@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
+
+    <ResourceDictionary x:Key="DarkModeColors">
+        <Color x:Key="PrimaryColorDark">#FF007ACC</Color>
+        <SolidColorBrush x:Key="PrimaryBrushDark" Color="{StaticResource PrimaryColorDark}" />
+
+        <Color x:Key="WarningColorDark">#FFFFA000</Color>
+        <SolidColorBrush x:Key="WarningBrushDark" Color="{StaticResource WarningColorDark}" />
+
+        <Color x:Key="ErrorColorDark">#FFD32F2F</Color>
+        <SolidColorBrush x:Key="ErrorBrushDark" Color="{StaticResource ErrorColorDark}" />
+    </ResourceDictionary>
+
+    <ResourceDictionary x:Key="LightModeColors">
+        <Color x:Key="PrimaryColorLight">#FF2196F3</Color>
+        <SolidColorBrush x:Key="PrimaryBrushLight" Color="{StaticResource PrimaryColorLight}" />
+
+        <Color x:Key="WarningColorLight">#FFFFC107</Color>
+        <SolidColorBrush x:Key="WarningBrushLight" Color="{StaticResource WarningColorLight}" />
+
+        <Color x:Key="ErrorColorLight">#FFF44336</Color>
+        <SolidColorBrush x:Key="ErrorBrushLight" Color="{StaticResource ErrorColorLight}" />
+    </ResourceDictionary>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}" />
+
+</ResourceDictionary>
