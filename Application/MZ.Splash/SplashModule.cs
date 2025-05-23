@@ -15,7 +15,6 @@ namespace MZ.Splash
         public override void OnInitialized(IContainerProvider containerProvider)
         {
             SetRegion<SplashWindowView>(MZWindowNames.SplashWindow,(MZRegionNames.SplashRegion, nameof(SplashWindowView)));
-            SetWindowLocate(MZWindowNames.SplashWindow, 0);
             ShowWindow(MZWindowNames.SplashWindow);
         }
 

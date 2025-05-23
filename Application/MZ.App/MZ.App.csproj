@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Dashboard\MZ.Dashboard.csproj" />
+    <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\MZ.Splash\MZ.Splash.csproj" />
   </ItemGroup>
 </Project>

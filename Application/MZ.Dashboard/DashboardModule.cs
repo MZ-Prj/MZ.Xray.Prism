@@ -16,7 +16,6 @@ namespace MZ.Dashboard
         {
             SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardWindowView)));
             SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisWindowView)));
-            
         }
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -35,6 +34,5 @@ namespace MZ.Dashboard
                 ShowWindow(MZWindowNames.AnalysisWindow);
             }, ThreadOption.UIThread, true);
         }
-
     }
 }
