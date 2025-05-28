@@ -3,12 +3,33 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
+	<SatelliteResourceLanguages>ko-KR;en-US</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="instance.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="instance.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MZ.Auth\MZ.Auth.csproj" />
     <ProjectReference Include="..\MZ.Dashboard\MZ.Dashboard.csproj" />
+    <ProjectReference Include="..\MZ.Dialog\MZ.Dialog.csproj" />
+    <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />
+    <ProjectReference Include="..\MZ.Language\MZ.Language.csproj" />
+    <ProjectReference Include="..\MZ.Loading\MZ.Loading.csproj" />
+    <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\MZ.Splash\MZ.Splash.csproj" />
   </ItemGroup>
 </Project>

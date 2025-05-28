@@ -9,6 +9,9 @@
         public static string DialogRegion = "DialogRegion";
         public static string LanguageRegion = "LanguageRegion";
         public static string LoadingRegion = "LoadingRegion";
-        
+
+        public static string UserLoginRegion = "UserLoginRegion";
+        public static string UserRegisterRegion = "UserRegisterRegion";
+
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.App", "MZ.App\MZ.App.csproj", "{D37BF3F0-3535-4DC8-B1B2-49088664EBF5}"
 EndProject
@@ -36,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Language", "MZ.Language\MZ.Language.csproj", "{39F472D4-E633-435F-B0AB-6F46CA81DE1E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Loading", "MZ.Loading\MZ.Loading.csproj", "{5D6AAEB8-E506-4440-ACA3-397A3307947C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Auth", "MZ.Auth\MZ.Auth.csproj", "{31436DD1-54C0-4AA4-832C-C4312476A64B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{5D6AAEB8-E506-4440-ACA3-397A3307947C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D6AAEB8-E506-4440-ACA3-397A3307947C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D6AAEB8-E506-4440-ACA3-397A3307947C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31436DD1-54C0-4AA4-832C-C4312476A64B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31436DD1-54C0-4AA4-832C-C4312476A64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31436DD1-54C0-4AA4-832C-C4312476A64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31436DD1-54C0-4AA4-832C-C4312476A64B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{9600B0CD-631C-411E-B8CF-B3FE563EBC85} = {6669B406-0876-411D-B8DB-FCCDF22364F5}
 		{39F472D4-E633-435F-B0AB-6F46CA81DE1E} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 		{5D6AAEB8-E506-4440-ACA3-397A3307947C} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
+		{31436DD1-54C0-4AA4-832C-C4312476A64B} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E01D6575-9656-4E92-BCEC-2ABE80B904C4}

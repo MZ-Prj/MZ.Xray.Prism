@@ -1,0 +1,117 @@
+﻿using MZ.Domain.Auths;
+using MZ.Domain.Entities;
+using MZ.Domain.Enums;
+using MZ.Domain.Interfaces;
+using MZ.DTO;
+using MZ.DTO.Enums;
+using MZ.Infrastructure.Interfaces;
+using MZ.Logger;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace MZ.Infrastructure.Services
+{
+    public class UserService : IUserService
+    {
+        private IInformationEncoder informationEncoder;
+
+        protected readonly IUserRepository userRepository;
+        protected readonly IUserSettingRepository userSettingRepository;
+        protected readonly IUserSession userSession;
+
+        public UserService(IUserRepository userRepository,
+                           IUserSettingRepository userSettingRepository,
+                           IUserSession userSession)
+        {
+            this.userRepository = userRepository;
+            this.userSettingRepository = userSettingRepository;
+            this.userSession = userSession;
+
+            informationEncoder = new Sha256InformationEncoder();
+        }
+
+        public async Task<BaseResponse<UserLoginRole, UserEntity>> Login(UserLoginRequest requeset)
+        {
+            try
+            {
+                UserEntity user = await userRepository.GetUserByUsernameAsync(requeset.Username);
+
+                if (user == null)
+                {
+                    return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.NotFound);
+                }
+
+                if (!user.VerifyPassword(requeset.Password, informationEncoder))
+                {
+                    return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Valid);
+                }
+
+                await userRepository.UpdateLastLoginDateAsync(user.Id);
+                userSession.CurrentUser = user.Username;
+                return BaseResponseExtensions.Success<UserLoginRole, UserEntity>(UserLoginRole.Success);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Fail, ex);
+            }
+        }
+
+        public BaseResponse<BaseRole, string> CurrentUser()
+        {
+            try
+            {
+                return BaseResponseExtensions.Success(BaseRole.Success, userSession.CurrentUser);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
+            }
+        }
+
+        public async Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                if (request.Password != request.RePassword)
+                {
+                    return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.NotMatchPassword);
+                }
+
+                UserEntity existUser = await userRepository.GetUserByUsernameAsync(request.Username, cancellationToken);
+
+                if (existUser != null)
+                {
+                    return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.AleadyExist);
+                }
+
+                UserEntity user = new ()
+                {
+                    Username = request.Username,
+                    Email = request.Email,
+                    Password = request.Password,
+                    CreateDate = DateTime.Now,
+                    LastLoginDate = DateTime.Now,
+                    Role = request.UserRole,
+                    UserSetting = new()
+                    {
+                        Theme = ThemeRole.LightSteel,
+                        Language = LanguageRole.KoKR
+                    }
+                };
+
+                user.HashPassword(request.Password, informationEncoder);
+                await userRepository.AddAsync(user, cancellationToken);
+
+                return BaseResponseExtensions.Success<UserRegisterRole, UserEntity>(UserRegisterRole.Success);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.Fail, ex);
+            }
+        }
+    }
+}

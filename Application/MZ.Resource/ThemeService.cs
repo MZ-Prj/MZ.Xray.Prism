@@ -1,20 +1,16 @@
 ﻿using System.Windows;
 using ControlzEx.Theming;
 using Microsoft.Win32;
+using MZ.Domain.Enums;
+using MZ.Util;
 
 namespace MZ.Resource
 {
-
     public static class ThemeService
     {
-        public static void SetTheme(string theme)
+        public static void Load(ThemeRole theme)
         {
-            ThemeManager.Current.ChangeTheme(Application.Current, theme);
-        }
-
-        public static void SetThemeInDatabase(string theme, string color = "Steel")
-        {
-            ThemeManager.Current.ChangeTheme(Application.Current, $"{theme}.{color}");
+            ThemeManager.Current.ChangeTheme(Application.Current, MZEnum.GetName(theme));
         }
 
         public static string ChangeMode()
@@ -25,27 +21,24 @@ namespace MZ.Resource
             return mode;
         }
 
-        public static string GetSystemTheme()
+        public static ThemeRole GetSystemTheme()
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"))
+                using RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+                if (key != null)
                 {
-                    if (key != null)
+                    object value = key.GetValue("AppsUseLightTheme");
+                    if (value != null && value is int themeValue)
                     {
-                        object value = key.GetValue("AppsUseLightTheme");
-                        if (value != null && value is int themeValue)
-                        {
-                            return themeValue == 0 ? "Dark" : "Light";
-                        }
+                        return themeValue == 0 ? ThemeRole.DarkSteel : ThemeRole.LightSteel;
                     }
                 }
             }
-            catch
-            {
-                //AppLogger.Instance.Warning("Unknow Theme");
-            }
-            return "Light";
+            catch { }
+
+            return ThemeRole.LightSteel;
         }
+
     }
 }

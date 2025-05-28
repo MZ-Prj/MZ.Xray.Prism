@@ -15,7 +15,6 @@ namespace MZ.Splash
         public override void OnInitialized(IContainerProvider containerProvider)
         {
             SetRegion<SplashWindowView>(MZWindowNames.SplashWindow,(MZRegionNames.SplashRegion, nameof(SplashWindowView)));
-            SetWindowLocate(MZWindowNames.SplashWindow, 0);
             ShowWindow(MZWindowNames.SplashWindow);
         }
 
@@ -26,7 +25,7 @@ namespace MZ.Splash
 
         public override void InitializeEvent()
         {
-            _eventAggregator.GetEvent<SplashStatusEvent>().Subscribe(() =>
+            _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
             {
                 CloseWindow(MZWindowNames.SplashWindow);
             }, ThreadOption.UIThread, true);

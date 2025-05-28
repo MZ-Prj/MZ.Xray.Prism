@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
-using Prism.Ioc;
 using System.Windows;
-using WinForms = System.Windows.Forms;
 using System.Collections.Generic;
+using Prism.Ioc;
+using MZ.Logger;
+using WinForms = System.Windows.Forms;
 
 namespace MZ.Core
 {
     public class MZWindowModule : MZModule
     {
-        protected Dictionary<string, Window> Windows { get; } = new Dictionary<string, Window>();
+        protected Dictionary<string, Window> Windows { get; } = [];
 
         public MZWindowModule(IContainerExtension container) : base(container)
         {
@@ -52,7 +53,7 @@ namespace MZ.Core
             }
             catch (Exception ex)
             {
-                //AppLogger.Instance.Error(ex.ToString());
+                MZLogger.Error(ex.ToString());
             }
         }
 
@@ -79,7 +80,7 @@ namespace MZ.Core
             }
             catch (Exception ex)
             {
-                //AppLogger.Instance.Error(ex.ToString());
+                MZLogger.Error(ex.ToString());
             }
         }
 

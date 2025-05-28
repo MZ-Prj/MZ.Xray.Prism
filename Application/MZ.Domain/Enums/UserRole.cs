@@ -1,12 +1,12 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace MZ.Domain.Enums
 {
     public enum UserRole
     {
-        Guest,
+        [Display(Name = "User", Description = "User")]
         User,
-        Premium,
-        Moderator,
+        [Display(Name = "Admin", Description = "Admin")]
         Admin
     }
 }

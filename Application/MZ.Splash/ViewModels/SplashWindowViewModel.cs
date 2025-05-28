@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using MZ.Core;
-using Prism.Ioc;
+﻿using System;
 using System.Linq;
-using System.Windows;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Prism.Ioc;
+using MZ.Core;
+using MZ.Logger;
+using MZ.Auth.Views;
+using MZ.Infrastructure;
 using static MZ.Core.MZEvent;
+using static MZ.Core.MZModel;
 
 namespace MZ.Splash.ViewModels
 {
@@ -13,8 +16,21 @@ namespace MZ.Splash.ViewModels
     {
         private List<Func<Task>> _process = [];
 
+        private int _maxStep = 0;
+        public int MaxStep { get => _maxStep; set => SetProperty(ref _maxStep, value); }
+
+        private int _step = 0;
+        public int Step { get => _step; set => SetProperty(ref _step, value); }
+
+        private string _message = string.Empty;
+        public string Message { get => _message; set => SetProperty(ref _message, value); }
+
+
+        private readonly DatabaseService _databaseService;
+
         public SplashWindowViewModel(IContainerExtension container) : base(container)
         {
+            _databaseService = container.Resolve<DatabaseService>();
         }
 
         public override void InitializeCore()
@@ -27,9 +43,20 @@ namespace MZ.Splash.ViewModels
                     {
                         await Task.CompletedTask;
                     }),
+                    ("Initialize Database", async () =>
+                    {
+                        _databaseService.InitializeCore();
+                        await _databaseService.InitializeModelAsync();
+                        await Task.CompletedTask;
+                    }),
                     ("Success!", async () =>
                     {
-                        _eventAggregator.GetEvent<SplashStatusEvent>().Publish();
+                        _eventAggregator.GetEvent<SplashCloseEvent>().Publish();
+                        _eventAggregator.GetEvent<NavigationEvent>().Publish(
+                            new NavigationModel(
+                                MZRegionNames.DashboardRegion,
+                                nameof(UserLoginView)));
+
                         await Task.CompletedTask;
                     })
                 };
@@ -39,6 +66,8 @@ namespace MZ.Splash.ViewModels
                     await step.Action();
                     await CallbackMessage(index, step.Message);
                 }))];
+
+                MaxStep = _process.Count - 1;
 
                 foreach (var process in _process)
                 {
@@ -55,6 +84,12 @@ namespace MZ.Splash.ViewModels
         /// <returns></returns>
         private async Task CallbackMessage(int step, string message)
         {
+            _dispatcher.Invoke(() =>
+            {
+                Step = step;
+                Message = $"{message} [{step}/{MaxStep}]";
+            });
+            MZLogger.Information($"{message}");
             await Task.Delay(1000);
         }
 

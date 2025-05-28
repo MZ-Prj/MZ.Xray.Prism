@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
+    <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
@@ -18,5 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
+    <ProjectReference Include="..\MZ.DTO\MZ.DTO.csproj" />
+    <ProjectReference Include="..\MZ.Util\MZ.Util.csproj" />
   </ItemGroup>
 </Project>
