@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MZ.Core\MZ.Core.csproj" />
+    <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />
+    <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
+    <ProjectReference Include="..\MZ.Util\MZ.Util.csproj" />
+  </ItemGroup>
+</Project>
