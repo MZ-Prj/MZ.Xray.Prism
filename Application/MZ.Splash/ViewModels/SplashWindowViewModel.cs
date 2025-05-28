@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using Prism.Ioc;
 using MZ.Core;
 using MZ.Logger;
+using MZ.Auth.Views;
+using MZ.Infrastructure;
 using static MZ.Core.MZEvent;
-using System.Threading;
+using static MZ.Core.MZModel;
 
 namespace MZ.Splash.ViewModels
 {
@@ -23,8 +25,12 @@ namespace MZ.Splash.ViewModels
         private string _message = string.Empty;
         public string Message { get => _message; set => SetProperty(ref _message, value); }
 
+
+        private readonly DatabaseService _databaseService;
+
         public SplashWindowViewModel(IContainerExtension container) : base(container)
         {
+            _databaseService = container.Resolve<DatabaseService>();
         }
 
         public override void InitializeCore()
@@ -37,9 +43,20 @@ namespace MZ.Splash.ViewModels
                     {
                         await Task.CompletedTask;
                     }),
+                    ("Initialize Database", async () =>
+                    {
+                        _databaseService.InitializeCore();
+                        await _databaseService.InitializeModelAsync();
+                        await Task.CompletedTask;
+                    }),
                     ("Success!", async () =>
                     {
-                        _eventAggregator.GetEvent<SplashStatusEvent>().Publish();
+                        _eventAggregator.GetEvent<SplashCloseEvent>().Publish();
+                        _eventAggregator.GetEvent<NavigationEvent>().Publish(
+                            new NavigationModel(
+                                MZRegionNames.DashboardRegion,
+                                nameof(UserLoginView)));
+
                         await Task.CompletedTask;
                     })
                 };

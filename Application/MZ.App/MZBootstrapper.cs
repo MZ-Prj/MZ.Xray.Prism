@@ -1,5 +1,15 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
+using MZ.Auth;
 using MZ.Dashboard;
+using MZ.Dialog;
+using MZ.Infrastructure;
+using MZ.Infrastructure.Interfaces;
+using MZ.Infrastructure.Repositories;
+using MZ.Infrastructure.Sessions;
+using MZ.Language;
+using MZ.Loading;
+using MZ.Resource;
 using MZ.Splash;
 using Prism.DryIoc;
 using Prism.Ioc;
@@ -24,7 +34,8 @@ namespace MZ.App
         /// <param name="containerRegistry"></param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            //Register Service
+            // Register Service
+            containerRegistry.RegisterSingleton<DatabaseService>();
         }
 
         /// <summary>
@@ -33,8 +44,15 @@ namespace MZ.App
         /// <param name="moduleCatalog"></param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
+            // Clients (UI)
             moduleCatalog.AddModule<SplashModule>();
             moduleCatalog.AddModule<DashboardModule>();
+
+            // Templates
+            moduleCatalog.AddModule<AuthModule>();
+            moduleCatalog.AddModule<LanguageModule>();
+            moduleCatalog.AddModule<DialogModule>();
+            moduleCatalog.AddModule<LoadingModule>();
         }
 
         /// <summary>
@@ -42,6 +60,14 @@ namespace MZ.App
         /// </summary>
         protected override void OnInitialized()
         {
+            // Theme
+            ThemeService.Load(ThemeService.GetSystemTheme());
+
+            // Language
+            LanguageService.Load(LanguageService.GetSystemLanguage());
+
+            // Build Version
+            BuildVersionService.Load(Assembly.GetExecutingAssembly());
         }
 
         /// <summary>

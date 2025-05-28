@@ -5,8 +5,8 @@ namespace MZ.Domain.Enums
     public enum LanguageRole
     {
         [Display(Name = "ko-KR", Description = "한국어")]
-        koKR,
+        KoKR,
         [Display(Name = "en-US", Description = "English")]
-        enUS,
+        EnUS,
     }
 }

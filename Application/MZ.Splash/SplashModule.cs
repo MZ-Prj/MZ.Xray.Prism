@@ -25,7 +25,7 @@ namespace MZ.Splash
 
         public override void InitializeEvent()
         {
-            _eventAggregator.GetEvent<SplashStatusEvent>().Subscribe(() =>
+            _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
             {
                 CloseWindow(MZWindowNames.SplashWindow);
             }, ThreadOption.UIThread, true);

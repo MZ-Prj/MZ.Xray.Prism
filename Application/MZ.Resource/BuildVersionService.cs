@@ -1,11 +1,18 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using System;
 
-namespace MZ.Util
+namespace MZ.Resource
 {
-    public static class MZBuildVersion
+    public static class BuildVersionService
     {
+        public static string BuildVersion { get; set; }
+
+        public static void Load(this Assembly assembly)
+        {
+            BuildVersion = GetBuildVersion(assembly);
+        }
+
         public static string GetBuildVersion(this Assembly assembly)
         {
             ArgumentNullException.ThrowIfNull(assembly);

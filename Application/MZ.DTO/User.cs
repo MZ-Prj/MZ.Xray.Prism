@@ -1,19 +1,22 @@
-﻿using System;
+﻿using MZ.Domain.Enums;
+using System;
 
 namespace MZ.DTO
 {
 #nullable enable
 
     #region Request
-    public record UserRegistrationRequest(
+    public record UserLoginRequest(
         string Username,
-        string Email,
         string Password
     );
 
-    public record LoginRequest(
+    public record UserRegisterRequest(
         string Username,
-        string Password
+        string Password,
+        string RePassword,
+        string Email,
+        UserRole UserRole
     );
 
     public record UserUpdateRequest(
@@ -28,11 +31,11 @@ namespace MZ.DTO
     #endregion
 
     #region Response
-    public record UserResponse(
-        bool Success,
-        string? Message,
-        UserDto? User
-    ) : BaseResponse(Success, Message);
+    //public record UserResponse(
+    //    bool Success,
+    //    string? Message,
+    //    UserDto? User
+    //) : BaseResponse(Success, Message);
     #endregion
 
     #region User DTO

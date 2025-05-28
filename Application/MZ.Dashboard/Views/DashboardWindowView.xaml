@@ -1,16 +1,69 @@
 ﻿<mah:MetroWindow x:Class="MZ.Dashboard.Views.DashboardWindowView"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:prism="http://prismlibrary.com/" 
+                 xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
                  xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  d:DataContext="{d:DesignInstance Type=viewmodels:DashboardWindowViewModel}"
                  mc:Ignorable="d"
-                 prism:ViewModelLocator.AutoWireViewModel="True">
+                 prism:ViewModelLocator.AutoWireViewModel="True"
+                 Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                 WindowState="Maximized"
+                 ResizeMode="CanMinimize"
+                 Title="MZ.Application">
+
+    <Window.Resources>
+        <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
+        <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+    </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding Path=WindowClosingCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button ToolTip="ToolTip">
+                <Image Source="pack://application:,,,/MZ.Resource;component/Assets/Images/loading.gif"
+                       Width="22"
+                       Height="22"/>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <ItemsControl ItemsSource="{Binding Path=WindowCommandButtons}" 
+                          IsEnabled="{Binding Path=LoadingService.MainScreenLoading.Loading, Mode=TwoWay, Converter={StaticResource BooleanInverterConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="FrameworkElement.Margin" Value="0,4,0,0"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding Path=Command}" 
+                                Visibility="{Binding Path=IsVisibility, Converter={StaticResource VisibilityConverter}}">
+                            <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="20" Height="20"/>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <Grid>
-            
+        <ContentControl prism:RegionManager.RegionName="DashboardRegion"/>
+        <ContentControl prism:RegionManager.RegionName="LoadingRegion"/>
     </Grid>
 </mah:MetroWindow>

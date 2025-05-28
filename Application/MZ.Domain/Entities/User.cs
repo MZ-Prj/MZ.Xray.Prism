@@ -2,9 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MZ.Domain.Enums;
+using MZ.Domain.Interfaces;
 
 namespace MZ.Domain.Entities
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Table("User")]
     public class UserEntity
     {
@@ -16,17 +20,43 @@ namespace MZ.Domain.Entities
         [StringLength(4, MinimumLength = 4, ErrorMessage = "Username must be 4 characters long")]
         public string Username { get; set; } = string.Empty;
 
-        [Required]
         [NotMapped]
-        [StringLength(8, MinimumLength = 4, ErrorMessage = "Password must be 4 characters long")]
         public string Password { get; set; } = string.Empty;
+
+        [Required]
+        public string PasswordHash { get; private set; } = string.Empty;
 
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; } = UserRole.User;
-
         public DateTime CreateDate { get; set; }
         public DateTime LastLoginDate { get; set; }
+
+        public void HashPassword(string password, IInformationEncoder encoder)
+        {
+            PasswordHash = encoder.Hash(password);
+        }
+
+        public bool VerifyPassword(string password, IInformationEncoder encoder)
+        {
+            return encoder.Verify(PasswordHash, password);
+        }
+
+        public UserSettingEntity UserSetting { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Table("UserSetting")]
+    public class UserSettingEntity
+    {
+        public int UserId { get; set; }
+        public ThemeRole Theme { get; set; }
+        public LanguageRole Language { get; set; }
+
+        [ForeignKey("UserId")]
+        public UserEntity User { get; set; }
     }
 }

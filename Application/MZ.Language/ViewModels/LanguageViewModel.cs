@@ -6,13 +6,13 @@ using MZ.Core;
 using MZ.Util;
 using MZ.Resource;
 using MZ.Domain.Enums;
-using MZ.Domain.Models;
+using MZ.Language.Models;
 
 namespace MZ.Language.ViewModels
 {
     public class LanguageViewModel : MZBindableBase
     {
-        public ObservableCollection<LanguageModel> Languages { get; set; } = new();
+        public ObservableCollection<LanguageModel> Languages { get; set; } = [];
 
         private DelegateCommand<string> _langueCommand;
         public DelegateCommand<string> LanguageCommand => _langueCommand ??= new DelegateCommand<string>(LanguageButton);

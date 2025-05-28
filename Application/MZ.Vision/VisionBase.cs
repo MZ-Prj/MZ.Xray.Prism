@@ -150,9 +150,9 @@ namespace MZ.Vision
                     Mat oneMinusAlpha = new Mat();
 
                     Cv2.Multiply(foreground.ExtractChannel(c), alpha, fore);
-                    Cv2.Subtract(Mat.Ones(alpha.Size(), alpha.Type()), alpha, oneMinusAlpha);// foreground[channel] * alpha
-                    Cv2.Multiply(background.ExtractChannel(c), oneMinusAlpha, back); // background[channel] * (1 - alpha)
-                    Cv2.Add(fore, back, fore);                                     // 합산
+                    Cv2.Subtract(Mat.Ones(alpha.Size(), alpha.Type()), alpha, oneMinusAlpha);
+                    Cv2.Multiply(background.ExtractChannel(c), oneMinusAlpha, back);
+                    Cv2.Add(fore, back, fore);
 
                     if (c == 0)
                     {
