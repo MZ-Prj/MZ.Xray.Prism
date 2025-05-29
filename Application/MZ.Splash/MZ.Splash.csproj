@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Auth\MZ.Auth.csproj" />
+    <ProjectReference Include="..\MZ.Blank\MZ.Blank.csproj" />
     <ProjectReference Include="..\MZ.Core\MZ.Core.csproj" />
     <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
   </ItemGroup>

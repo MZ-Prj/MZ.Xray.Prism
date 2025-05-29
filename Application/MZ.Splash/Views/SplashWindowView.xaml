@@ -1,8 +1,9 @@
 ﻿<Window x:Class="MZ.Splash.Views.SplashWindowView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:gif="clr-namespace:WpfAnimatedGif;assembly=WpfAnimatedGif"
         xmlns:prism="http://prismlibrary.com/"            
-        xmlns:gif="clr-namespace:XamlAnimatedGif;assembly=XamlAnimatedGif" xmlns:viewmodels="clr-namespace:MZ.Splash.ViewModels" 
+        xmlns:viewmodels="clr-namespace:MZ.Splash.ViewModels" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         d:DataContext="{d:DesignInstance Type=viewmodels:SplashWindowViewModel}"
@@ -23,12 +24,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" 
-               gif:AnimationBehavior.SourceUri="pack://application:,,,/MZ.Resource;component/Assets/Images/loading.gif"
-               gif:AnimationBehavior.AnimateInDesignMode="False"
+               gif:ImageBehavior.AnimatedSource="pack://application:,,,/MZ.Resource;component/Assets/Images/loading.gif" 
                Stretch="None"
                VerticalAlignment="Center"
-               HorizontalAlignment="Center">
-        </Image>
+               HorizontalAlignment="Center"/>
 
         <Grid Grid.Row="1">
             <ProgressBar Value="{Binding Path=Step}"

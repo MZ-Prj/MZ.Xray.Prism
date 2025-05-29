@@ -1,7 +1,6 @@
 ﻿using MZ.Core;
 using MZ.Loading.Views;
 using Prism.Ioc;
-using Prism.Regions;
 
 namespace MZ.Loading
 {

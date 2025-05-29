@@ -6,6 +6,7 @@ using Prism.Ioc;
 using MZ.Core;
 using MZ.Logger;
 using MZ.Auth.Views;
+using MZ.Blank.Views;
 using MZ.Infrastructure;
 using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
@@ -24,7 +25,6 @@ namespace MZ.Splash.ViewModels
 
         private string _message = string.Empty;
         public string Message { get => _message; set => SetProperty(ref _message, value); }
-
 
         private readonly DatabaseService _databaseService;
 
@@ -45,18 +45,21 @@ namespace MZ.Splash.ViewModels
                     }),
                     ("Initialize Database", async () =>
                     {
-                        _databaseService.InitializeCore();
-                        await _databaseService.InitializeModelAsync();
+                        await _databaseService.MakeAdmin();
                         await Task.CompletedTask;
                     }),
                     ("Success!", async () =>
                     {
                         _eventAggregator.GetEvent<SplashCloseEvent>().Publish();
-                        _eventAggregator.GetEvent<NavigationEvent>().Publish(
+                        _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                             new NavigationModel(
                                 MZRegionNames.DashboardRegion,
                                 nameof(UserLoginView)));
 
+                        _eventAggregator.GetEvent<AnalysisNavigationEvent>().Publish(
+                            new NavigationModel(
+                                MZRegionNames.AnalysisRegion,
+                                nameof(BlankView)));
                         await Task.CompletedTask;
                     })
                 };
@@ -92,6 +95,5 @@ namespace MZ.Splash.ViewModels
             MZLogger.Information($"{message}");
             await Task.Delay(1000);
         }
-
     }
 }
