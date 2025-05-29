@@ -57,9 +57,9 @@ namespace MZ.Auth.ViewModels
             if (response.Success)
             {
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
-                new NavigationModel(
-                    MZRegionNames.DashboardRegion,
-                    "DashboardControlView"));
+                            new NavigationModel(
+                                MZRegionNames.DashboardRegion,
+                                MZViewNames.DashboardControlView));
             }
         }
 
