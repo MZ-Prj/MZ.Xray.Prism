@@ -7,6 +7,5 @@ namespace MZ.Core
             string Region,
             string View
         );
-
     }
 }

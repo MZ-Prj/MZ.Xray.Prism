@@ -22,7 +22,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                await appSettingRepository.DeleteByIdAsync(1, cancellationToken);
+                await appSettingRepository.DeleteAllAsync(cancellationToken);
 
                 var appSetting = new AppSettingEntity()
                 {

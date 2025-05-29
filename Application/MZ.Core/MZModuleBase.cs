@@ -10,18 +10,6 @@ namespace MZ.Core
 {
     public abstract class MZModuleBase
     {
-        #region 
-        private static readonly Lazy<Type[]> _defaultViewTypes = new(() =>
-                        [.. typeof(MZModuleBase).Assembly
-                            .GetExportedTypes()
-                            .Where(IsValidViewType)]);
-        private static bool IsValidViewType(Type type)
-        {
-            return typeof(FrameworkElement).IsAssignableFrom(type)
-                   && !type.IsAbstract
-                   && !type.ContainsGenericParameters;
-        }
-        #endregion
 
         /// <summary>
         /// 이벤트를 전달하는 Event Aggregator
@@ -114,7 +102,11 @@ namespace MZ.Core
             const string viewSuffix = "View";
             const string regionSuffix = "Region";
 
-            foreach (var view in _defaultViewTypes.Value)
+            var assembly = this.GetType().Assembly;
+            var viewTypes = assembly.GetTypes()
+                .Where(t => typeof(FrameworkElement).IsAssignableFrom(t) && t.IsPublic && !t.IsAbstract);
+
+            foreach (var view in viewTypes)
             {
                 containerRegistry.RegisterForNavigation(view, view.Name);
 

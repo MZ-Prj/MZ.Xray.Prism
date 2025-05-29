@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
@@ -8,9 +8,13 @@
 	<SatelliteResourceLanguages>ko-KR;en-US</SatelliteResourceLanguages>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="instance.db" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="instance.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -24,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Auth\MZ.Auth.csproj" />
+    <ProjectReference Include="..\MZ.Blank\MZ.Blank.csproj" />
     <ProjectReference Include="..\MZ.Dashboard\MZ.Dashboard.csproj" />
     <ProjectReference Include="..\MZ.Dialog\MZ.Dialog.csproj" />
     <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />

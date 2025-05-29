@@ -56,5 +56,12 @@ namespace MZ.Infrastructure.Repositories
                 await DeleteAsync(entity, cancellationToken);
             }
         }
+
+        public async Task DeleteAllAsync(CancellationToken cancellationToken)
+        {
+            var entities = await _context.Set<T>().ToListAsync(cancellationToken);
+            _context.Set<T>().RemoveRange(entities);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
