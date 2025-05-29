@@ -1,0 +1,9 @@
+﻿<UserControl x:Class="MZ.Dashboard.Views.AnalysisControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Label>Analysis Control View</Label>
+    </Grid>
+</UserControl>

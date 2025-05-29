@@ -9,8 +9,11 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  d:DataContext="{d:DesignInstance Type=viewmodels:AnalysisWindowViewModel}"
                  mc:Ignorable="d"
-                 prism:ViewModelLocator.AutoWireViewModel="True">
+                 prism:ViewModelLocator.AutoWireViewModel="True"
+                 WindowState="Maximized"
+                 ResizeMode="CanMinimize"
+                 Title="MZ.Application">
     <Grid>
-            
+        <ContentControl prism:RegionManager.RegionName="AnalysisRegion"/>
     </Grid>
 </mah:MetroWindow>

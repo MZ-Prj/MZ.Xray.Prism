@@ -14,8 +14,8 @@ namespace MZ.Dashboard
 
         public override void OnInitialized(IContainerProvider containerProvider)
         {
-            SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardWindowView)));
-            SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisWindowView)));
+            SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardControlView)));
+            SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
         }
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -32,7 +32,6 @@ namespace MZ.Dashboard
 
                 ShowWindow(MZWindowNames.DashboardWindow);
                 ShowWindow(MZWindowNames.AnalysisWindow);
-
             }, ThreadOption.UIThread, true);
         }
     }
