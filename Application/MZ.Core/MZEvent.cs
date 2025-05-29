@@ -6,7 +6,8 @@ namespace MZ.Core
     public static partial class MZEvent
     {
         public class SplashCloseEvent : PubSubEvent { }
-        public class NavigationEvent : PubSubEvent<NavigationModel> { }
+        public class DashboardNavigationEvent : PubSubEvent<NavigationModel> { }
+        public class AnalysisNavigationEvent : PubSubEvent<NavigationModel> { }
     }
 
 }

@@ -31,7 +31,6 @@ namespace MZ.Core
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -129,6 +128,5 @@ namespace MZ.Core
                 window.Hide();
             }
         }
-
     }
 }

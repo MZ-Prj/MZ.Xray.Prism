@@ -14,7 +14,7 @@ namespace MZ.Infrastructure.Services
 {
     public class UserService : IUserService
     {
-        private IInformationEncoder informationEncoder;
+        private IInformationEncoder _informationEncoder;
 
         protected readonly IUserRepository userRepository;
         protected readonly IUserSettingRepository userSettingRepository;
@@ -28,7 +28,7 @@ namespace MZ.Infrastructure.Services
             this.userSettingRepository = userSettingRepository;
             this.userSession = userSession;
 
-            informationEncoder = new Sha256InformationEncoder();
+            _informationEncoder = new Sha256InformationEncoder();
         }
 
         public async Task<BaseResponse<UserLoginRole, UserEntity>> Login(UserLoginRequest requeset)
@@ -42,7 +42,7 @@ namespace MZ.Infrastructure.Services
                     return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.NotFound);
                 }
 
-                if (!user.VerifyPassword(requeset.Password, informationEncoder))
+                if (!user.VerifyPassword(requeset.Password, _informationEncoder))
                 {
                     return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Valid);
                 }
@@ -102,7 +102,7 @@ namespace MZ.Infrastructure.Services
                     }
                 };
 
-                user.HashPassword(request.Password, informationEncoder);
+                user.HashPassword(request.Password, _informationEncoder);
                 await userRepository.AddAsync(user, cancellationToken);
 
                 return BaseResponseExtensions.Success<UserRegisterRole, UserEntity>(UserRegisterRole.Success);

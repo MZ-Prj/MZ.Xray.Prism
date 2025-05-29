@@ -1,5 +1,4 @@
-﻿
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -9,7 +8,7 @@ using Prism.Services.Dialogs;
 
 namespace MZ.Core
 {
-    public abstract class MZBindableBase : BindableBase
+    public abstract class MZBindableBase : BindableBase, INavigationAware
     {
         #region Dispatcher
         protected readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
@@ -68,6 +67,19 @@ namespace MZ.Core
         }
 
         public virtual void InitializeEvent()
+        {
+        }
+
+        public virtual void OnNavigatedTo(NavigationContext navigationContext)
+        {
+        }
+
+        public virtual bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public virtual void OnNavigatedFrom(NavigationContext navigationContext)
         {
         }
     }

@@ -13,6 +13,7 @@ namespace MZ.Infrastructure.Interfaces
         Task AddAsync(T entity, CancellationToken cancellationToken);
         Task UpdateAsync(T entity, CancellationToken cancellationToken);
         Task DeleteAsync(T entity, CancellationToken cancellationToken);
+        Task DeleteAllAsync(CancellationToken cancellationToken);
         Task DeleteByIdAsync(int id, CancellationToken cancellationToken);
     }
 }

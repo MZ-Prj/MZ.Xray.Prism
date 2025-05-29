@@ -6,16 +6,8 @@ namespace MZ.Infrastructure
 {
     public class AppDbContext : DbContext
     {
-        public static string Root = @"Data Source=./instance.db";
-
         public AppDbContext() { }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite(Root);
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
