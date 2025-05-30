@@ -8,9 +8,9 @@ namespace MZ.Resource.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool booleanValue)
+            if (value is bool check)
             {
-                return !booleanValue;
+                return !check;
             }
 
             return false;
@@ -18,9 +18,9 @@ namespace MZ.Resource.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool booleanValue)
+            if (value is bool check)
             {
-                return !booleanValue;
+                return !check;
             }
 
             return false;

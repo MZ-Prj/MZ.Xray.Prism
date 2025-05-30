@@ -96,6 +96,13 @@ namespace MZ.App
 
             // DatabaseService
             containerRegistry.RegisterSingleton<DatabaseService>();
+
+            // Session
+            containerRegistry.RegisterSingleton<IUserSession, UserSession>();
+
+            // Business
+            containerRegistry.Register<IUserService, UserService>();
+            containerRegistry.Register<IAppSettingService, AppSettingService>();
         }
 
         private void RegisterRepositories(IContainerRegistry containerRegistry)
@@ -108,12 +115,7 @@ namespace MZ.App
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
         {
-            // Session
-            containerRegistry.RegisterSingleton<IUserSession, UserSession>();
-
-            // Service
-            containerRegistry.Register<IUserService, UserService>();
-            containerRegistry.Register<IAppSettingService, AppSettingService>();
+            containerRegistry.RegisterSingleton<LoadingService>();
         }
 
         /// <summary>

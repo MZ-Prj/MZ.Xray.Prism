@@ -6,6 +6,7 @@
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:prism="http://prismlibrary.com/" 
                  xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
+                 xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
                  xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -39,8 +40,7 @@
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <ItemsControl ItemsSource="{Binding Path=WindowCommandButtons}" 
-                          IsEnabled="{Binding Path=LoadingService.MainScreenLoading.Loading, Mode=TwoWay, Converter={StaticResource BooleanInverterConverter}}">
+            <ItemsControl ItemsSource="{Binding Path=WindowCommandButtons}" >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel HorizontalAlignment="Stretch"/>
@@ -64,6 +64,6 @@
     </mah:MetroWindow.RightWindowCommands>
     <Grid>
         <ContentControl prism:RegionManager.RegionName="DashboardRegion"/>
-        <ContentControl prism:RegionManager.RegionName="LoadingRegion"/>
+        <loading:LoadingView DataContext="{Binding Path=LoadingModel}"/>
     </Grid>
 </mah:MetroWindow>

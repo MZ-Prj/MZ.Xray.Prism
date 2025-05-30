@@ -8,5 +8,6 @@ namespace MZ.Loading.ViewModels
         public LoadingViewModel(IContainerExtension container) : base(container)
         {
         }
+
     }
 }
