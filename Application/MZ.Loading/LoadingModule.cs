@@ -17,12 +17,11 @@ namespace MZ.Loading
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<LoadingView>();
+            containerRegistry.Register<LoadingView>();
         }
 
         public override void InitializeEvent()
         {
         }
-
     }
 }

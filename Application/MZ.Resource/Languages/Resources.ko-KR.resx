@@ -267,4 +267,25 @@
   <data name="LngLMMControlRegion_Chat" xml:space="preserve">
     <value>대화</value>
   </data>
+  <data name="LngUserRegisterRegion_Username" xml:space="preserve">
+    <value>사용자 계정</value>
+  </data>
+  <data name="LngUserRegisterRegion_Email" xml:space="preserve">
+    <value>이메일</value>
+  </data>
+  <data name="LngUserRegisterRegion_Password" xml:space="preserve">
+    <value>비밀번호</value>
+  </data>
+  <data name="LngUserRegisterRegion_Repassword" xml:space="preserve">
+    <value>비밀번호</value>
+  </data>
+  <data name="LngUserRegisterRegion_Register" xml:space="preserve">
+    <value>등록</value>
+  </data>
+  <data name="LngUserRegisterRegion_Back" xml:space="preserve">
+    <value>뒤로가기</value>
+  </data>
+  <data name="LngUserRegisterRegion_IsAdmin" xml:space="preserve">
+    <value>관리자 설정</value>
+  </data>
 </root>

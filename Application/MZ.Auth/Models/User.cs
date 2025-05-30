@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using MZ.Domain.Enums;
+using Prism.Mvvm;
 
 namespace MZ.Auth.Models
 {
@@ -22,7 +23,14 @@ namespace MZ.Auth.Models
 
     public class UserRegisterModel : UserModel
     {
+        private string _email = string.Empty;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
+
         private string _repassword;
         public string Repassword { get => _repassword; set => SetProperty(ref _repassword, value); }
+
+        private bool _isAdmin;
+        public bool IsAdmin { get => _isAdmin; set => SetProperty(ref _isAdmin, value); }
+
     }
 }

@@ -15,5 +15,6 @@
                  Title="MZ.Application">
     <Grid>
         <ContentControl prism:RegionManager.RegionName="AnalysisRegion"/>
+        <ContentControl prism:RegionManager.RegionName="AnalysisLoadingRegion"/>
     </Grid>
 </mah:MetroWindow>

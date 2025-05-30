@@ -9,14 +9,20 @@ namespace MZ.Resource.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool boolean = value is bool;
-            return boolean ? Visibility.Visible : Visibility.Collapsed;
+            if (value is bool boolean)
+            {
+                return boolean ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool visibility = value is Visibility;
-            return visibility && (Visibility)value == Visibility.Visible;
+            if (value is Visibility visibility)
+            {
+                return visibility == Visibility.Visible;
+            }
+            return false;
         }
     }
 }

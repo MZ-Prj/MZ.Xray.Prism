@@ -267,4 +267,25 @@
   <data name="LngLMMControlRegion_Chat" xml:space="preserve">
     <value>Chat</value>
   </data>
+  <data name="LngUserRegisterRegion_Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="LngUserRegisterRegion_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="LngUserRegisterRegion_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="LngUserRegisterRegion_Repassword" xml:space="preserve">
+    <value>Repassword</value>
+  </data>
+  <data name="LngUserRegisterRegion_Register" xml:space="preserve">
+    <value>Regist</value>
+  </data>
+  <data name="LngUserRegisterRegion_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="LngUserRegisterRegion_IsAdmin" xml:space="preserve">
+    <value>Is Admin</value>
+  </data>
 </root>
