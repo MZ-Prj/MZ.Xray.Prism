@@ -1,0 +1,61 @@
+﻿using System;
+
+namespace MZ.Domain.Interfaces
+{
+    public interface ICalibration
+    {
+        public double RelativeWidthRatio { get; set; }
+        public double OffsetRegion { get; set; }
+        public double GainRegion { get; set; }
+        public double BoundaryArtifact { get; set; }
+        public double ActivationThresholdRatio { get; set; }
+        public int MaxImageWidth { get; set; }
+        public int SensorImageWidth { get; set; }
+    }
+
+    public interface IImage
+    {
+        public string Path { get; set; }
+        public string Filename { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
+
+    public interface IFilter
+    {
+        public double Zoom { get; set; }
+        public float SharpnessLevel { get; set; }
+        public float BrightnessLevel { get; set; }
+        public float ContrastLevel { get; set; }
+        public float ColorMode { get; set; }
+    }
+
+    public interface IMaterial
+    {
+        public double Blur { get; set; }
+        public double HighLowRate { get; set; }
+        public double Density { get; set; }
+        public double EdgeBinary { get; set; }
+        public double Transparency { get; set; }
+
+    }
+
+    public interface IMaterialCurve
+    {
+        public double Y { get; set; }
+        public double XMin { get; set; }
+        public double XMax { get; set; }
+        public string Color { get; set; }
+
+    }
+
+    public interface IZeffect
+    {
+        public bool Check { get; set; }
+        public string Content { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
+    }
+
+}

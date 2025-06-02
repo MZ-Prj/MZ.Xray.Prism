@@ -8,5 +8,6 @@ namespace MZ.Core
     public static class MZViewNames
     {
         public static string DashboardControlView = "DashboardControlView";
+        public static string AnalysisControlView = "AnalysisControlView";
     }
 }

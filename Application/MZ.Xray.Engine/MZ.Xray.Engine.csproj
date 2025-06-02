@@ -2,13 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MZ.Util\MZ.Util.csproj" />
-    <ProjectReference Include="..\MZ.Vision\MZ.Vision.csproj" />
   </ItemGroup>
 </Project>
