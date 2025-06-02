@@ -25,6 +25,13 @@ namespace MZ.Infrastructure.Repositories
             return await _context.Set<UserEntity>().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
         }
 
+        public async Task<UserEntity> GetUserByUsernameAllRelationsAsync(string username, CancellationToken cancellationToken = default)
+        {
+            return await _context.Set<UserEntity>()
+                .Include(u => u.UserSetting)
+                .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+        }
+
         public void UpdateLastLoginDate(int id)
         {
             var user = _context.Set<UserEntity>().Find(id);
