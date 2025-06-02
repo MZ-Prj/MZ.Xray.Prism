@@ -13,12 +13,12 @@ namespace MZ.Resource
             ThemeManager.Current.ChangeTheme(Application.Current, MZEnum.GetName(theme));
         }
 
-        public static string ChangeMode()
+        public static ThemeRole ChangeMode()
         {
-            var theme = ThemeManager.Current.DetectTheme(Application.Current);
-            string mode = theme.DisplayName.Contains("Dark") ? "Light" : "Dark";
-            ThemeManager.Current.ChangeTheme(Application.Current, $"{mode}.Steel");
-            return mode;
+            bool isDark = ThemeManager.Current.DetectTheme(Application.Current).DisplayName.Contains("Dark");
+            ThemeRole theme = isDark ? ThemeRole.LightSteel : ThemeRole.DarkSteel;
+            ThemeManager.Current.ChangeTheme(Application.Current, MZEnum.GetName(theme));
+            return theme;
         }
 
         public static ThemeRole GetSystemTheme()

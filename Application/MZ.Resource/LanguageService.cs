@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MZ.Domain.Enums;
+using MZ.Util;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
@@ -41,9 +43,15 @@ namespace MZ.Resource
             return resourceManager.GetString(key);
         }
 
-        public static string GetCurrentLanguageCode()
+        public static string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.Name;
+        }
+
+        public static LanguageRole? GetCurrentLanguageRole()
+        {
+            string code = CultureInfo.CurrentUICulture.Name;
+            return MZEnum.Get<LanguageRole>(code);
         }
 
         public static string GetSystemLanguage()
