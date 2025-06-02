@@ -18,12 +18,12 @@ namespace MZ.Dashboard.Models
         private Brush _colorBrush;
         public Brush ColorBrush { get => _colorBrush; set => SetProperty(ref _colorBrush, value); }
 
-        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush, bool isVisibility = true)
+        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true)
         {
             IsVisibility = isVisibility;
             Command = command;
             IconKind = iconKind;
-            ColorBrush = colorBrush;
+            ColorBrush = colorBrush ?? Brushes.Gray;
         }
     }
 }
