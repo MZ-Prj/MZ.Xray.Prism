@@ -71,5 +71,18 @@ namespace MZ.Util
             }
             return 0;
         }
+
+        public static TEnum? Get<TEnum>(string value) where TEnum : struct, Enum
+        {
+            foreach (TEnum enumValue in Enum.GetValues(typeof(TEnum)))
+            {
+                string name = GetName(enumValue);
+                if (name.Equals(value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return enumValue;
+                }
+            }
+            return null;
+        }
     }
 }

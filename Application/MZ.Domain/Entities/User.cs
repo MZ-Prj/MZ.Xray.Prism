@@ -10,7 +10,7 @@ namespace MZ.Domain.Entities
     /// 
     /// </summary>
     [Table("User")]
-    public class UserEntity
+    public class UserEntity : IUser
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -24,7 +24,7 @@ namespace MZ.Domain.Entities
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        public string PasswordHash { get; private set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
@@ -32,7 +32,6 @@ namespace MZ.Domain.Entities
         public UserRole Role { get; set; } = UserRole.User;
         public DateTime CreateDate { get; set; }
         public DateTime LastLoginDate { get; set; }
-
         public void HashPassword(string password, IInformationEncoder encoder)
         {
             PasswordHash = encoder.Hash(password);
@@ -50,7 +49,7 @@ namespace MZ.Domain.Entities
     /// 
     /// </summary>
     [Table("UserSetting")]
-    public class UserSettingEntity
+    public class UserSettingEntity : IUserSetting
     {
         public int UserId { get; set; }
         public ThemeRole Theme { get; set; }

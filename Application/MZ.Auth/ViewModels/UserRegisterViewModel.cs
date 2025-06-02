@@ -6,6 +6,7 @@ using MZ.Infrastructure;
 using MZ.Util;
 using Prism.Commands;
 using Prism.Ioc;
+using System.Windows.Input;
 using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
 
@@ -19,8 +20,10 @@ namespace MZ.Auth.ViewModels
         #endregion
 
         #region Command
-        public DelegateCommand RegisterCommand => new(MZAction.Wrapper(RegisterButton));
-        public DelegateCommand BackCommand => new(MZAction.Wrapper(BackButton));
+        public DelegateCommand _registerCommand;
+        public ICommand RegisterCommand => _registerCommand ??= new(MZAction.Wrapper(RegisterButton));
+        public DelegateCommand _backCommand;
+        public ICommand BackCommand => _backCommand ??= new(MZAction.Wrapper(BackButton));
         #endregion
 
         #region Service

@@ -2,6 +2,7 @@
 using Prism.Commands;
 using Prism.Regions;
 using System;
+using System.Windows.Input;
 using MZ.Core;
 using MZ.Auth.Views;
 using MZ.Auth.Models;
@@ -21,8 +22,12 @@ namespace MZ.Auth.ViewModels
         #endregion
 
         #region Command
-        public DelegateCommand LoginCommand => new (MZAction.Wrapper(LoginButton));
-        public DelegateCommand RegisterCommand => new (MZAction.Wrapper(RegisterButton));
+
+        private DelegateCommand _loginCommand;
+        public ICommand LoginCommand => _loginCommand ??= new (MZAction.Wrapper(LoginButton));
+
+        private DelegateCommand _registerCommand;
+        public ICommand RegisterCommand => _registerCommand ??= new(MZAction.Wrapper(RegisterButton));
         #endregion
 
         private readonly DatabaseService _databaseService;
@@ -60,6 +65,12 @@ namespace MZ.Auth.ViewModels
                             new NavigationModel(
                                 MZRegionNames.DashboardRegion,
                                 MZViewNames.DashboardControlView));
+
+
+                _eventAggregator.GetEvent<AnalysisNavigationEvent>().Publish(
+                            new NavigationModel(
+                                MZRegionNames.AnalysisRegion,
+                                MZViewNames.AnalysisControlView));
             }
         }
 

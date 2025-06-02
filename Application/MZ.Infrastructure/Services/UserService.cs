@@ -6,6 +6,7 @@ using MZ.DTO;
 using MZ.DTO.Enums;
 using MZ.Infrastructure.Interfaces;
 using MZ.Logger;
+using MZ.Util;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,21 @@ namespace MZ.Infrastructure.Services
             {
                 MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Fail, ex);
+            }
+        }
+
+        public BaseResponse<BaseRole, string> Logout()
+        {
+            try
+            {
+                userSession.CurrentUser = string.Empty;
+
+                return BaseResponseExtensions.Success(BaseRole.Success, userSession.CurrentUser);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
             }
         }
 
@@ -113,5 +129,56 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.Fail, ex);
             }
         }
+
+        public async Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                LanguageRole? language = request.LanguageRole;
+                if (language == null)
+                {
+                    return BaseResponseExtensions.Success(BaseRole.Warning, LanguageRole.EnUS);
+                }
+                if (!string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    UserEntity user = await userRepository.GetUserByUsernameAllRelationsAsync(userSession.CurrentUser, cancellationToken);
+                    
+                    user.UserSetting.Language = language.Value;
+                    await userRepository.UpdateAsync(user, cancellationToken);
+                }
+                return BaseResponseExtensions.Success(BaseRole.Success, language.Value);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, LanguageRole>(BaseRole.Fail, ex);
+            }
+        }
+
+        public async Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                ThemeRole? theme = request.ThemeRole;
+                if (theme == null)
+                {
+                    return BaseResponseExtensions.Success(BaseRole.Warning, ThemeRole.LightSteel);
+                }
+                if (!string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    UserEntity user = await userRepository.GetUserByUsernameAllRelationsAsync(userSession.CurrentUser, cancellationToken);
+
+                    user.UserSetting.Theme = theme.Value;
+                    await userRepository.UpdateAsync(user, cancellationToken);
+                }
+                return BaseResponseExtensions.Success(BaseRole.Success, theme.Value);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, ThemeRole>(BaseRole.Fail, ex);
+            }
+        }
+
     }
 }

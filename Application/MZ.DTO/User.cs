@@ -19,15 +19,15 @@ namespace MZ.DTO
         UserRole UserRole
     );
 
-    public record UserUpdateRequest(
-        string? NewUsername,
-        string? NewEmail
-    );
+    //public record UserUpdateRequest(
+    //    string? NewUsername,
+    //    string? NewEmail
+    //);
 
-    public record ChangePasswordRequest(
-        string CurrentPassword,
-        string NewPassword
-    );
+    //public record ChangePasswordRequest(
+    //    string CurrentPassword,
+    //    string NewPassword
+    //);
     #endregion
 
     #region Response
