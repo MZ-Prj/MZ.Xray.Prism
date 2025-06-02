@@ -7,6 +7,7 @@ using MZ.Util;
 using MZ.Resource;
 using MZ.Domain.Enums;
 using MZ.Language.Models;
+using System.Windows.Input;
 
 namespace MZ.Language.ViewModels
 {
@@ -15,7 +16,7 @@ namespace MZ.Language.ViewModels
         public ObservableCollection<LanguageModel> Languages { get; set; } = [];
 
         private DelegateCommand<string> _langueCommand;
-        public DelegateCommand<string> LanguageCommand => _langueCommand ??= new DelegateCommand<string>(LanguageButton);
+        public ICommand LanguageCommand => _langueCommand ??= new DelegateCommand<string>(MZAction.Wrapper<string>(LanguageButton));
 
         public LanguageViewModel(IContainerExtension container) : base(container)
         {
@@ -23,14 +24,13 @@ namespace MZ.Language.ViewModels
 
         public override void InitializeModel()
         {
-            foreach (LanguageRole lang in Enum.GetValues(typeof(LanguageRole)))
+            foreach (LanguageRole language in Enum.GetValues(typeof(LanguageRole)))
             {
-                string displayName = MZEnum.GetDescription(lang);
-                string cultureCode = MZEnum.GetName(lang);
+                string displayName = MZEnum.GetDescription(language);
+                string cultureCode = MZEnum.GetName(language);
 
                 Languages.Add(new LanguageModel() { DisplayName = displayName, CultureCode = cultureCode });
             }
-            base.InitializeModel();
         }
 
         private void LanguageButton(string cultureCode)
