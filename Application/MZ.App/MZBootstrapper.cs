@@ -3,6 +3,7 @@ using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using MZ.Auth;
 using MZ.Blank;
+using MZ.Core;
 using MZ.Dashboard;
 using MZ.Dialog;
 using MZ.Infrastructure;
@@ -116,6 +117,9 @@ namespace MZ.App
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<LoadingService>();
+
+            //custom dialog
+            containerRegistry.RegisterDialogWindow<MZDialogWindow>();
         }
 
         /// <summary>

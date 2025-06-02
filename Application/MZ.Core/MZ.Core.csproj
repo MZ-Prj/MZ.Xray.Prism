@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Logger\MZ.Logger.csproj" />
+    <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
   </ItemGroup>
 </Project>

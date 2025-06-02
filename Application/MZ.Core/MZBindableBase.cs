@@ -46,6 +46,7 @@ namespace MZ.Core
         {
             InitializeServices(container);
             InitializeCore();
+            InitializeCommand();
             InitializeModel();
             InitializeEvent();
         }
@@ -67,6 +68,10 @@ namespace MZ.Core
         }
 
         public virtual void InitializeEvent()
+        {
+        }
+
+        public virtual void InitializeCommand()
         {
         }
 
