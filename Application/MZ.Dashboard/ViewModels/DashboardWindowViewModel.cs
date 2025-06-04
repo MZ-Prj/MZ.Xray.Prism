@@ -34,8 +34,10 @@ namespace MZ.Dashboard.ViewModels
         #region Commands
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
+
         private DelegateCommand _languageCommand;
         public ICommand LanguageCommand => _languageCommand ??= new(MZAction.Wrapper(LanguageButton));
+
         private DelegateCommand _logoutCommand;
         public ICommand LogoutCommand => _logoutCommand ??= new DelegateCommand(MZAction.Wrapper(LogoutButton));
         #endregion

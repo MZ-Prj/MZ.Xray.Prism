@@ -1165,5 +1165,36 @@ namespace MZ.Vision
             return result;
         }
 
+        public Type GetTypeFromMatType(MatType matType)
+        {
+            string type = matType.ToString();
+
+            return type switch
+            {
+                "CV_8UC1" => typeof(byte),
+                "CV_8UC2" => typeof(Vec2b),
+                "CV_8UC3" => typeof(Vec3b),
+                "CV_8UC4" => typeof(Vec4b),
+                "CV_32FC1" => typeof(float),
+                "CV_32FC2" => typeof(Vec2f),
+                "CV_32FC3" => typeof(Vec3f),
+                "CV_32FC4" => typeof(Vec4f),
+                "CV_64FC1" => typeof(double),
+                "CV_64FC2" => typeof(Vec2d),
+                "CV_64FC3" => typeof(Vec3d),
+                "CV_64FC4" => typeof(Vec4d),
+                _ => typeof(byte)
+            };
+        }
+
+        public bool IsEmpty(Mat mat)
+        {
+            if (mat == null || mat.Empty())
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

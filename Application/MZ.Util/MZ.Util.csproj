@@ -5,6 +5,7 @@
     <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>

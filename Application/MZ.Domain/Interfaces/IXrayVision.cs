@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MZ.Domain.Enums;
+using System;
 
 namespace MZ.Domain.Interfaces
 {
@@ -22,13 +23,19 @@ namespace MZ.Domain.Interfaces
         public DateTime CreateDate { get; set; }
     }
 
+    public interface IVideo
+    {
+        public int Count { get; set; }
+
+    }
+
     public interface IFilter
     {
-        public double Zoom { get; set; }
-        public float SharpnessLevel { get; set; }
-        public float BrightnessLevel { get; set; }
-        public float ContrastLevel { get; set; }
-        public float ColorMode { get; set; }
+        public float Zoom { get; set; }
+        public float Sharpness { get; set; }
+        public float Brightness { get; set; }
+        public float Contrast { get; set; }
+        public ColorRole ColorMode { get; set; }
     }
 
     public interface IMaterial
@@ -41,16 +48,15 @@ namespace MZ.Domain.Interfaces
 
     }
 
-    public interface IMaterialCurve
+    public interface IMaterialControl
     {
         public double Y { get; set; }
         public double XMin { get; set; }
         public double XMax { get; set; }
-        public string Color { get; set; }
 
     }
 
-    public interface IZeffect
+    public interface IZeffectControl
     {
         public bool Check { get; set; }
         public string Content { get; set; }
