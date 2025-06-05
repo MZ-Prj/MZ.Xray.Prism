@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using MZ.Domain.Interfaces;
 
 namespace MZ.Domain.Entities
 {
@@ -33,7 +34,7 @@ namespace MZ.Domain.Entities
     /// 
     /// </summary>
     [Table("Category")]
-    public class CategoryEntity
+    public class CategoryEntity : ICategory
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -56,7 +57,7 @@ namespace MZ.Domain.Entities
     /// 
     /// </summary>
     [Table("ObjectDetection")]
-    public class ObjectDetectionEntity
+    public class ObjectDetectionEntity : IObjectDetection
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

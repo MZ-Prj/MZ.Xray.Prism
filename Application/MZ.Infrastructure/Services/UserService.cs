@@ -6,7 +6,6 @@ using MZ.DTO;
 using MZ.DTO.Enums;
 using MZ.Infrastructure.Interfaces;
 using MZ.Logger;
-using MZ.Util;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,8 +62,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                userSession.CurrentUser = string.Empty;
-
+                userSession.ClearAll();
                 return BaseResponseExtensions.Success(BaseRole.Success, userSession.CurrentUser);
             }
             catch (Exception ex)
@@ -108,8 +106,8 @@ namespace MZ.Infrastructure.Services
                     Username = request.Username,
                     Email = request.Email,
                     Password = request.Password,
-                    CreateDate = DateTime.Now,
-                    LastLoginDate = DateTime.Now,
+                    CreateDate = DateTime.UtcNow,
+                    LastLoginDate = DateTime.UtcNow,
                     Role = request.UserRole,
                     UserSetting = new()
                     {

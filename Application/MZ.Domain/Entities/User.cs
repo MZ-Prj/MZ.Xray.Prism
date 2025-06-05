@@ -30,8 +30,8 @@ namespace MZ.Domain.Entities
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; } = UserRole.User;
-        public DateTime CreateDate { get; set; }
-        public DateTime LastLoginDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime LastLoginDate { get; set; } = DateTime.Now;
         public void HashPassword(string password, IInformationEncoder encoder)
         {
             PasswordHash = encoder.Hash(password);
@@ -43,6 +43,9 @@ namespace MZ.Domain.Entities
         }
 
         public UserSettingEntity UserSetting { get; set; }
+        public CalibrationEntity Calibration { get; set; }
+        public FilterEntity Filter { get; set; }
+        public MaterialEntity Material { get; set; }
     }
 
     /// <summary>

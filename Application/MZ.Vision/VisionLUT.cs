@@ -5,13 +5,13 @@ using static MZ.Vision.VisionEnums;
 
 namespace MZ.Vision
 {
-
     public class VisionLUTModel
     {
         public FunctionNameEnumTypes Name { get; set; }
-        public List<double> Parameters { get; set; } = new List<double>();
-        public List<Point> MinMax { get; set; } = new List<Point>();
+        public List<double> Parameters { get; set; } = [];
+        public List<Point> MinMax { get; set; } = [];
     }
+
     public class VisionEnums
     {
         public enum FunctionNameEnumTypes
@@ -22,52 +22,10 @@ namespace MZ.Vision
             Pow,
         }
     }
+
     public class VisionLUT
     {
-        public Dictionary<FunctionNameEnumTypes, VisionLUTModel> DefaultEquationParameter { get; set; }
-        public VisionLUT()
-        {
-            DefaultEquationParameter = new Dictionary<FunctionNameEnumTypes, VisionLUTModel>
-            {
-                {
-                    FunctionNameEnumTypes.Base,
-                    new VisionLUTModel
-                    {
-                        Name = FunctionNameEnumTypes.Base,
-                        Parameters = new List<double>
-                        {
-                            1,0,0
-                        },
-                        MinMax = new List<Point>
-                        {
-                            new Point(-2,2),
-                            new Point(-2,2),
-                            new Point(-2,2),
-                        }
-                    }
-                },
-                {
-                    FunctionNameEnumTypes.Atanh,
-                    new VisionLUTModel
-                    {
-                        Name = FunctionNameEnumTypes.Atanh,
-                        Parameters = new List<double>
-                        {
-                            0.1,0.1,1,0.5
-                        },
-                        MinMax = new List<Point>
-                        {
-                            new Point(-2,2),
-                            new Point(-2,2),
-                            new Point(-2,2),
-                            new Point(-2,2),
-                        }
-                    }
-                }
-            };
-        }
-
-        public double Run(FunctionNameEnumTypes func, double input, double[] values)
+        public static double Run(FunctionNameEnumTypes func, double input, double[] values)
         {
             double result = 0;
             switch (func)
@@ -90,7 +48,7 @@ namespace MZ.Vision
 
 
 
-        public double Atanh(double input, double[] values)
+        public static double Atanh(double input, double[] values)
         {
             double result = 0.0;
             try
@@ -126,7 +84,7 @@ namespace MZ.Vision
         }
 
 
-        public double Base(double input, double[] values)
+        public static double Base(double input, double[] values)
         {
             double a = values[0];
             double b = values[1];
@@ -136,21 +94,21 @@ namespace MZ.Vision
             return result;
         }
 
-        private double Log(double input, double[] values)
+        private static double Log(double input, double[] values)
         {
             double a = values[0];
             double result = Math.Log(1 + input) / Math.Log(a);
             return ErrorCheck(result);
         }
 
-        private double Pow(double input, double[] values)
+        private static double Pow(double input, double[] values)
         {
             double a = values[0];
             double result = Math.Pow(input, a);
             return ErrorCheck(result);
         }
 
-        private double ErrorCheck(double input)
+        private static double ErrorCheck(double input)
         {
             if (double.IsNaN(input))
             {

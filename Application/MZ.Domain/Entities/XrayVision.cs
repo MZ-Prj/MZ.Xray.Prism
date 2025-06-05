@@ -1,4 +1,5 @@
-﻿using MZ.Domain.Interfaces;
+﻿using MZ.Domain.Enums;
+using MZ.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -70,7 +71,8 @@ namespace MZ.Domain.Entities
         public string Filename { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public ICollection<ObjectDetectionEntity> ObjectDetections { get; set; }
     }
 
     /// <summary>
@@ -82,11 +84,11 @@ namespace MZ.Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public double Zoom { get; set; }
-        public float SharpnessLevel { get; set; }
-        public float BrightnessLevel { get; set; }
-        public float ContrastLevel { get; set; }
-        public float ColorMode { get; set; }
+        public float Zoom { get; set; }
+        public float Sharpness{ get; set; }
+        public float Brightness{ get; set; }
+        public float Contrast { get; set; }
+        public ColorRole ColorMode { get; set; }
 
         // Foreign key
         public int UserId { get; set; }
@@ -117,14 +119,14 @@ namespace MZ.Domain.Entities
         public UserEntity User { get; set; }
 
         // One-to-Many
-        public ICollection<MaterialCurveEntity> MaterialCurves { get; set; }
+        public ICollection<MaterialControlEntity> MaterialControls { get; set; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    [Table("MaterialCurve")]
-    public class MaterialCurveEntity : IMaterialCurve
+    [Table("MaterialControl")]
+    public class MaterialControlEntity : IMaterialControl
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -138,11 +140,11 @@ namespace MZ.Domain.Entities
         public int MaterialId { get; set; }
 
         [ForeignKey("MaterialId")]
-        public MaterialEntity MaterialEntities { get; set; }
+        public MaterialEntity Material { get; set; }
     }
 
-    [Table("Zeffect")]
-    public class ZeffectEntity : IZeffect
+    [Table("ZeffectControl")]
+    public class ZeffectControlEntity : IZeffectControl
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

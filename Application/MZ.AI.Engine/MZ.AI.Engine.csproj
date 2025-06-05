@@ -5,9 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+    <PackageReference Include="YoloDotNet" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
-    <ProjectReference Include="..\MZ.Vision\MZ.Vision.csproj" />
   </ItemGroup>
 </Project>
