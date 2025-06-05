@@ -14,7 +14,7 @@ namespace MZ.Vision
 {
     public class VisionBase
     {
-        public Scalar Make(MatType type)
+        public static Scalar Make(MatType type)
         {
             Scalar scalar = new Scalar(0);
 
@@ -36,7 +36,7 @@ namespace MZ.Vision
             }
             return scalar;
         }
-        public Scalar MakeZeros(MatType type)
+        public static Scalar MakeZeros(MatType type)
         {
             Scalar scalar = new Scalar(0);
 
@@ -58,35 +58,64 @@ namespace MZ.Vision
             }
             return scalar;
         }
-        public Mat CreateZeros(int height, int width, MatType type)
+        public static Mat CreateZeros(int height, int width, MatType type)
         {
             Mat result = new Mat(height, width, type, MakeZeros(type));
             return result;
         }
 
-        public Mat Create(int height, int width, MatType type)
+        public static Mat Create(int height, int width, MatType type)
         {
             Mat result = new Mat(height, width, type, Make(type));
             return result;
         }
 
-        public Mat Create(int height, int width, MatType type, Scalar value)
+        public static Mat Create(int height, int width, MatType type, Scalar value)
         {
             Mat result = new Mat(height, width, type, value);
             return result;
         }
 
-        public Mat Clone(Mat input)
+        public static Mat Clone(Mat input)
         {
             return input.Clone();
         }
 
-        public void Save(Mat input, string root)
+        public static void Save(Mat input, string root)
         {
             Cv2.ImWrite(root, input);
         }
 
-        public void Save(List<Mat> input, List<DateTime> time, string root, double split, double fps = 2.0)
+        public static void Save(List<Mat> input, string root, double fps = 2.0)
+        {
+            Size frameSize = new(input[0].Width, input[0].Height);
+            FourCC fourCC = FourCC.XVID;
+
+            using (var writer = new VideoWriter(root, fourCC, fps, frameSize, true))
+            {
+                if (!writer.IsOpened())
+                {
+                    throw new Exception("VideoWriter Open Error");
+                }
+
+                for (int i = 0; i < input.Count; i++)
+                {
+                    Mat resizedImage = input[i].Clone();
+                    if (resizedImage.Size() != frameSize)
+                    {
+                        Cv2.Resize(resizedImage, resizedImage, frameSize);
+                    }
+                    else
+                    {
+                        resizedImage = BlendWithBackground(resizedImage);
+                    }
+
+                    writer.Write(resizedImage);
+                }
+            }
+        }
+
+        public static void Save(List<Mat> input, List<DateTime> time, string root, double split, double fps = 2.0)
         {
             Size frameSize = new(input[0].Width, input[0].Height);
             FourCC fourCC = FourCC.XVID;
@@ -124,7 +153,7 @@ namespace MZ.Vision
             }
         }
 
-        public Mat BlendWithBackground(Mat input)
+        public static Mat BlendWithBackground(Mat input)
         {
             var start = DateTime.Now;
 
@@ -141,7 +170,7 @@ namespace MZ.Vision
             foreground.ConvertTo(foreground, MatType.CV_32FC3);
 
             Mat result = new Mat();
-            
+
             for (int c = 0; c < 3; c++)
             {
                 using (Mat fore = new Mat())
@@ -169,13 +198,13 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat CvtColor(Mat input, ColorConversionCodes code)
+        public static Mat CvtColor(Mat input, ColorConversionCodes code)
         {
             Cv2.CvtColor(input, input, ColorConversionCodes.BGRA2BGR);
             return input;
         }
 
-        public Task SaveAsync(Mat input, string root)
+        public static Task SaveAsync(Mat input, string root)
         {
             return Task.Run(() =>
             {
@@ -183,20 +212,20 @@ namespace MZ.Vision
             });
         }
 
-        public Mat Load(string filename)
+        public static Mat Load(string filename)
         {
             Mat result = Cv2.ImRead(filename, ImreadModes.Unchanged);
             return result;
         }
-        
-        public Mat RoI(Mat input, int x, int y, int width, int height)
+
+        public static Mat RoI(Mat input, int x, int y, int width, int height)
         {
             var roiRect = new Rect(x, y, width, height);
             Mat roiMat = input.SubMat(roiRect);
             return roiMat;
         }
 
-        public (double, double) MinMax(Mat input)
+        public static (double, double) MinMax(Mat input)
         {
             if (input.Type() == MatType.CV_16UC3)
             {
@@ -242,14 +271,14 @@ namespace MZ.Vision
         }
 
 
-        public Mat FillPoly(Mat image, List<Point> polygonPoints, Scalar color)
+        public static Mat FillPoly(Mat image, List<Point> polygonPoints, Scalar color)
         {
             Point[][] pts = [[.. polygonPoints]];
             Cv2.FillPoly(image, pts, color);
             return image;
         }
 
-        public double CompareHistogram(Mat input1, Mat input2, HistCompMethods histCompMethods = HistCompMethods.Chisqr)
+        public static double CompareHistogram(Mat input1, Mat input2, HistCompMethods histCompMethods = HistCompMethods.Chisqr)
         {
             Mat hist1 = new();
             Mat hist2 = new();
@@ -261,7 +290,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Histogram(Mat input)
+        public static Mat Histogram(Mat input)
         {
             Mat result = new();
 
@@ -283,7 +312,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat PlotFilledHistogram(Mat input, double lower = 0, double upper = byte.MaxValue)
+        public static Mat PlotFilledHistogram(Mat input, double lower = 0, double upper = byte.MaxValue)
         {
             int channels = input.Channels();
 
@@ -331,7 +360,7 @@ namespace MZ.Vision
                 Cv2.Add(histImage, overlay, histImage);
             }
 
-            if (upper < 255)
+            if (upper < byte.MaxValue)
             {
                 int upperX = (int)upper;
                 Mat overlay = new Mat(histImage.Size(), MatType.CV_8UC4, new Scalar(0, 0, 0, 0));
@@ -344,7 +373,7 @@ namespace MZ.Vision
         }
 
 
-        public Mat Contrast(Mat input, int level)
+        public static Mat Contrast(Mat input, int level)
         {
             Mat result = new();
             //double slop = 1;
@@ -357,7 +386,7 @@ namespace MZ.Vision
         }
 
 
-        public Mat Sharp(Mat input, int level)
+        public static Mat Sharp(Mat input, int level)
         {
             Mat blur = new();
             Mat result = new();
@@ -368,7 +397,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Blur(Mat input, int level)
+        public static Mat Blur(Mat input, int level)
         {
             Mat result = new();
             //Cv2.GaussianBlur(input, result, new Size(level*2+1, level * 2 + 1), 0);
@@ -376,7 +405,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Bright(Mat input, int level)
+        public static Mat Bright(Mat input, int level)
         {
             Mat result = new();
 
@@ -392,12 +421,12 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Convert16BitTo8Bit(Mat input)
+        public static Mat Convert16BitTo8Bit(Mat input)
         {
             Mat result = new();
             if (MatType.CV_16U == input.Depth())
             {
-                input.ConvertTo(result, MatType.CV_8UC1, 1.0 / (double)(Byte.MaxValue + 1));
+                input.ConvertTo(result, MatType.CV_8UC1, 1.0 / (double)(byte.MaxValue + 1));
             }
             else
             {
@@ -406,7 +435,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Resize(Mat input, int width, int height)
+        public static Mat Resize(Mat input, int width, int height)
         {
             Mat result = new();
             Size size = new(width, height);
@@ -414,7 +443,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat ResizeWithAspectRatio(Mat input, int size)
+        public static Mat ResizeWithAspectRatio(Mat input, int size)
         {
             int originalWidth = input.Width;
             int originalHeight = input.Height;
@@ -438,7 +467,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Rotate(Mat input, RotateFlags rotate = RotateFlags.Rotate90Counterclockwise)
+        public static Mat Rotate(Mat input, RotateFlags rotate = RotateFlags.Rotate90Counterclockwise)
         {
             Mat result = new();
             Cv2.Rotate(input, result, rotate);
@@ -446,14 +475,14 @@ namespace MZ.Vision
         }
 
 
-        public Mat CenterCol(Mat input, int width, int height, Scalar scalar, int start, int end)
+        public static Mat CenterCol(Mat input, int width, int height, Scalar scalar, int start, int end)
         {
             Mat result = new(height, width, input.Type(), scalar);
             input.ColRange(0, input.Width).CopyTo(result.ColRange(start, end));
             return result;
         }
 
-        public Mat OverlapCol(Mat input, Mat line)
+        public static Mat OverlapCol(Mat input, Mat line)
         {
             int cols = input.Cols;
             int offset = line.Width;
@@ -462,7 +491,7 @@ namespace MZ.Vision
             return input;
         }
 
-        public Mat ShiftCol(Mat input, Mat line)
+        public static Mat ShiftCol(Mat input, Mat line)
         {
             int cols = input.Cols;
             int rows = input.Rows;
@@ -475,7 +504,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat ShiftColLeft(Mat input, Mat line)
+        public static Mat ShiftColLeft(Mat input, Mat line)
         {
             int cols = input.Cols;
             int rows = input.Rows;
@@ -489,7 +518,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat ShiftColRight(Mat input, Mat line)
+        public static Mat ShiftColRight(Mat input, Mat line)
         {
             int cols = input.Cols;
             int rows = input.Rows;
@@ -504,7 +533,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat ShiftRow(Mat input, Mat line)
+        public static Mat ShiftRow(Mat input, Mat line)
         {
             int cols = input.Cols;
             int rows = input.Rows;
@@ -517,7 +546,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat SplitCol(Mat input, int start, int end)
+        public static Mat SplitCol(Mat input, int start, int end)
         {
             int cols = end - start;
             int rows = input.Rows;
@@ -526,19 +555,19 @@ namespace MZ.Vision
             return result;
         }
 
-        public double Mean(Mat input)
+        public static double Mean(Mat input)
         {
             return (double)Cv2.Mean(input);
         }
 
-        public Mat Flip(Mat input, FlipMode mode)
+        public static Mat Flip(Mat input, FlipMode mode)
         {
             Mat result = new();
             Cv2.Flip(input, result, mode);
             return result;
         }
 
-        public Mat ExpandArrayToMat(ushort[] array, int width, MatType matType)
+        public static Mat ExpandArrayToMat(ushort[] array, int width, MatType matType)
         {
             int rows = array.Length;
             int cols = width;
@@ -553,7 +582,7 @@ namespace MZ.Vision
             return expandedMat;
         }
 
-        public Mat Crop(Mat input, int x, int y, int width, int height)
+        public static Mat Crop(Mat input, int x, int y, int width, int height)
         {
             Rect rect = new Rect(x, y, width, height);
             Mat result = new(input, rect);
@@ -561,7 +590,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat CropPaste(Mat input, Mat cropped, int x, int y)
+        public static Mat CropPaste(Mat input, Mat cropped, int x, int y)
         {
             Mat result = input.Clone();
             Rect roi = new Rect(x, y, cropped.Width, cropped.Height);
@@ -570,7 +599,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Convert1DArrayToMat(ushort[] array, int height = 64)
+        public static Mat Convert1DArrayToMat(ushort[] array, int height = 64)
         {
             int width = array.Length;
 
@@ -586,7 +615,7 @@ namespace MZ.Vision
             return mat;
         }
 
-        public string InformationOnPixel(Mat input, System.Windows.Point point)
+        public static string InformationOnPixel(Mat input, System.Windows.Point point)
         {
             string result = string.Empty;
             try
@@ -611,7 +640,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public double[] RowAverage(Mat mat)
+        public static double[] RowAverage(Mat mat)
         {
             int rows = mat.Rows;
             int cols = mat.Cols;
@@ -626,7 +655,7 @@ namespace MZ.Vision
             return average;
         }
 
-        public double[] ColAverage(Mat mat)
+        public static double[] ColAverage(Mat mat)
         {
             int rows = mat.Rows;
             int cols = mat.Cols;
@@ -640,7 +669,7 @@ namespace MZ.Vision
 
             return average;
         }
-        public void View(Mat input, string title = "title")
+        public static void View(Mat input, string title = "title")
         {
             Mat output = new Mat();
             Cv2.Resize(input, output, new Size(input.Width / 2, input.Height / 2));
@@ -650,7 +679,7 @@ namespace MZ.Vision
 
             Cv2.WaitKey(0);
         }
-        public Mat ImageSourceToMat(ImageSource imageSource)
+        public static Mat ImageSourceToMat(ImageSource imageSource)
         {
             BitmapSource bitmapSource = imageSource as BitmapSource;
             var outStream = new System.IO.MemoryStream();
@@ -662,19 +691,19 @@ namespace MZ.Vision
             return bitmap.ToMat();
         }
 
-        public Mat BitmapSourceToMat(BitmapSource bitmapSource)
+        public static Mat BitmapSourceToMat(BitmapSource bitmapSource)
         {
             return bitmapSource.ToMat();
         }
 
-        public Mat Threshold(Mat mat, double threshold, ThresholdTypes type)
+        public static Mat Threshold(Mat mat, double threshold, ThresholdTypes type)
         {
             Mat result = new();
             Cv2.Threshold(mat, result, threshold, byte.MaxValue, type);
             return result;
         }
 
-        public Mat Threshold(Mat mat, double lower, double upper)
+        public static Mat Threshold(Mat mat, double lower, double upper)
         {
             Mat result = new();
 
@@ -694,7 +723,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat ColorBalance(Mat mat, double red, double green, double blue)
+        public static Mat ColorBalance(Mat mat, double red, double green, double blue)
         {
             Mat[] channels = Cv2.Split(mat);
 
@@ -707,7 +736,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat SelectColor(Mat mat, ColorEnum color)
+        public static Mat SelectColor(Mat mat, ColorEnum color)
         {
             Mat result = new();
 
@@ -805,7 +834,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Mat Exposure(Mat mat, double exposure, double offset, double gammaCorrection)
+        public static Mat Exposure(Mat mat, double exposure, double offset, double gammaCorrection)
         {
             Mat result = new();
 
@@ -846,7 +875,7 @@ namespace MZ.Vision
         }
 
 
-        public Mat Curve(Mat mat, Point[] points)
+        public static Mat Curve(Mat mat, Point[] points)
         {
             if (points.Length == 0)
             {
@@ -874,7 +903,7 @@ namespace MZ.Vision
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        private byte[] GenerateLinearLUT(Point[] points)
+        private static byte[] GenerateLinearLUT(Point[] points)
         {
             byte[] lut = new byte[256];
 
@@ -908,7 +937,7 @@ namespace MZ.Vision
         /// <param name="points"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        private double LinearInterpolate(List<Point> points, double input)
+        private static double LinearInterpolate(List<Point> points, double input)
         {
             if (points.Count == 0)
             {
@@ -943,7 +972,7 @@ namespace MZ.Vision
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        private byte[] GenerateSplineLUT(Point[] points)
+        private static byte[] GenerateSplineLUT(Point[] points)
         {
             byte[] lut = new byte[256];
 
@@ -977,7 +1006,7 @@ namespace MZ.Vision
             return lut;
         }
 
-        private List<Point> GenerateSpline(List<Point> points)
+        private static List<Point> GenerateSpline(List<Point> points)
         {
             var splinePoints = new List<Point>();
             if (points.Count < 2)
@@ -1003,7 +1032,7 @@ namespace MZ.Vision
             return splinePoints;
         }
 
-        private double CalculateSplineValue(double t, double p0, double p1, double p2, double p3)
+        private static double CalculateSplineValue(double t, double p0, double p1, double p2, double p3)
         {
             return 0.5 * (
                 (-p0 + 3 * p1 - 3 * p2 + p3) * Math.Pow(t, 3) +
@@ -1019,7 +1048,7 @@ namespace MZ.Vision
         /// <param name="splinePoints"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        private double InterpolateFromSpline(List<Point> splinePoints, double input)
+        private static double InterpolateFromSpline(List<Point> splinePoints, double input)
         {
             if (splinePoints.Count == 0)
             {
@@ -1048,14 +1077,14 @@ namespace MZ.Vision
             return input;
         }
 
-        public Mat GaussianBlur(Mat mat, int size)
+        public static Mat GaussianBlur(Mat mat, int size)
         {
             Mat result = new();
             Cv2.GaussianBlur(mat, result, new Size(size, size), 1);
             return result;
         }
 
-        public List<Rect> ContourRectangles(Mat mat, int minArea)
+        public static List<Rect> ContourRectangles(Mat mat, int minArea)
         {
             double maxArea = mat.Width * mat.Height * 0.9;
             // Contour 탐지
@@ -1080,7 +1109,7 @@ namespace MZ.Vision
         }
 
 
-        public List<Rect> ContourRectangles(Mat mat, int minArea, int maxArea)
+        public static List<Rect> ContourRectangles(Mat mat, int minArea, int maxArea)
         {
             List<Rect> rectangles = new List<Rect>();
             Mat matGray = new Mat();
@@ -1109,8 +1138,8 @@ namespace MZ.Vision
             return rectangles;
         }
 
-        private Random _random = new();
-        public Scalar GetRandomColor()
+        private static Random _random = new();
+        public static Scalar GetRandomColor()
         {
 
             byte r = (byte)_random.Next(0, 256);
@@ -1119,7 +1148,7 @@ namespace MZ.Vision
             return new Scalar(b, g, r);
         }
 
-        public Scalar GetColorFromSpectrom(double input, double min, double max)
+        public static Scalar GetColorFromSpectrom(double input, double min, double max)
         {
             if (max == min)
             {
@@ -1147,14 +1176,14 @@ namespace MZ.Vision
             return new Scalar(bgrColor.Item0, bgrColor.Item1, bgrColor.Item2);
         }
 
-        public Mat HConcat(params Mat[] mats)
+        public static Mat HConcat(params Mat[] mats)
         {
             Mat result = new();
             Cv2.HConcat(mats, result);
             return result;
         }
 
-        public Mat BrightnessAndContrast(Mat mat, double brightness, double contrast)
+        public static Mat BrightnessAndContrast(Mat mat, double brightness, double contrast)
         {
             double contrastFactor = (100.0 + contrast) / 100.0;
             contrastFactor *= contrastFactor;
@@ -1165,7 +1194,7 @@ namespace MZ.Vision
             return result;
         }
 
-        public Type GetTypeFromMatType(MatType matType)
+        public static Type GetTypeFromMatType(MatType matType)
         {
             string type = matType.ToString();
 
@@ -1187,7 +1216,7 @@ namespace MZ.Vision
             };
         }
 
-        public bool IsEmpty(Mat mat)
+        public static bool IsEmpty(Mat mat)
         {
             if (mat == null || mat.Empty())
             {
@@ -1195,6 +1224,16 @@ namespace MZ.Vision
             }
             return false;
         }
+
+        public static BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        {
+            if (bitmap.CanFreeze)
+            {
+                bitmap.Freeze();
+            }
+            return bitmap;
+        }
+
 
     }
 }

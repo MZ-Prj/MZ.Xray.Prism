@@ -105,20 +105,20 @@ namespace MZ.Infrastructure
                     .HasForeignKey<MaterialEntity>(m => m.UserId);
 
                 // 1:N MaterialCurve
-                entity.HasMany(m => m.MaterialCurves)
+                entity.HasMany(m => m.MaterialControls)
                     .WithOne(c => c.Material)
                     .HasForeignKey(c => c.MaterialId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
             // MaterialCurve
-            modelBuilder.Entity<MaterialCurveEntity>(entity =>
+            modelBuilder.Entity<MaterialControlEntity>(entity =>
             {
                 entity.HasKey(m => m.Id);
             });
 
             // Zeffect
-            modelBuilder.Entity<ZeffectEntity>(entity =>
+            modelBuilder.Entity<ZeffectControlEntity>(entity =>
             {
                 entity.HasKey(z => z.Id);
                 entity.Property(z => z.Check).HasDefaultValue(false);
@@ -169,10 +169,10 @@ namespace MZ.Infrastructure
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            user.CreateDate = DateTime.Now;
+                            user.CreateDate = DateTime.UtcNow;
                             break;
                         case EntityState.Modified:
-                            user.LastLoginDate = DateTime.Now;
+                            user.LastLoginDate = DateTime.UtcNow;
                             break;
                     }
                 }

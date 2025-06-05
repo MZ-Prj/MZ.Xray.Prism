@@ -1,39 +1,107 @@
-﻿using MZ.Vision;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using MZ.Logger;
+using MZ.Vision;
 using OpenCvSharp;
 using Prism.Mvvm;
-using System;
-using System.Threading.Tasks;
 
 namespace MZ.Xray.Engine
 {
-    public class XrayService : BindableBase
+    public partial class XrayService : BindableBase
     {
+        public readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         #region Fields & Properties
-        private readonly ProcessThread _visionProcess = new();
-        private readonly ProcessThread _videoProcess = new();
+        private readonly ProcessThread _mediaProcess = new();
         #endregion
 
-        #region Vision Algorithm (OpenCV)
-        private readonly VisionBase _visionBase = new();
-        private readonly VisionLUT _visionLUT = new();
-        #endregion
+        private void StartMediaProcess()
+        {
+            _mediaProcess.IsRunning = true;
+            _mediaProcess.Thread = new Thread(() =>
+            {
+                try
+                {
+                    while (_mediaProcess.IsRunning)
+                    {
+                        MediaProcess();
+                        Thread.Sleep((1000 / Media.Information.FPS));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MZLogger.Error(ex.ToString());
+                }
 
-        private MediaEngine _media = new();
-        public MediaEngine Media { get => _media; set => SetProperty(ref _media, value); }
+            });
+            _mediaProcess.Thread.Start();
+        }
 
-        private CalibrationEngine _calibration = new();
-        public CalibrationEngine Calibration { get => _calibration; set => SetProperty(ref _calibration, value); }
+
+        private void StopMediaProcess()
+        {
+            _mediaProcess.IsRunning = false;
+            if (_mediaProcess.Thread != null && _mediaProcess.Thread.IsAlive)
+            {
+                _mediaProcess.Thread.Join(_mediaProcess.LazyTime);
+            }
+        }
+
+
+        public void Play()
+        {
+            Stop();
+
+            StartMediaProcess();
+        }
+
+        public void Stop()
+        {
+            StopMediaProcess();
+        }
+
+        private void MediaProcess()
+        {
+            _dispatcher.Invoke(() =>
+            {
+                
+            });
+        }
+
+    }
+
+    public partial class XrayService : BindableBase
+    {
+        #region Processer (모델 및 알고리즘 처리)
+        private MediaProcesser _media = new();
+        public MediaProcesser Media { get => _media; set => SetProperty(ref _media, value); }
+
+        private CalibrationProcesser _calibration = new();
+        public CalibrationProcesser Calibration { get => _calibration; set => SetProperty(ref _calibration, value); }
         
-        private MaterialEngine _material = new();
-        public MaterialEngine Material { get => _material; set => SetProperty(ref _material, value); }
+        private MaterialProcesser _material = new();
+        public MaterialProcesser Material { get => _material; set => SetProperty(ref _material, value); }
 
-        private ZeffectEngine _zeffect = new();
-        public ZeffectEngine Zeffect { get => _zeffect; set => SetProperty(ref _zeffect, value); }
+        private ZeffectProcesser _zeffect = new();
+        public ZeffectProcesser Zeffect { get => _zeffect; set => SetProperty(ref _zeffect, value); }
+        #endregion
 
+        #region Manager (관리)
+        private XrayDataSaveManager _saveManager = new();
+        public XrayDataSaveManager SaveManager { get => _saveManager; set => SetProperty(ref _saveManager, value); }
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <returns></returns>
         public async Task Process(Mat origin)
         {
             // 받아온 값이 유무 확인
-            if (_visionBase.IsEmpty(origin))
+            if (VisionBase.IsEmpty(origin))
             {
                 return;
             }
@@ -66,20 +134,29 @@ namespace MZ.Xray.Engine
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         public (Mat high, Mat low, Mat color, Mat zeff) Calculation(Mat line)
         {
             int width = line.Width;
             int halfHeight = line.Height / 2;
 
             // 16uc1
-            Mat high = _visionBase.Create(halfHeight, width, MatType.CV_16UC1);
-            Mat low = _visionBase.Create(halfHeight, width, MatType.CV_16UC1);
+            Mat high = VisionBase.Create(halfHeight, width, MatType.CV_16UC1);
+            Mat low = VisionBase.Create(halfHeight, width, MatType.CV_16UC1);
 
             // 8uc4
-            Mat color = _visionBase.Create(halfHeight, width, MatType.CV_8UC4);
+            Mat color = VisionBase.Create(halfHeight, width, MatType.CV_8UC4);
 
             // 8uc1
-            Mat zeff = _visionBase.Create(halfHeight, width, MatType.CV_8UC1);
+            Mat zeff = VisionBase.Create(halfHeight, width, MatType.CV_8UC1);
+
+            //
+            Mat gain = Calibration.Gain;
+            Mat offset = Calibration.Offset;
 
             Parallel.For(0, width, x =>
             {
@@ -88,32 +165,28 @@ namespace MZ.Xray.Engine
                 {
                     int l = halfHeight + y;
 
-                    // Gain/Offset 픽셀 값
-                    double gainHigh = Calibration.GetGainPixel(y, 0);
-                    double offsetHigh = Calibration.GetOffsetPixel(y, 0);
-                    double gainLow = Calibration.GetGainPixel(l, 0);
-                    double offsetLow = Calibration.GetGainPixel(l, 0);
+                    // Gain(High,Low) / Offset(High,Low) 픽셀 값
+                    double gh = gain.At<ushort>(y, 0);
+                    double oh = offset.At<ushort>(y, 0);
+                    double gl = gain.At<ushort>(l, 0);
+                    double ol = offset.At<ushort>(l, 0);
 
-                    // Gain값이 최소치 이상일때
-                    if (Calibration.CompareBoundaryArtifact(gainHigh))
+                    // Gain값이 해당 boundary 이상일 때
+                    if (Calibration.CompareBoundaryArtifact(gh))
                     {
-                        // 실제 픽셀값 변환
-                        double _high = Calibration.Normalize(line.At<ushort>(y, x), offsetHigh, gainHigh, Material.GetHighLowRate());
-                        double _low = Calibration.Normalize(line.At<ushort>(l, x), offsetLow, gainLow, Material.GetHighLowRate());
-
+                        // 정규화
+                        double nh = Calibration.Normalize(line.At<ushort>(y, x), oh, gh, Material.HighLowRate);
+                        double nl = Calibration.Normalize(line.At<ushort>(l, x), ol, gl, Material.HighLowRate);
                         // Min, Max 검증
-                        ushort _uhigh = (ushort)(Math.Max(_high, _low) * ushort.MaxValue);
-                        ushort _ulow = (ushort)(Math.Min(_high, _low) * ushort.MaxValue);
-
+                        ushort uh = (ushort)(Math.Max(nh, nl) * ushort.MaxValue);
+                        ushort ul = (ushort)(Math.Min(nh, nl) * ushort.MaxValue);
                         // 값 입력
-                        high.Set(k, x, _uhigh);
-                        low.Set(k, x, _ulow);
-
+                        high.Set(k, x, uh);
+                        low.Set(k, x, ul);
                         // zeff 계산
-                        zeff.Set(k, x, Zeffect.Calculation(_uhigh, _ulow));
-
+                        zeff.Set(k, x, Zeffect.Calculation(uh, ul));
                         // 색상 계산
-                        color.Set(k, x, Material.Calculation(_high, _low));
+                        color.Set(k, x, Material.Calculation(nh, nl));
 
                         k++;
                     }
@@ -123,17 +196,29 @@ namespace MZ.Xray.Engine
             return (high, low, color, zeff);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
         public async Task UpdateOnResizeAsync(Mat line)
         {
-            int width = Media.GetWidth();
-            int maxImageWidth = Calibration.GetMaxImageWidth();
+            int width = Media.Image.Width;
+            int maxImageWidth = Calibration.MaxImageWidth;
 
             await Task.WhenAll(
-                Task.Run( ()=> Calibration.UpdateOnResize(line, width)),
-                Task.Run( ()=> Media.UpdateOnResize(line, maxImageWidth)),
-                Task.Run( ()=> Zeffect.UpdateOnResize(line, width, maxImageWidth)));
+                Task.Run(()=> Calibration.UpdateOnResize(line, width)),
+                Task.Run(()=> Media.UpdateOnResize(line, maxImageWidth)),
+                Task.Run(()=> Zeffect.UpdateOnResize(line, width, maxImageWidth)));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="color"></param>
+        /// <param name="zeff"></param>
+        /// <returns></returns>
         public async Task ShiftAsync(Mat line, Mat color, Mat zeff)
         {
             await Task.WhenAll(
@@ -142,8 +227,30 @@ namespace MZ.Xray.Engine
                 Task.Run(() => Zeffect.Shift(zeff)));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task SaveAsync()
         {
+
+            int frameCount = Media.Information.Count;
+            int sensorWidth = Calibration.SensorImageWidth;
+            int width = Media.Image.Width;
+
+            if (frameCount <= 0)
+            {
+                return;
+            }
+
+            string path = SaveManager.GetPath();
+            string time = SaveManager.GetCurrentTime();
+
+            (int start, int end) = SaveManager.GetSplitPosition(width, sensorWidth, frameCount);
+
+            await Task.WhenAll(
+                Task.Run(() => SaveManager.Image(Media.Image, start, end, path, $"{time}.png")),
+                Task.Run(() => SaveManager.Origin(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff")));
 
         }
     }

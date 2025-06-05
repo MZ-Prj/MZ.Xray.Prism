@@ -41,6 +41,9 @@ namespace MZ.Domain.Models
     public class FrameInformationModel : BindableBase
     {
 
+        private int _slider = 0;
+        public int Slider { get => _slider; set => SetProperty(ref _slider, value); }
+
         private int _count = 0;
         public int Count { get => _count; set => SetProperty(ref _count, value); }
 
@@ -107,13 +110,26 @@ namespace MZ.Domain.Models
         private Mat _origin;
         public Mat Origin { get => _origin; set => SetProperty(ref _origin, value); }
 
-        public double RelativeWidthRatio { get; set; }
-        public double OffsetRegion { get; set; }
-        public double GainRegion { get; set; }
-        public double BoundaryArtifact { get; set; }
-        public double ActivationThresholdRatio { get; set; }
-        public int MaxImageWidth { get; set; }
-        public int SensorImageWidth { get; set; }
+        private double _relativeWidthRatio = 1.25;
+        public double RelativeWidthRatio { get => _relativeWidthRatio; set => SetProperty(ref _relativeWidthRatio, value); }
+
+        private double _offsetRegion = 15000;
+        public double OffsetRegion { get => _offsetRegion; set => SetProperty(ref _offsetRegion, value); }
+
+        private double _gainRegion = 2600;
+        public double GainRegion { get => _gainRegion; set => SetProperty(ref _gainRegion, value); }
+
+        private double _boundaryArtifact = 5000;
+        public double BoundaryArtifact { get => _boundaryArtifact; set => SetProperty(ref _boundaryArtifact, value); }
+        
+        private double _activationThresholdRatio = 0.9;
+        public double ActivationThresholdRatio { get => _activationThresholdRatio; set => SetProperty(ref _activationThresholdRatio, value); }
+
+        private int _maxImageWidth = 1600;
+        public int MaxImageWidth { get => _maxImageWidth; set => SetProperty(ref _maxImageWidth, value); }
+
+        private int _sensorImageWidth = 16;
+        public int SensorImageWidth { get => _sensorImageWidth; set => SetProperty(ref _sensorImageWidth, value); }
     }
 
     public class MaterialModel : BindableBase, IMaterial
@@ -126,19 +142,34 @@ namespace MZ.Domain.Models
 
         private ObservableCollection<MaterialControlModel> _controls = [];
         public ObservableCollection<MaterialControlModel> Controls { get => _controls; set => SetProperty(ref _controls, value); }
-        
-        public double Blur { get; set; }
-        public double HighLowRate { get; set; }
-        public double Density { get; set; }
-        public double EdgeBinary { get; set; }
-        public double Transparency { get; set; }
+
+        private double _blur = 10.0;
+        public double Blur { get => _blur; set => SetProperty(ref _blur, value); }
+
+        private double _highLowRate = 1.05;
+        public double HighLowRate { get => _highLowRate; set => SetProperty(ref _highLowRate, value); }
+
+        private double _density = 1.5;
+        public double Density { get => _density; set => SetProperty(ref _density, value); }
+
+        private double _edgeBinary = 0.0;
+        public double EdgeBinary { get => _edgeBinary; set => SetProperty(ref _edgeBinary, value); }
+
+        private double _transparency = 1.8;
+        public double Transparency { get => _transparency; set => SetProperty(ref _transparency, value); }
+
     }
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
-        public double Y { get; set; }
-        public double XMin { get; set; }
-        public double XMax { get; set; }
+        private double _y = 0.0;
+        public double Y { get => _y; set => SetProperty(ref _y, value); }
+
+        private double _xMin = byte.MinValue;
+        public double XMin { get => _xMin; set => SetProperty(ref _xMin, value); }
+
+        private double _xMax = byte.MaxValue;
+        public double XMax { get => _xMax; set => SetProperty(ref _xMax, value); }
 
         private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
@@ -195,9 +226,17 @@ namespace MZ.Domain.Models
 
     public class ZeffectControlModel : BindableBase, IZeffectControl
     {
-        public bool Check { get; set; }
-        public string Content { get; set; }
-        public double Min { get; set; }
-        public double Max { get; set; }
+        private bool _check = false;
+        public bool Check { get => _check; set => SetProperty(ref _check, value); }
+
+        private string _content = string.Empty;
+        public string Content { get => _content; set => SetProperty(ref _content, value); }
+
+        private double _min = 0.0;
+        public double Min { get => _min; set => SetProperty(ref _min, value); }
+
+        private double _max = 1.0;
+        public double Max { get => _max; set => SetProperty(ref _max, value); }
+
     }
 }

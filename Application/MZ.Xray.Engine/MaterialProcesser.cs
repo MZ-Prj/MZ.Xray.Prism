@@ -10,16 +10,21 @@ namespace MZ.Xray.Engine
     /// <summary>
     /// 물성에 대한 정보를 이미지로 표기
     /// </summary>
-    public class MaterialEngine : BindableBase
+    public class MaterialProcesser : BindableBase
     {
-        #region Vision Algorithm (OpenCV)
-        private readonly VisionBase _visionBase = new();
-        private readonly VisionLUT _visionLUT = new();
-        #endregion
 
         #region Params
         private MaterialModel _model = new();
         public MaterialModel Model { get => _model; set => SetProperty(ref _model, value); }
+        #endregion
+
+        #region Wrapper
+        public double HighLowRate
+        {
+            get => Model.HighLowRate;
+            set => Model.HighLowRate = value;
+        }
+
         #endregion
 
         public Vec4b Calculation(double high, double low)
@@ -34,15 +39,15 @@ namespace MZ.Xray.Engine
             Vec4b color = Model.Image.At<Vec4b>((int)(diff * byte.MaxValue), (int)(avg * byte.MaxValue));
 
             // 연산
-            double highLut = Math.Clamp(_visionLUT.Run(FunctionNameEnumTypes.Atanh, high, [1, 0, 1, 2]), 0.0, 1.0);
-            double lowLut = Math.Clamp(_visionLUT.Run(FunctionNameEnumTypes.Atanh, low, [1, 0, 1, 2]), 0.0, 1.0);
+            double highLut = Math.Clamp(VisionLUT.Run(FunctionNameEnumTypes.Atanh, high, [1, 0, 1, 2]), 0.0, 1.0);
+            double lowLut = Math.Clamp(VisionLUT.Run(FunctionNameEnumTypes.Atanh, low, [1, 0, 1, 2]), 0.0, 1.0);
             double avgLut = (highLut + lowLut) * 0.5;
 
             // 밀도(%)
             double density = Math.Clamp(avgLut * Model.Density, 0.0, 1.0);
 
             // 투영도(%)
-            double transparency = Math.Clamp(_visionLUT.Run(FunctionNameEnumTypes.Log, ((1 - avg)), [Model.Transparency]), 0.0, 1.0);
+            double transparency = Math.Clamp(VisionLUT.Run(FunctionNameEnumTypes.Log, ((1 - avg)), [Model.Transparency]), 0.0, 1.0);
 
             // 색상(byte) * 밀도(%)
             byte r = (byte)(color.Item2 * density);
@@ -55,9 +60,5 @@ namespace MZ.Xray.Engine
             return new Vec4b(b, g, r, a);
         }
 
-        public double GetHighLowRate()
-        {
-            return Model.HighLowRate;
-        }
     }
 }
