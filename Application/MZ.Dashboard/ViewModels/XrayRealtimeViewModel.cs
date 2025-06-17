@@ -23,7 +23,7 @@ namespace MZ.Dashboard.ViewModels
         public ObservableCollection<IconButtonModel> VideoButtons { get; } = [];
         #endregion
 
-        #region
+        #region Command
         private DelegateCommand _pickerCommand;
         public ICommand PickerCommand => _pickerCommand ??= new(MZAction.Wrapper(PickerButton));
         private DelegateCommand _playStopCommand;
@@ -36,7 +36,7 @@ namespace MZ.Dashboard.ViewModels
         #endregion
         public XrayRealtimeViewModel(IContainerExtension container) : base(container)
         {
-
+            base.Initialize();
         }
 
         public override void InitializeModel()

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
@@ -27,6 +27,8 @@
     <ProjectReference Include="..\..\Application\MZ.Util\MZ.Util.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Vision\MZ.Vision.csproj" />
     <ProjectReference Include="..\MZ.Dashboard\MZ.Dashboard.csproj" />
+    <ProjectReference Include="..\MZ.Producer.Engine\MZ.Producer.Engine.csproj" />
     <ProjectReference Include="..\MZ.Splash\MZ.Splash.csproj" />
+    <ProjectReference Include="..\MZ.Toolbar\MZ.Toolbar.csproj" />
   </ItemGroup>
 </Project>

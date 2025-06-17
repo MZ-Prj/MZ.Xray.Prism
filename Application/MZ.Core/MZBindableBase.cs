@@ -1,14 +1,16 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Threading;
 using Prism.Events;
 using Prism.Ioc;
-using Prism.Modularity;
 using Prism.Mvvm;
+using Prism.Navigation;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 
 namespace MZ.Core
 {
-    public abstract class MZBindableBase : BindableBase, INavigationAware
+    public abstract class MZBindableBase : BindableBase, INavigationAware, IDestructible, IDisposable
     {
         #region Dispatcher
         protected readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
@@ -27,16 +29,16 @@ namespace MZ.Core
         protected IRegionManager _regionManager;
 
         /// <summary>
-        /// 모듈 로드 및 관리
-        /// 동적 모듈 로드 및 해제 기능을 제공
-        /// </summary>
-        protected IModuleManager _moduleManager;
-
-        /// <summary>
         /// DialogService는 대화 상자를 관리하고 표시하는 데 사용
         /// 사용자와의 상호작용을 위한 팝업 대화 상자 기능을 제공
         /// </summary>
         protected IDialogService _dialogService;
+        #endregion
+
+
+
+        #region Subscription Management
+        private readonly List<(EventBase eventBase, SubscriptionToken eventToken)> _subscriptions = [];
         #endregion
 
         #region Services
@@ -44,19 +46,28 @@ namespace MZ.Core
 
         protected MZBindableBase(IContainerExtension container)
         {
-            InitializeServices(container);
-            InitializeCore();
-            InitializeCommand();
-            InitializeModel();
-            InitializeEvent();
+            InitializeBaseServices(container);
         }
 
-        protected void InitializeServices(IContainerExtension container)
+        protected void InitializeBaseServices(IContainerExtension container)
         {
             _eventAggregator = container.Resolve<IEventAggregator>();
             _regionManager = container.Resolve<IRegionManager>();
-            _moduleManager = container.Resolve<IModuleManager>();
             _dialogService = container.Resolve<IDialogService>();
+        }
+
+        #region Initialize
+
+        protected virtual void Initialize()
+        {
+            InitializeModel();
+            InitializeEvent();
+            InitializeCore();
+        }
+
+        public virtual void InitializeServices(IContainerExtension container)
+        {
+
         }
 
         public virtual void InitializeCore()
@@ -71,10 +82,19 @@ namespace MZ.Core
         {
         }
 
-        public virtual void InitializeCommand()
-        {
-        }
+        #endregion
 
+        #region Event
+        protected void SubscribeEvent<TEvent, TPayload>(Action<TPayload> action, ThreadOption threadOption = ThreadOption.UIThread, bool keepSubscriberReferenceAlive = true) where TEvent : PubSubEvent<TPayload>, new()
+        {
+            var eventBase = _eventAggregator.GetEvent<TEvent>();
+            var eventToken = eventBase.Subscribe(action, threadOption, keepSubscriberReferenceAlive);
+            _subscriptions.Add((eventBase, eventToken));
+        }
+        #endregion
+
+
+        #region Navigate
         public virtual void OnNavigatedTo(NavigationContext navigationContext)
         {
         }
@@ -87,5 +107,24 @@ namespace MZ.Core
         public virtual void OnNavigatedFrom(NavigationContext navigationContext)
         {
         }
+
+        #endregion
+
+        #region Clear
+        public virtual void Destroy()
+        {
+            foreach (var (eventBase, eventToken) in _subscriptions)
+            {
+                eventBase.Unsubscribe(eventToken);
+            }
+            _subscriptions.Clear();
+        }
+
+        public virtual void Dispose()
+        {
+            Destroy();
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

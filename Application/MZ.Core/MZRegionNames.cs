@@ -13,5 +13,11 @@
         public static string UserLoginRegion = "UserLoginRegion";
         public static string UserRegisterRegion = "UserRegisterRegion";
 
+        //UI
+        public static string SidebarRegion = "SidebarRegion";
+        public static string ToolbarRegion = "ToolbarRegion";
+        //producer
+        public static string IpNetworkRegion = "IpNetworkRegion";
+
     }
 }

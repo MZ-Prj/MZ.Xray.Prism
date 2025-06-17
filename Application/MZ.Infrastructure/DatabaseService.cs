@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MZ.Infrastructure
 {
-    public class DatabaseService
+    public class DatabaseService : IDatabaseService
     {
-        public IUserService User;
-        public IAppSettingService AppSetting;
+        public IUserService User { get; } 
+        public IAppSettingService AppSetting { get; }
 
         private readonly CancellationTokenSource _cts;
 

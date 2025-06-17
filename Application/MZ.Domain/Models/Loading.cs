@@ -4,7 +4,6 @@ using System;
 
 namespace MZ.Domain.Models
 {
-
     public class LoadingModel : BindableBase
     {
         private bool _isLoading = false;
@@ -20,11 +19,9 @@ namespace MZ.Domain.Models
                 Message = message;
             }
 
-            IsLoading = true;
-
             return MZDisposable.LoadingWrapper((isLoading) =>
             {
-                IsLoading = false;
+                IsLoading = isLoading;
             });
         }
     }

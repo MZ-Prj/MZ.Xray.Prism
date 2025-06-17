@@ -24,6 +24,7 @@ namespace MZ.Splash.ViewModels
 
         public SplashWindowViewModel(IContainerExtension container) : base(container)
         {
+            base.Initialize();
         }
 
         public override void InitializeCore()

@@ -87,7 +87,7 @@ namespace MZ.Core
             }
             catch (Exception ex)
             {
-                MZLogger.Warning(ex.ToString());
+                MZLogger.Warning(ex.Message);
             }
         }
 

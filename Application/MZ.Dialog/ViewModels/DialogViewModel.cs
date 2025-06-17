@@ -14,7 +14,7 @@ namespace MZ.Dialog.ViewModels
     {
 
         #region Services
-        private readonly LoadingService _loadingService;
+        private readonly ILoadingService _loadingService;
         #endregion
 
         #region Models
@@ -37,9 +37,9 @@ namespace MZ.Dialog.ViewModels
 
         #endregion
 
-        public DialogViewModel(IContainerExtension container) : base(container)
+        public DialogViewModel(IContainerExtension container, ILoadingService loadingService) : base(container)
         {
-            _loadingService = container.Resolve<LoadingService>();
+            _loadingService = loadingService;
         }
 
         public bool CanCloseDialog()

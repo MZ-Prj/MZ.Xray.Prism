@@ -1,10 +1,11 @@
 ﻿using MZ.Domain.Models;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 
 namespace MZ.Loading
 {
-    public class LoadingService : BindableBase
+    public class LoadingService : BindableBase, ILoadingService
     {
         private readonly Dictionary<string, LoadingModel> _matchers = [];
 
@@ -20,5 +21,6 @@ namespace MZ.Loading
                 return model;
             }
         }
+
     }
 }

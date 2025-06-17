@@ -20,6 +20,7 @@ namespace MZ.Language.ViewModels
 
         public LanguageViewModel(IContainerExtension container) : base(container)
         {
+            base.Initialize();
         }
 
         public override void InitializeModel()

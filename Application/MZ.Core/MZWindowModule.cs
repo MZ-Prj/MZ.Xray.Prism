@@ -52,7 +52,7 @@ namespace MZ.Core
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
             }
         }
 
@@ -79,7 +79,7 @@ namespace MZ.Core
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
             }
         }
 

@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:converters="clr-namespace:MZ.Resource.Converters">
+    
+    <converters:NumericDecimalConverter x:Key="NumericDecimalConverter" />
+    <converters:NumericIntegerConverter x:Key="NumericIntegerConverter" />
+    
+    <DataTemplate x:Key="StringEditorTemplate">
+        <TextBox Margin="4"
+                 Text="{Binding Path=Content,
+                                RelativeSource={RelativeSource AncestorType=ContentControl},
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="Int32EditorTemplate">
+        <TextBox Margin="4"
+                 Text="{Binding Path=Content,
+                                RelativeSource={RelativeSource AncestorType=ContentControl},
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged,
+                                Converter={StaticResource NumericIntegerConverter}}" />
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="DoubleEditorTemplate">
+        <TextBox Margin="4"
+                 Text="{Binding Path=Content,
+                                RelativeSource={RelativeSource AncestorType=ContentControl},
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged,
+                                Converter={StaticResource NumericDecimalConverter}}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="BoolEditorTemplate">
+        <CheckBox Margin="4"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding Path=Content,
+                                      RelativeSource={RelativeSource AncestorType=ContentControl},
+                                      Mode=TwoWay}" />
+    </DataTemplate>
+</ResourceDictionary>

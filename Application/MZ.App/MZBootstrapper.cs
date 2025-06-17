@@ -96,7 +96,7 @@ namespace MZ.App
             containerRegistry.Register<AppDbContext>();
 
             // DatabaseService
-            containerRegistry.RegisterSingleton<DatabaseService>();
+            containerRegistry.RegisterSingleton<IDatabaseService, DatabaseService>();
 
             // Session
             containerRegistry.RegisterSingleton<IUserSession, UserSession>();
@@ -116,7 +116,7 @@ namespace MZ.App
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<LoadingService>();
+            containerRegistry.RegisterSingleton<ILoadingService, LoadingService>();
 
             //custom dialog
             containerRegistry.RegisterDialogWindow<MZDialogWindow>();

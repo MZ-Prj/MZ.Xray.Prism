@@ -6,7 +6,6 @@ namespace MZ.Resource.Converters
 {
     public class NumericDecimalConverter : IValueConverter
     {
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is double doubleValue)
@@ -39,7 +38,9 @@ namespace MZ.Resource.Converters
             foreach (char c in input)
             {
                 if (char.IsDigit(c) || c == '-' || c == '.')
+                {
                     filtered += c;
+                }
             }
 
             int firstMinus = filtered.IndexOf('-');

@@ -21,8 +21,8 @@ namespace MZ.Dashboard.ViewModels
     public class DashboardWindowViewModel : MZBindableBase
     {
         #region Services
-        private readonly LoadingService _loadingService;
-        private readonly DatabaseService _databaseService;
+        private readonly ILoadingService _loadingService;
+        private readonly IDatabaseService _databaseService;
         #endregion
 
         #region Models
@@ -44,10 +44,13 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
 
-        public DashboardWindowViewModel(IContainerExtension container) : base(container)
+        public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService) : base(container)
         {
-            _databaseService = container.Resolve<DatabaseService>();
-            _loadingService = container.Resolve<LoadingService>();
+            _databaseService = databaseService;
+            _loadingService = loadingService;
+
+            base.Initialize();
+
         }
 
         public override void InitializeModel()

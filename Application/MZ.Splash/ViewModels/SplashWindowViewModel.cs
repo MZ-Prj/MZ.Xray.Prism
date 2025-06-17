@@ -15,6 +15,11 @@ namespace MZ.Splash.ViewModels
 {
     public class SplashWindowViewModel : MZBindableBase
     {
+        #region Service
+        private readonly IDatabaseService _databaseService;
+        #endregion
+
+        #region Params
         private List<Func<Task>> _process = [];
 
         private int _maxStep = 0;
@@ -25,12 +30,12 @@ namespace MZ.Splash.ViewModels
 
         private string _message = string.Empty;
         public string Message { get => _message; set => SetProperty(ref _message, value); }
-
-        private readonly DatabaseService _databaseService;
-
-        public SplashWindowViewModel(IContainerExtension container) : base(container)
+        #endregion
+        public SplashWindowViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
         {
-            _databaseService = container.Resolve<DatabaseService>();
+            _databaseService = databaseService;
+            base.Initialize();
+
         }
 
         public override void InitializeCore()

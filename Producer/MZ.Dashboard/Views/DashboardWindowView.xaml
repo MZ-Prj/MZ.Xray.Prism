@@ -9,8 +9,8 @@
                  xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
                  xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  d:DataContext="{d:DesignInstance Type=viewmodels:DashboardWindowViewModel}"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  mc:Ignorable="d"
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
@@ -33,14 +33,16 @@
         <mah:WindowCommands>
             <Button ToolTip="ToolTip">
                 <Image Source="pack://application:,,,/MZ.Resource;component/Assets/Images/loading.gif"
-                       Width="22"
-                       Height="22"/>
+                       Width="20"
+                       Height="20"
+                       Margin="4"/>
             </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <ItemsControl ItemsSource="{Binding Path=WindowCommandButtons}" >
+            <ItemsControl ItemsSource="{Binding Path=WindowCommandButtons}" 
+                          IsEnabled="{Binding Path=LoadingModel.IsLoading, Converter={StaticResource BooleanInverterConverter}}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel HorizontalAlignment="Stretch"/>

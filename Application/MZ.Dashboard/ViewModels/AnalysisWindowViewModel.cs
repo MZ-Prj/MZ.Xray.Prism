@@ -10,6 +10,7 @@ namespace MZ.Dashboard.ViewModels
     {
         public AnalysisWindowViewModel(IContainerExtension container) : base(container)
         {
+            base.Initialize();
         }
 
         public override void InitializeEvent()

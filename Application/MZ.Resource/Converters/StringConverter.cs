@@ -1,11 +1,30 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    public class LastestDirectoryConverter : IValueConverter
+    {
 
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string input)
+            {
+                var directoryInfo = new DirectoryInfo(input);
+                return directoryInfo.Name;
+            }
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.Empty;
+        }
+    }
     public class UppercaseConverter : IValueConverter
     {
         private static readonly Regex _regex = new("[-_]", RegexOptions.Compiled);

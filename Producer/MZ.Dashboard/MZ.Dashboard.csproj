@@ -15,5 +15,8 @@
     <ProjectReference Include="..\..\Application\MZ.Logger\MZ.Logger.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Util\MZ.Util.csproj" />
+    <ProjectReference Include="..\MZ.Producer.Engine\MZ.Producer.Engine.csproj" />
+    <ProjectReference Include="..\MZ.Sidebar\MZ.Sidebar.csproj" />
+    <ProjectReference Include="..\MZ.Toolbar\MZ.Toolbar.csproj" />
   </ItemGroup>
 </Project>

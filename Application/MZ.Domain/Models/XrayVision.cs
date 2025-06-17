@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 
 namespace MZ.Domain.Models
 {
-
     public class FilterModel : BindableBase, IFilter
     {
         private float _zoom = 1.0f;
@@ -64,6 +63,12 @@ namespace MZ.Domain.Models
 
         private bool _isPlaying = false;
         public bool IsPlaying { get => _isPlaying; set => SetProperty(ref _isPlaying, value); }
+
+        private double _width = 0;
+        public double Width { get => _width; set => SetProperty(ref _width, value); }
+
+        private double _height = 0;
+        public double Height { get => _height; set => SetProperty(ref _height, value); }
 
     }
 

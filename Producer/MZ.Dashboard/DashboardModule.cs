@@ -28,7 +28,6 @@ namespace MZ.Dashboard
             _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
             {
                 SetWindowLocate(MZWindowNames.DashboardWindow, 0);
-
                 ShowWindow(MZWindowNames.DashboardWindow);
             }, ThreadOption.UIThread, true);
         }

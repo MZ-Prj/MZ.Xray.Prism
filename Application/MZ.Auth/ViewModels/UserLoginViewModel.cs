@@ -16,6 +16,13 @@ namespace MZ.Auth.ViewModels
 {
     public class UserLoginViewModel : MZBindableBase
     {
+
+        #region Services
+        private readonly IDatabaseService _databaseService;
+
+        #endregion
+
+
         #region Params
         private UserModel _user = new();
         public UserModel User { get => _user; set => SetProperty(ref _user, value); }
@@ -30,10 +37,11 @@ namespace MZ.Auth.ViewModels
         public ICommand RegisterCommand => _registerCommand ??= new(MZAction.Wrapper(RegisterButton));
         #endregion
 
-        private readonly DatabaseService _databaseService;
-        public UserLoginViewModel(IContainerExtension container) : base(container)
+        public UserLoginViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
         {
-            _databaseService = container.Resolve<DatabaseService>();
+            _databaseService = databaseService;
+
+            base.Initialize();  
         }
 
         public override async void OnNavigatedTo(NavigationContext context)

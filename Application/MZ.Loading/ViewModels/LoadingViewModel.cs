@@ -1,4 +1,5 @@
 ﻿using MZ.Core;
+using MZ.Domain.Models;
 using Prism.Ioc;
 
 namespace MZ.Loading.ViewModels

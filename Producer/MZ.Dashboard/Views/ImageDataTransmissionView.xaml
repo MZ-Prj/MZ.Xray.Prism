@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="MZ.Dashboard.Views.ImageDataTransmissionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
+             xmlns:prism="http://prismlibrary.com/" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:behaviors="clr-namespace:MZ.Dashboard.Behaviors"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ImageDataTransmissionViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+            <ItemsControl ItemsSource="{Binding Path=ActionButtons}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding Path=Command}" 
+                                Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="20" Height="20"/>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  SelectedIndex="{Binding Path=XrayData.CurrentIndex}"
+                  ItemsSource="{Binding Path=XrayData.Models}" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Hidden"
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  HeadersVisibility="Column"
+                  Margin="4">
+            <i:Interaction.Behaviors>
+                <behaviors:ScrollViewBehavior />
+            </i:Interaction.Behaviors>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Index" 
+                            Binding="{Binding Path=Index}" 
+                            Width="Auto" />
+                <DataGridTextColumn Header="Path" 
+                            Binding="{Binding Path=Path}" 
+                            Width="*" />
+                <DataGridTextColumn Header="Name" 
+                            Binding="{Binding Path=Name}" 
+                            Width="Auto" />
+                <DataGridTextColumn Header="Width" 
+                            Binding="{Binding Path=Width}" 
+                            Width="Auto" />
+                <DataGridTextColumn Header="Height" 
+                            Binding="{Binding Path=Height}" 
+                            Width="Auto" />
+                <DataGridTextColumn Header="Type" 
+                            Binding="{Binding Path=Type}" 
+                            Width="Auto" />
+                <DataGridTextColumn Header="Message" 
+                            Binding="{Binding Path=Message}" 
+                            Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+    
+</UserControl>

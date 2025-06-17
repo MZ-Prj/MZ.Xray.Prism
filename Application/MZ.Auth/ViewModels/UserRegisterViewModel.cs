@@ -14,6 +14,13 @@ namespace MZ.Auth.ViewModels
 {
     public class UserRegisterViewModel : MZBindableBase
     {
+
+        #region Service
+        private readonly IDatabaseService _databaseService;
+
+        #endregion
+
+
         #region Params
         private UserRegisterModel _user = new();
         public UserRegisterModel User { get => _user; set => SetProperty(ref _user, value); }
@@ -26,14 +33,11 @@ namespace MZ.Auth.ViewModels
         public ICommand BackCommand => _backCommand ??= new(MZAction.Wrapper(BackButton));
         #endregion
 
-        #region Service
-        private readonly DatabaseService _databaseService;
-
-        #endregion
-
         public UserRegisterViewModel(IContainerExtension container) : base(container)
         {
             _databaseService = container.Resolve<DatabaseService>();
+
+            base.Initialize();
         }
 
         private async void RegisterButton()
