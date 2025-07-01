@@ -3,7 +3,9 @@ using MZ.Core;
 using MZ.Dashboard.Models;
 using MZ.Producer.Engine;
 using MZ.Sidebar.Models;
+using MZ.Domain.Models;
 using MZ.Util;
+using MZ.Loading;
 using Prism.Commands;
 using Prism.Ioc;
 using System.Linq;
@@ -16,12 +18,19 @@ namespace MZ.Dashboard.ViewModels
     public class ImageDataTransmissionViewModel : MZBindableBase
     {
         #region Service
+        private readonly ILoadingService _loadingService;
         private readonly IProducerService _producerService;
         #endregion
 
         #region Params
-        public ObservableCollection<IconButtonModel> ActionButtons { get; } = [];
+        private LoadingModel _loadingModel;
+        public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.DashboardRegion]; set => SetProperty(ref _loadingModel, value); }
+
+        private ObservableCollection<IconButtonModel> _actionButtons = [];
+        public ObservableCollection<IconButtonModel> ActionButtons { get => _actionButtons; set => SetProperty(ref _actionButtons, value); }
+
         public XrayDataProcesser XrayData => _producerService.XrayData;
+        public SocketProcesser Socket => _producerService.Socket;
         #endregion
 
         #region Command
@@ -35,9 +44,10 @@ namespace MZ.Dashboard.ViewModels
         public ICommand StopCommand => _stopCommand ??= new(MZAction.Wrapper(StopButton));
         #endregion
 
-        public ImageDataTransmissionViewModel(IContainerExtension container, IProducerService producerService) : base(container)
+        public ImageDataTransmissionViewModel(IContainerExtension container, ILoadingService loadingService, IProducerService producerService) : base(container)
         {
             _producerService = producerService;
+            _loadingService = loadingService;
 
             base.Initialize();
         }
@@ -45,9 +55,8 @@ namespace MZ.Dashboard.ViewModels
         #region Initialize
         public override void InitializeModel()
         {
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.FileImport), LoadCommand));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayPauseCommand));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Stop), StopCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayPauseCommand, isVisibility:false));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Stop), StopCommand, isVisibility: false));
         }
 
         public override void InitializeEvent()
@@ -62,7 +71,25 @@ namespace MZ.Dashboard.ViewModels
         #region Button
         private async void LoadButton()
         {
-            await _producerService.LoadAsync();
+            using (_loadingService[MZRegionNames.DashboardRegion].Show())
+            {
+                await _producerService.LoadAsync();
+            }
+
+            foreach (var button in ActionButtons)
+            {
+                button.IsVisibility = Socket.Model.IsConnected;
+            }
+
+            if (Socket.Model.IsConnected)
+            {
+                await _producerService.RunAsync();
+            }
+            else
+            {
+                _producerService.Stop();
+            }
+
         }
 
         private void PlayPauseButton()

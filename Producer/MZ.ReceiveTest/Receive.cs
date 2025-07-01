@@ -12,8 +12,7 @@ namespace MZ.ReceiveTest
         private TcpListener _listener;
         private TcpClient _client;
         private NetworkStream _stream;
-        private bool _isConnected;
-        public bool IsConnected;
+        public bool IsConnected { get; set; }
 
         public async Task StartListening(int port)
         {

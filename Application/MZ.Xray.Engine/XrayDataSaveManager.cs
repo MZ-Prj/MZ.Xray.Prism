@@ -72,7 +72,7 @@ namespace MZ.Xray.Engine
 
         public string GetPath()
         {
-            return Path.GetFullPath($"{_absoluteRoot}\\{DateTime.Now.ToString("yyyy-MM-dd")}");
+            return Path.GetFullPath($"{_absoluteRoot}\\{DateTime.Now:yyyy-MM-dd}");
         }
 
         public string GetCurrentTime()
@@ -83,10 +83,7 @@ namespace MZ.Xray.Engine
         public (int, int) GetSplitPosition(int width, int sensorWidth, int frameCount)
         {
             int start = width - (sensorWidth * frameCount) >= 0 ? width - (sensorWidth * frameCount) : 0;
-            if (start < 0)
-            {
-                start = 0;
-            }
+            start = start < 0 ? 0 : start;
             int end = width;
 
             return (start, end);

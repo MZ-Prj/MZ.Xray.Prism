@@ -6,6 +6,8 @@ namespace MZ.Domain.Models
 {
     public class LoadingModel : BindableBase
     {
+        private const string _defaultMessage = "Loading...";
+        
         private bool _isLoading = false;
         public bool IsLoading { get => _isLoading; set => SetProperty(ref _isLoading, value); }
 
@@ -17,6 +19,10 @@ namespace MZ.Domain.Models
             if (!string.IsNullOrEmpty(message))
             {
                 Message = message;
+            }
+            else
+            {
+                Message = _defaultMessage;
             }
 
             return MZDisposable.LoadingWrapper((isLoading) =>

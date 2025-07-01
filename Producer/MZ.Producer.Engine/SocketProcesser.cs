@@ -5,6 +5,7 @@ using System;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MZ.Logger;
+using System.Reflection;
 
 namespace MZ.Producer.Engine
 {
@@ -12,6 +13,10 @@ namespace MZ.Producer.Engine
     {
         #region Model
         public IpNetworkModel Model { get; set; } = new();
+
+        private string _message = string.Empty;
+        public string Message { get => _message; set => SetProperty(ref _message, value); }
+
         #endregion
 
         #region Params(Network)
@@ -32,10 +37,12 @@ namespace MZ.Producer.Engine
                 await _client.ConnectAsync(IPAddress.Parse(Model.Ip), Model.Port);
                 _stream = _client.GetStream();
                 Model.IsConnected = true;
+                Message = $"IsConnected = {Model.IsConnected}";
             }
             catch (Exception ex)
             {
                 Model.IsConnected = false;
+                Message = ex.Message;
                 MZLogger.Error(ex.Message);
             }
         }
@@ -50,6 +57,8 @@ namespace MZ.Producer.Engine
             _client = null;
 
             Model.IsConnected = false;
+
+            Message = $"IsConnected = {Model.IsConnected}";
         }
 
         public async Task<bool> SendAsync(FileModel model)
@@ -64,11 +73,13 @@ namespace MZ.Producer.Engine
                 await _stream.WriteAsync(infoToByte);
                 await _stream.WriteAsync(image);
 
+                Message = $"{MethodBase.GetCurrentMethod().Name} = {model.Name}";
                 return true;
             }
             catch (Exception ex)
             {
                 Disconnect();
+                Message = ex.Message;
                 MZLogger.Error(ex.Message);
                 return false;
             }

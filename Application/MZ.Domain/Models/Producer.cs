@@ -12,8 +12,9 @@ namespace MZ.Domain.Models
         private int _port = 5887;
         public int Port { get => _port; set => SetProperty(ref _port, value); }
 
-        private bool _isConnected = true;
+        private bool _isConnected = false;
         public bool IsConnected { get => _isConnected; set => SetProperty(ref _isConnected, value); }
+
     }
 
     public class FileModel : BindableBase

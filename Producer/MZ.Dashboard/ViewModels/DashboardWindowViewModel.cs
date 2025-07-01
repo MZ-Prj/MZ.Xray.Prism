@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
 using static MZ.Sidebar.MZEvents;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -28,7 +29,7 @@ namespace MZ.Dashboard.ViewModels
         private readonly IProducerService _producerService;
         #endregion
 
-        #region Models
+        #region Params
         private LoadingModel _loadingModel;
         public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.DashboardRegion]; set => SetProperty(ref _loadingModel, value); }
 
@@ -126,7 +127,7 @@ namespace MZ.Dashboard.ViewModels
 
             if (result == true)
             {
-                using (_loadingService[MZRegionNames.DashboardRegion].Show("File load"))
+                using (_loadingService[MZRegionNames.DashboardRegion].Show())
                 {
                     string directory = Path.GetDirectoryName(dialog.FileName);
                     _producerService.Stop();

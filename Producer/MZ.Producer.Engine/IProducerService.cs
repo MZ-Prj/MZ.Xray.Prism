@@ -11,6 +11,7 @@ namespace MZ.Producer.Engine
         Task LoadFilesAsync(string path);
         Task SendFileAsync(FileModel model);
         Task LoadAsync();
+        Task RunAsync();
         void Stop();
         void Pause();
     }

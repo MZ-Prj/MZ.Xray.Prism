@@ -73,18 +73,16 @@ namespace MZ.Producer.Engine
                     await Socket.ConnectAsync();
                 }
 
-                await LoadFilesAsync(Path);
-
-                if (XrayData.Models.Count == 0)
+                if (Socket.Model.IsConnected)
                 {
-                    return;
-                }
-                _cancellationTokenSource?.Dispose();
-                _cancellationTokenSource = new();
-                
-                XrayData.CurrentIndex = 0;
+                    await LoadFilesAsync(Path);
 
-                await RunAsync(_cancellationTokenSource.Token);
+                    _cancellationTokenSource?.Dispose();
+                    _cancellationTokenSource = new();
+
+                    XrayData.CurrentIndex = 0;
+                }
+
             }
             catch (Exception ex)
             {
@@ -95,6 +93,7 @@ namespace MZ.Producer.Engine
         public void Stop()
         {
             XrayData.CurrentIndex = 0;
+            Socket.Disconnect();
             _cancellationTokenSource?.Cancel();
         }
 
@@ -103,15 +102,15 @@ namespace MZ.Producer.Engine
             IsPaused = !IsPaused;
         }
 
-        private async Task RunAsync(CancellationToken cancellationToken)
+        public async Task RunAsync()
         {
             try
             {
-                while (!cancellationToken.IsCancellationRequested)
+                while (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     if (IsPaused)
                     {
-                        await Task.Delay(SendInterval, cancellationToken).ConfigureAwait(false);
+                        await Task.Delay(SendInterval, _cancellationTokenSource.Token).ConfigureAwait(false);
                         continue;
                     }
 
@@ -123,10 +122,10 @@ namespace MZ.Producer.Engine
                     FileModel data = XrayData.GetCurrentFile();
                     bool check = await Socket.SendAsync(data).ConfigureAwait(false);
 
-                    XrayData.CurrentIndex++;
                     XrayData.Models[XrayData.CurrentIndex].Message = check ? "Success" : "Fail";
+                    XrayData.CurrentIndex++;
 
-                    await Task.Delay(SendInterval, cancellationToken);
+                    await Task.Delay(SendInterval, _cancellationTokenSource.Token);
                 }
             }
             catch (OperationCanceledException) { }

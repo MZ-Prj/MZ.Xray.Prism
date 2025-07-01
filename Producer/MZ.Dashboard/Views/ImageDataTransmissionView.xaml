@@ -20,8 +20,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+
+            <Button Command="{Binding Path=LoadCommand}" 
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                <iconPacks:PackIconMaterial Kind="Lan" Width="20" Height="20"/>
+            </Button>
+            
             <ItemsControl ItemsSource="{Binding Path=ActionButtons}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -31,6 +39,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Command="{Binding Path=Command}" 
+                                IsEnabled="{Binding Path=IsVisibility}"
                                 Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                             <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="20" Height="20"/>
                         </Button>
@@ -76,6 +85,9 @@
                             Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">
+            <Label Content="{Binding Path=Socket.Message}"/> 
+        </StackPanel>
     </Grid>
     
 </UserControl>

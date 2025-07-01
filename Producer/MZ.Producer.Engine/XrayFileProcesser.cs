@@ -19,7 +19,7 @@ namespace MZ.Producer.Engine
         protected readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         #endregion
 
-        private int _currentIndex = -1;
+        private int _currentIndex = 0;
         public int CurrentIndex { get => _currentIndex; set => SetProperty(ref _currentIndex, value); }
 
         public ObservableCollection<FileModel> Models { get; set; } = [];
