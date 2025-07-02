@@ -1,8 +1,8 @@
 ﻿using MZ.Core;
 using Prism.Events;
 using Prism.Ioc;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {

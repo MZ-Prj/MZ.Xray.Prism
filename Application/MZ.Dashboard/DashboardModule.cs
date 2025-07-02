@@ -2,7 +2,7 @@
 using MZ.Dashboard.Views;
 using Prism.Events;
 using Prism.Ioc;
-using static MZ.Core.MZEvent;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard
 {

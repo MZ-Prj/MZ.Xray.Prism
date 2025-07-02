@@ -9,8 +9,8 @@ using MZ.Auth.Models;
 using MZ.Infrastructure;
 using MZ.Util;
 using MZ.Logger;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Auth.ViewModels
 {

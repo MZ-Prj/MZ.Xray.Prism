@@ -2,17 +2,44 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Prism.Mvvm;
 using MZ.Logger;
 using MZ.Vision;
+using MZ.Domain.Models;
 using OpenCvSharp;
-using Prism.Mvvm;
+using Prism.Events;
+using static MZ.Event.MZEvent;
+using System.Threading.Channels;
 
 namespace MZ.Xray.Engine
 {
-    public partial class XrayService : BindableBase
+    public partial class XrayService : BindableBase, IXrayService
     {
         public readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly IEventAggregator _eventAggregator;
 
+        public XrayService(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+
+            _socketReceive = new SocketReceiveProcesser(_eventAggregator);
+
+            InitializeEvent();
+        }
+
+        public void InitializeEvent()
+        {
+            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe(async (FileModel file) =>
+            {
+                await Process(file.Image);
+            }, ThreadOption.UIThread, true);
+        }
+
+
+    }
+
+    public partial class XrayService : BindableBase, IXrayService
+    {
         #region Fields & Properties
         private readonly ProcessThread _mediaProcess = new();
         #endregion
@@ -72,8 +99,34 @@ namespace MZ.Xray.Engine
 
     }
 
-    public partial class XrayService : BindableBase
+    public partial class XrayService : BindableBase, IXrayService
     {
+        #region Processer (네트워크)
+        private SocketReceiveProcesser _socketReceive;
+        public SocketReceiveProcesser SocketReceive { get => _socketReceive; set => SetProperty(ref _socketReceive, value); }
+        #endregion
+
+        public void InitializeSocket()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    SocketReceive.Create();
+                    await SocketReceive.ReceiveAsync();
+                }
+                catch (Exception ex)
+                {
+                    MZLogger.Error(ex.ToString());
+                }
+            });
+        }
+
+    }
+
+    public partial class XrayService : BindableBase, IXrayService
+    {
+
         #region Processer (모델 및 알고리즘 처리)
         private MediaProcesser _media = new();
         public MediaProcesser Media { get => _media; set => SetProperty(ref _media, value); }
@@ -86,6 +139,7 @@ namespace MZ.Xray.Engine
 
         private ZeffectProcesser _zeffect = new();
         public ZeffectProcesser Zeffect { get => _zeffect; set => SetProperty(ref _zeffect, value); }
+
         #endregion
 
         #region Manager (관리)

@@ -15,6 +15,7 @@ using MZ.Language;
 using MZ.Loading;
 using MZ.Resource;
 using MZ.Splash;
+using MZ.Xray.Engine;
 using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -46,6 +47,8 @@ namespace MZ.App
 
             // Service
             RegisterApplicationServices(containerRegistry);
+
+            RegisterUIService(containerRegistry);
         }
 
         /// <summary>
@@ -117,7 +120,12 @@ namespace MZ.App
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<ILoadingService, LoadingService>();
+            containerRegistry.RegisterSingleton<IXrayService, XrayService>();
 
+        }
+
+        private void RegisterUIService(IContainerRegistry containerRegistry)
+        {
             //custom dialog
             containerRegistry.RegisterDialogWindow<MZDialogWindow>();
         }
