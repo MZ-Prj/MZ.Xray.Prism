@@ -13,8 +13,8 @@ using Prism.Ioc;
 using Prism.Events;
 using Prism.Commands;
 using Prism.Services.Dialogs;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {

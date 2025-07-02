@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Xray.Engine", "MZ.Xray.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.AI.Engine", "MZ.AI.Engine\MZ.AI.Engine.csproj", "{77D0D9CA-B7D7-4545-8EF5-891B62772749}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Event", "MZ.Event\MZ.Event.csproj", "{07745122-6FE4-4E83-BDE2-1F8134343049}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{77D0D9CA-B7D7-4545-8EF5-891B62772749}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77D0D9CA-B7D7-4545-8EF5-891B62772749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77D0D9CA-B7D7-4545-8EF5-891B62772749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07745122-6FE4-4E83-BDE2-1F8134343049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07745122-6FE4-4E83-BDE2-1F8134343049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07745122-6FE4-4E83-BDE2-1F8134343049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07745122-6FE4-4E83-BDE2-1F8134343049}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

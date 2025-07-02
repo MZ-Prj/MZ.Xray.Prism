@@ -7,9 +7,10 @@ using MZ.Core;
 using MZ.Logger;
 using MZ.Auth.Views;
 using MZ.Blank.Views;
+using MZ.Xray.Engine;
 using MZ.Infrastructure;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Splash.ViewModels
 {
@@ -17,6 +18,7 @@ namespace MZ.Splash.ViewModels
     {
         #region Service
         private readonly IDatabaseService _databaseService;
+        private readonly IXrayService _xrayService;
         #endregion
 
         #region Params
@@ -31,9 +33,10 @@ namespace MZ.Splash.ViewModels
         private string _message = string.Empty;
         public string Message { get => _message; set => SetProperty(ref _message, value); }
         #endregion
-        public SplashWindowViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
+        public SplashWindowViewModel(IContainerExtension container, IXrayService xrayService, IDatabaseService databaseService) : base(container)
         {
             _databaseService = databaseService;
+            _xrayService = xrayService;
             base.Initialize();
 
         }
@@ -51,6 +54,11 @@ namespace MZ.Splash.ViewModels
                     ("Initialize Database", async () =>
                     {
                         await _databaseService.MakeAdmin();
+                        await Task.CompletedTask;
+                    }),
+                    ("Initialize Network",  async () =>
+                    {
+                        _xrayService.InitializeSocket();
                         await Task.CompletedTask;
                     }),
                     ("Success!", async () =>

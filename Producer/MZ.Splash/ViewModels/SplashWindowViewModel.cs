@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Prism.Ioc;
 using MZ.Core;
 using MZ.Logger;
-using static MZ.Core.MZEvent;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Splash.ViewModels
 {

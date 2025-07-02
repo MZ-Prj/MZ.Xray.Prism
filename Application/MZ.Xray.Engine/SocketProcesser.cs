@@ -2,47 +2,80 @@
 using MZ.DTO.Enums;
 using MZ.Util;
 using OpenCvSharp;
+using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Xray.Engine
 {
     public class SocketReceiveProcesser : BindableBase
     {
+        private readonly IEventAggregator _eventAggregator;
+
+        #region Params
         private TcpListener _listener;
         private TcpClient _client;
         private NetworkStream _stream;
-        public bool IsConnected { get; set; }
-        public int Port { get; set; }
+        private CancellationTokenSource _cancellationTokenSource;
+        public IpNetworkModel Model { get; set; } = new();
+        #endregion
 
-        public async Task Start(int port)
+        public SocketReceiveProcesser()
         {
-            Port = port; 
+
+        }
+
+        public SocketReceiveProcesser(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
+
+        public void Create()
+        {
             try
             {
-                _listener = new TcpListener(IPAddress.Any, port);
+                _cancellationTokenSource = new();
+                _listener = new TcpListener(IPAddress.Any, Model.Port);
+                _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _listener.Start();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public async Task ReceiveAsync()
+        {
+            while (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                _client?.Dispose();
+                _stream?.Dispose();
 
                 _client = await _listener.AcceptTcpClientAsync();
                 _stream = _client.GetStream();
 
-                IsConnected = true;
-            }
-            catch
-            {
-
+                while (true)
+                {
+                    var model = await ReceiveXrayDataAsync();
+                    if (model == null)
+                    {
+                        break;
+                    }
+                    _eventAggregator.GetEvent<FileReceiveEvent>().Publish(model);
+                }
             }
         }
 
-        public void Stop()
+        public void Dispose()
         {
             _stream?.Close();
             _client?.Close();
             _listener?.Stop();
-            IsConnected = false;
         }
 
 
@@ -58,24 +91,33 @@ namespace MZ.Xray.Engine
         {
             try
             {
-                //Header Length(4byte)
+                //Header Length (4byte)
                 byte[] headerSizeBuffer = new byte[4];
-                await _stream.ReadExactlyAsync(headerSizeBuffer, 0, 4);
+                await _stream.ReadAsync(headerSizeBuffer.AsMemory(0, 4));
                 int headerSize = BitConverter.ToInt32(headerSizeBuffer, 0);
+                if (headerSize == 0)
+                {
+                    return null;
+                }
 
                 //Header Information (utf-8)
                 byte[] headerBuffer = new byte[headerSize];
-                await _stream.ReadExactlyAsync(headerBuffer, 0, headerSize);
+                await _stream.ReadAsync(headerBuffer.AsMemory(0, headerSize));
                 string header = System.Text.Encoding.UTF8.GetString(headerBuffer);
                 string[] parts = header.Split('|');
 
                 //Receive Image
                 int imageSize = int.Parse(parts[3]);
+                if (imageSize == 0)
+                {
+                    return null;
+                }
+
                 byte[] imageBuffer = new byte[imageSize];
                 int totalSize = 0;
                 while (totalSize < imageSize)
                 {
-                    int read = await _stream.ReadAsync(imageBuffer, totalSize, imageSize - totalSize);
+                    int read = await _stream.ReadAsync(imageBuffer.AsMemory(totalSize, imageSize - totalSize));
                     totalSize += read;
                 }
 
@@ -92,14 +134,9 @@ namespace MZ.Xray.Engine
                 return model;
 
             }
-            catch 
+            catch
             {
-                var model = new FileModel
-                {
-                    Message = MZEnum.GetDescription(BaseRole.Fail),
-                };
-
-                return model;
+                return null;
             }
         }
     }

@@ -35,8 +35,6 @@ namespace MZ.Core
         protected IDialogService _dialogService;
         #endregion
 
-
-
         #region Subscription Management
         private readonly List<(EventBase eventBase, SubscriptionToken eventToken)> _subscriptions = [];
         #endregion

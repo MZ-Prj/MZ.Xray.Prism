@@ -7,8 +7,8 @@ using MZ.Util;
 using Prism.Commands;
 using Prism.Ioc;
 using System.Windows.Input;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Auth.ViewModels
 {

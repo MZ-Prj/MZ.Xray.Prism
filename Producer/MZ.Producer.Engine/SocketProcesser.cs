@@ -78,7 +78,7 @@ namespace MZ.Producer.Engine
             }
             catch (Exception ex)
             {
-                Disconnect();
+                //Disconnect();
                 Message = ex.Message;
                 MZLogger.Error(ex.Message);
                 return false;

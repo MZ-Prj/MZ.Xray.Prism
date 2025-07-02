@@ -36,5 +36,6 @@
     <ProjectReference Include="..\MZ.Loading\MZ.Loading.csproj" />
     <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\MZ.Splash\MZ.Splash.csproj" />
+    <ProjectReference Include="..\MZ.Xray.Engine\MZ.Xray.Engine.csproj" />
   </ItemGroup>
 </Project>

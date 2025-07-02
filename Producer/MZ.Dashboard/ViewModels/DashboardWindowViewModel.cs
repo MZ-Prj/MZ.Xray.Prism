@@ -15,10 +15,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-using static MZ.Core.MZEvent;
 using static MZ.Core.MZModel;
 using static MZ.Sidebar.MZEvents;
-using System;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {
