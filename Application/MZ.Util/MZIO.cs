@@ -89,10 +89,9 @@ namespace MZ.Util
         {
             try
             {
-                string directoryPath = Path.GetDirectoryName(path);
-                if (!string.IsNullOrEmpty(directoryPath))
+                if (!string.IsNullOrEmpty(path))
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    Directory.CreateDirectory(path);
                 }
             }
             catch
@@ -105,10 +104,9 @@ namespace MZ.Util
         {
             try
             {
-                string directoryPath = Path.GetDirectoryName(copy);
-                if (!string.IsNullOrEmpty(directoryPath))
+                if (!string.IsNullOrEmpty(copy))
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    Directory.CreateDirectory(copy);
                     File.Copy(input, copy);
                 }
             }

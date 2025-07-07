@@ -124,10 +124,11 @@ namespace MZ.Dashboard.Bahaviors
         {
             if (this.AssociatedObject.DataContext is XrayRealtimeViewModel viewModel)
             {
-                double width = Math.Max(this.AssociatedObject.ActualWidth, 1.0);
-                double height = Math.Max(this.AssociatedObject.ActualHeight, 1.0);
+                int width = (int)Math.Max(this.AssociatedObject.ActualWidth, 1.0);
+                int height = (int)Math.Max(this.AssociatedObject.ActualHeight, 1.0);
 
-                //viewModel.VisionService.ViewParameters.CanvasSize = new(width, height);
+                viewModel.MediaCreate(width, height);
+
                 var canvas = MZFramework.FindChildByName(this.AssociatedObject, "CanvasImageView") as Canvas;
                 var predict = MZFramework.FindChildByName(this.AssociatedObject, "CanvasAIPredictView") as Canvas;
 
@@ -143,13 +144,11 @@ namespace MZ.Dashboard.Bahaviors
         {
             if (this.AssociatedObject.DataContext is XrayRealtimeViewModel viewModel)
             {
-                double width = Math.Max(this.AssociatedObject.ActualWidth, 1.0);
-                double height = Math.Max(this.AssociatedObject.ActualHeight, 1.0);
+                int width = (int)Math.Max(this.AssociatedObject.ActualWidth, 1.0);
+                int height = (int)Math.Max(this.AssociatedObject.ActualHeight, 1.0);
 
-                //if (viewModel.VisionService.ViewParameters.CanvasSize.Width != width || viewModel.VisionService.ViewParameters.CanvasSize.Height != height)
-                //{
-                //    viewModel.VisionService.ViewParameters.CanvasSize = new(width, height);
-                //}
+                viewModel.MediaCreate(width, height);
+
             }
         }
     }

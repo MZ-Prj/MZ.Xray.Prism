@@ -1,8 +1,9 @@
 ﻿using MZ.Domain.Models;
 using MZ.Vision;
+using Prism.Mvvm;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
-using Prism.Mvvm;
+using System.Threading.Tasks;
 
 namespace MZ.Xray.Engine
 {
@@ -52,6 +53,9 @@ namespace MZ.Xray.Engine
         {
             Model.Image = VisionBase.Create(height, width, MatType.CV_8UC4);
             Model.ImageSource = Model.Image.ToBitmapSource();
+
+            Model.Information.Width = width;
+            Model.Information.Height = height;
         }
 
         public void UpdateOnResize(Mat line, int width)
@@ -61,9 +65,25 @@ namespace MZ.Xray.Engine
                 : Model.Image;
         }
 
+        public async Task UpdateOnResizeAsync(Mat line, int width)
+        {
+            await Task.Run(() =>
+            {
+                UpdateOnResize(line, width);
+            });
+        }
+
         public void Shift(Mat color)
         {
             Model.Image = VisionBase.ShiftCol(Model.Image, color);
+        }
+
+        public async Task ShiftAsync(Mat color)
+        {
+            await Task.Run(() =>
+            {
+                Shift(color);
+            });
         }
 
         public void IncreaseCount()

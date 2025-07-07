@@ -5,14 +5,26 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MZ.Xray.Engine
 {
     public class XrayDataSaveManager : BindableBase
     {
 
-        private string _absoluteRoot = $".\\Save\\Image"; 
+        private string _absoluteRoot = $"..\\Save\\Image"; 
         public string AbsoluteRoot { get => _absoluteRoot; set => SetProperty(ref _absoluteRoot, value); }
+
+        public void Base(Mat input, string path, string filename)
+        {
+            MZIO.TryMakeDirectory(path);
+
+            string root = $"{path}/{filename}";
+            if (!File.Exists(path))
+            {
+                VisionBase.Save(input, root);
+            }
+        }
 
         public void Image(Mat input, int start, int end, string path, string filename)
         {
@@ -20,11 +32,19 @@ namespace MZ.Xray.Engine
 
             string root = $"{path}/{filename}";
 
-            if (!File.Exists(root))
+            if (!File.Exists(path))
             {
                 var mat = VisionBase.SplitCol(input, start, end);
-                VisionBase.SaveAsync(mat, root);
+                VisionBase.Save(mat, root);
             }
+        }
+
+        public async Task ImageAsync(Mat input, int start, int end, string path, string filename)
+        {
+            await Task.Run(() =>
+            {
+                Image(input, start, end, path, filename);
+            });
         }
 
         public void Origin(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
@@ -46,6 +66,14 @@ namespace MZ.Xray.Engine
 
                 VisionBase.Save(mat, root);
             }
+        }
+
+        public async Task OriginAsync(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
+        {
+            await Task.Run(() =>
+            {
+                Origin(origin, offset, gain, start, end, path, filename);
+            });
         }
 
         public void Video(List<Mat> list, string path, string filename)

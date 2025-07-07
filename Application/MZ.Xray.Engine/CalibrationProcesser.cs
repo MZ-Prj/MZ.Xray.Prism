@@ -70,23 +70,28 @@ namespace MZ.Xray.Engine
                 : Model.Origin;
         }
 
+        public async Task UpdateOnResizeAsync(Mat line, int width)
+        {
+            await Task.Run(() => {
+                UpdateOnResize(line, width);
+            });
+        }
+
         public bool UpdateOnEnergy(Mat line)
         {
             (_, double max) = VisionBase.MinMax(line);
-
+            bool check = true;
             if (max < Model.OffsetRegion)
             {
                 Model.Offset = line;
+                check = false;
             }
             else if (max < Model.GainRegion)
             {
                 Model.Gain = line;
+                check = false;
             }
-            else
-            {
-                return false;
-            }
-            return true;
+            return check;
         }
 
         public void Shift(Mat line)
@@ -94,10 +99,33 @@ namespace MZ.Xray.Engine
             Model.Origin = VisionBase.ShiftCol(Model.Origin, line);
         }
 
-        public double Normalize(ushort value, double offset, double gain, double rate)
+        public async Task ShiftAsync(Mat line)
+        {
+            await Task.Run(() =>
+            {
+                Shift(line);
+            });
+        }
+
+        public double  Normalize(double value, double offset, double gain, double rate)
         {
             double result = (value - offset) / Math.Max(1.0, (gain - offset)) * rate;
             return Math.Clamp(result, 0.0, 1.0);
+        }
+
+        public bool IsObject(Mat high)
+        {
+            if (high == null || high.Empty())
+            {
+                return false;
+            }
+
+            using Mat converted = VisionBase.Convert16BitTo8Bit(high);
+
+            var checkThresholdTask = IsObjectCheckThreshold(converted, Model.ActivationThresholdRatio);
+            var checkTopPixelTask = IsObjectCheckTopPixel(converted, Model.ActivationThresholdRatio);
+
+            return checkThresholdTask && checkTopPixelTask;
         }
 
         public async Task<bool> IsObjectAsync(Mat high)
@@ -144,6 +172,11 @@ namespace MZ.Xray.Engine
         public bool CompareBoundaryArtifact(double gain)
         {
             return gain > Model.BoundaryArtifact;
+        }
+
+        public void UpdateGain(Mat line)
+        {
+            Model.Gain = line;
         }
 
     }
