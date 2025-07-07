@@ -4,6 +4,8 @@ using MZ.Domain.Models;
 using OpenCvSharp;
 using Prism.Mvvm;
 using static MZ.Vision.VisionEnums;
+using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace MZ.Xray.Engine
 {
@@ -62,9 +64,25 @@ namespace MZ.Xray.Engine
                 ? VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC4, new Scalar(0)) : Model.Image;
         }
 
+        public async Task UpdateOnResizeAsync(Mat line, int width, int maxImageWidth)
+        {
+            await Task.Run(() =>
+            {
+                UpdateOnResize(line, width, maxImageWidth);
+            });
+        }
+
         public void Shift(Mat zeff)
         {
             Model.Image = VisionBase.ShiftCol(Model.Image, zeff);
+        }
+
+        public async Task ShiftAsync(Mat zeff)
+        {
+            await Task.Run(() =>
+            {
+                Shift(zeff);
+            });
         }
 
     }

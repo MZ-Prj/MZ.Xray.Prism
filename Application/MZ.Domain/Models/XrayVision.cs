@@ -118,13 +118,13 @@ namespace MZ.Domain.Models
         private double _relativeWidthRatio = 1.25;
         public double RelativeWidthRatio { get => _relativeWidthRatio; set => SetProperty(ref _relativeWidthRatio, value); }
 
-        private double _offsetRegion = 15000;
+        private double _offsetRegion = 2800;
         public double OffsetRegion { get => _offsetRegion; set => SetProperty(ref _offsetRegion, value); }
 
-        private double _gainRegion = 2600;
+        private double _gainRegion = 15000;
         public double GainRegion { get => _gainRegion; set => SetProperty(ref _gainRegion, value); }
 
-        private double _boundaryArtifact = 5000;
+        private double _boundaryArtifact = 3000;
         public double BoundaryArtifact { get => _boundaryArtifact; set => SetProperty(ref _boundaryArtifact, value); }
         
         private double _activationThresholdRatio = 0.9;

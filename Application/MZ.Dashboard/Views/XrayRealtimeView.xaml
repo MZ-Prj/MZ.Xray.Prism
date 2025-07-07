@@ -25,17 +25,17 @@
         </i:Interaction.Behaviors>
 
         <Canvas x:Name="CanvasImageView" 
+                DataContext="{Binding Path=Media}"
                 CacheMode="BitmapCache"
                 ClipToBounds="True" 
                 IsManipulationEnabled="true" 
-                DataContext="{Binding Path=VisionService}"
-                Width="{Binding Path=ViewParameters.CanvasSize.Width}" 
-                Height="{Binding Path=ViewParameters.CanvasSize.Height}"
+                Width="{Binding Path=Information.Width}" 
+                Height="{Binding Path=Information.Height}"
                 SnapsToDevicePixels="True"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderOptions.EdgeMode="Aliased"
                 RenderTransformOrigin="0.5, 0.5">
-
+            <!--
             <Canvas.Effect>
                 <managers:XrayShaderManager Input="{Binding Path=ViewParameters.ImageBrush}"
                                             TextureSize="{Binding Path=ViewParameters.CanvasSize, Mode=TwoWay}"
@@ -48,8 +48,10 @@
             <Canvas.RenderTransform>
                 <ScaleTransform ScaleX="{Binding Path=ViewParameters.Zoom}" ScaleY="{Binding Path=ViewParameters.Zoom}"/>
             </Canvas.RenderTransform>
+            -->
+            
             <Canvas.Background>
-                <ImageBrush ImageSource="{Binding Path=ViewParameters.ImageSource, Mode=OneWay}"/>
+                <ImageBrush ImageSource="{Binding Path=Model.ImageSource, Mode=OneWay}"/>
             </Canvas.Background>
         </Canvas>
 

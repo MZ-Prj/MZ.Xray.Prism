@@ -1,5 +1,6 @@
 ﻿using MZ.Core;
 using MZ.Dashboard.Models;
+using MZ.Xray.Engine;
 using MZ.Util;
 using MahApps.Metro.IconPacks;
 using Prism.Commands;
@@ -8,11 +9,17 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
     public class XrayRealtimeViewModel : MZBindableBase
     {
+        #region Service
+        private readonly IXrayService _xrayService;
+        #endregion
+
         #region Params
         private Canvas _canvasImageView;
         public Canvas CanvasImageView { get => _canvasImageView; set => SetProperty(ref _canvasImageView, value); }
@@ -21,6 +28,10 @@ namespace MZ.Dashboard.ViewModels
         public Canvas CanvasPredictView { get => _canvasPredictView; set => SetProperty(ref _canvasPredictView, value); }
 
         public ObservableCollection<IconButtonModel> VideoButtons { get; } = [];
+
+        public MediaProcesser _media;
+        public MediaProcesser Media { get => _media; set => SetProperty(ref _media, value); }
+
         #endregion
 
         #region Command
@@ -34,8 +45,12 @@ namespace MZ.Dashboard.ViewModels
         public ICommand NextCommand => _nextCommand ??= new(MZAction.Wrapper(NextButton));
 
         #endregion
-        public XrayRealtimeViewModel(IContainerExtension container) : base(container)
+        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService) : base(container)
         {
+            _xrayService = xrayService;
+
+            Media = _xrayService.Media;
+            
             base.Initialize();
         }
 
@@ -55,8 +70,6 @@ namespace MZ.Dashboard.ViewModels
                 pickerButton.IconKind = pickerButton.IconKind == nameof(PackIconMaterialKind.PinOff) ? nameof(PackIconMaterialKind.Pin) : nameof(PackIconMaterialKind.PinOff);
             }
         }
-
-
         private void PlayStopButton()
         {
         }
@@ -67,6 +80,11 @@ namespace MZ.Dashboard.ViewModels
 
         private void NextButton()
         {
+        }
+
+        public void MediaCreate(int width, int height)
+        {
+            _xrayService.Media.Create(width, height);
         }
     }
 }

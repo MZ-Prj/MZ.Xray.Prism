@@ -1,7 +1,10 @@
 ﻿using MZ.Domain.Models;
 using MZ.Vision;
 using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Prism.Mvvm;
 using static MZ.Vision.VisionEnums;
 
@@ -26,6 +29,127 @@ namespace MZ.Xray.Engine
         }
 
         #endregion
+
+        public MaterialProcesser()
+        {
+            InitializeMaterial();
+        }
+
+        public void InitializeMaterial()
+        {
+            Model.Image = VisionBase.Create(byte.MaxValue, byte.MaxValue, MatType.CV_8UC4);
+            Model.Image.SetTo(Scalar.All(0));
+
+            SetMaterialControls();
+            UpdateAllMaterialGraph();
+        }
+
+        public void SetMaterialControls()
+        {
+            Model.Controls.Add(new MaterialControlModel() { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
+            Model.Controls.Add(new MaterialControlModel() { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
+            Model.Controls.Add(new MaterialControlModel() { Y = 100, XMin = -10, XMax = 255, Scalar = new Scalar(255, 128, 0, 255) });
+        }
+
+        public void SetMaterialControlsInDatabase(ICollection<MaterialControlModel> controls)
+        {
+            Model.Controls.Clear();
+            foreach (var control in controls)
+            {
+                Model.Controls.Add(
+                    new MaterialControlModel()
+                    {
+                        Y = control.Y,
+                        XMin = control.XMin,
+                        XMax = control.XMax,
+                        Scalar = control.Scalar
+                    }
+                );
+            }
+            SortControls();
+            UpdateAllMaterialGraph();
+        }
+
+        public void UpdateAllMaterialGraph()
+        {
+            if (Model.Image == null)
+            {
+                return;
+            }
+
+            Model.Image.SetTo(Scalar.All(0));
+
+            int width = Model.Image.Width;
+            int height = Model.Image.Height;
+
+            SortControls();
+            foreach (var control in Model.Controls)
+            {
+                DrawControl(control, width, height);
+            }
+
+            if (Model.Blur > 0)
+            {
+                Model.Image = VisionBase.Blur(Model.Image, (int)Model.Blur);
+            }
+
+            // 그래프 보여주는 용도
+            var image = VisionBase.Flip(Model.Image, FlipMode.X);
+            Model.ImageSource = image.ToBitmapSource();
+        }
+
+        public void DrawControl(MaterialControlModel control, int width, int height)
+        {
+            int xMin = (int)control.XMin;
+            int xMax = (int)control.XMax;
+            double maxY = control.Y;
+
+            Scalar color = control.Scalar;
+            color.Val3 = byte.MaxValue;
+
+            double centerX = (xMin + xMax) / 2.0;
+            double halfDistance = (xMax - xMin) / 2.0;
+            double p = -maxY / (halfDistance * halfDistance);
+
+            List<Point> parabolaPoints = [];
+
+            for (int x = xMin; x <= xMax; x++)
+            {
+                if (x < 0 || x >= width)
+                {
+                    continue;
+                }
+
+                // y = a(x - centerX)^2 + b
+                double y = p * Math.Pow(x - centerX, 2) + maxY;
+                int yAxis = Math.Max(0, Math.Min(height - 1, (int)Math.Round(y)));
+
+                parabolaPoints.Add(new Point(x, yAxis));
+            }
+
+            // 채우기 위한 polygon
+            var polygonPoints = new List<Point>
+            {
+                new (xMin, 0)
+            };
+            polygonPoints.AddRange(parabolaPoints);
+            polygonPoints.Add(new Point(xMax, 0));
+
+            Cv2.FillPoly(Model.Image, [[.. polygonPoints]], color);
+        }
+
+        /// <summary>
+        /// Matrial List 목록 정렬 (Y값 큰 순서)
+        /// </summary>
+        public void SortControls()
+        {
+            var sortedList = Model.Controls.OrderByDescending(p => p.Y).ToList();
+            Model.Controls.Clear();
+            foreach (var parabola in sortedList)
+            {
+                Model.Controls.Add(parabola);
+            }
+        }
 
         public Vec4b Calculation(double high, double low)
         {

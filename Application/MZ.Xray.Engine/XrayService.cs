@@ -9,7 +9,7 @@ using MZ.Domain.Models;
 using OpenCvSharp;
 using Prism.Events;
 using static MZ.Event.MZEvent;
-using System.Threading.Channels;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MZ.Xray.Engine
 {
@@ -29,13 +29,11 @@ namespace MZ.Xray.Engine
 
         public void InitializeEvent()
         {
-            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe(async (FileModel file) =>
+            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe( async (FileModel file) =>
             {
                 await Process(file.Image);
             }, ThreadOption.UIThread, true);
         }
-
-
     }
 
     public partial class XrayService : BindableBase, IXrayService
@@ -154,7 +152,6 @@ namespace MZ.Xray.Engine
         /// <returns></returns>
         public async Task Process(Mat origin)
         {
-            // 받아온 값이 유무 확인
             if (VisionBase.IsEmpty(origin))
             {
                 return;
@@ -167,7 +164,7 @@ namespace MZ.Xray.Engine
             await UpdateOnResizeAsync(line);
 
             // Update : Gain, Offset 
-            if (Calibration.UpdateOnEnergy(line))
+            if (!Calibration.UpdateOnEnergy(line))
             {
                 return;
             }
@@ -176,15 +173,18 @@ namespace MZ.Xray.Engine
             (Mat high, _, Mat color, Mat zeff) = Calculation(line);
 
             // 물체 유무 판단
-            if (await Calibration.IsObjectAsync(high))
+            bool isObject = await Calibration.IsObjectAsync(high);
+
+            if (isObject)
             {
                 await ShiftAsync(line, color, zeff);
                 Media.IncreaseCount();
             }
             else
             {
-                await SaveAsync();
+                Save();
                 Media.ClearCount();
+                Calibration.UpdateGain(line);
             }
         }
 
@@ -220,20 +220,22 @@ namespace MZ.Xray.Engine
                     int l = halfHeight + y;
 
                     // Gain(High,Low) / Offset(High,Low) 픽셀 값
-                    double gh = gain.At<ushort>(y, 0);
-                    double oh = offset.At<ushort>(y, 0);
-                    double gl = gain.At<ushort>(l, 0);
-                    double ol = offset.At<ushort>(l, 0);
+                    double gl = gain.At<ushort>(y, 0);
+                    double ol = offset.At<ushort>(y, 0);
+                    double gh = gain.At<ushort>(l, 0);
+                    double oh = offset.At<ushort>(l, 0);
 
                     // Gain값이 해당 boundary 이상일 때
                     if (Calibration.CompareBoundaryArtifact(gh))
                     {
                         // 정규화
-                        double nh = Calibration.Normalize(line.At<ushort>(y, x), oh, gh, Material.HighLowRate);
-                        double nl = Calibration.Normalize(line.At<ushort>(l, x), ol, gl, Material.HighLowRate);
+                        double nh = Calibration.Normalize(line.At<ushort>(l, x), oh, gh, Material.HighLowRate);
+                        double nl = Calibration.Normalize(line.At<ushort>(y, x), ol, gl, Material.HighLowRate);
+
                         // Min, Max 검증
                         ushort uh = (ushort)(Math.Max(nh, nl) * ushort.MaxValue);
                         ushort ul = (ushort)(Math.Min(nh, nl) * ushort.MaxValue);
+
                         // 값 입력
                         high.Set(k, x, uh);
                         low.Set(k, x, ul);
@@ -261,9 +263,9 @@ namespace MZ.Xray.Engine
             int maxImageWidth = Calibration.MaxImageWidth;
 
             await Task.WhenAll(
-                Task.Run(()=> Calibration.UpdateOnResize(line, width)),
-                Task.Run(()=> Media.UpdateOnResize(line, maxImageWidth)),
-                Task.Run(()=> Zeffect.UpdateOnResize(line, width, maxImageWidth)));
+                Calibration.UpdateOnResizeAsync(line, width),
+                Media.UpdateOnResizeAsync(line, maxImageWidth),
+                Zeffect.UpdateOnResizeAsync(line, width, maxImageWidth));
         }
 
         /// <summary>
@@ -276,18 +278,17 @@ namespace MZ.Xray.Engine
         public async Task ShiftAsync(Mat line, Mat color, Mat zeff)
         {
             await Task.WhenAll(
-                Task.Run(() => Calibration.Shift(line)),
-                Task.Run(() => Media.Shift(color)),
-                Task.Run(() => Zeffect.Shift(zeff)));
+                Calibration.ShiftAsync(line),
+                Media.ShiftAsync(color),
+                Zeffect.ShiftAsync(zeff));
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task SaveAsync()
+        public void Save()
         {
-
             int frameCount = Media.Information.Count;
             int sensorWidth = Calibration.SensorImageWidth;
             int width = Media.Image.Width;
@@ -302,10 +303,13 @@ namespace MZ.Xray.Engine
 
             (int start, int end) = SaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
-            await Task.WhenAll(
-                Task.Run(() => SaveManager.Image(Media.Image, start, end, path, $"{time}.png")),
-                Task.Run(() => SaveManager.Origin(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff")));
-
+            //이미지 저장 background
+            Task.Run(async () =>
+            {
+                await Task.WhenAll(
+                    SaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
+                    SaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"));
+            });
         }
     }
 }

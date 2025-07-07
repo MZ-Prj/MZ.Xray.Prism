@@ -15,7 +15,7 @@ namespace MZ.Dashboard
         public override void OnInitialized(IContainerProvider containerProvider)
         {
             SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardControlView)));
-            SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
+            //SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
         }
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -28,10 +28,10 @@ namespace MZ.Dashboard
             _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
             {
                 SetWindowLocate(MZWindowNames.DashboardWindow, 0);
-                SetWindowLocate(MZWindowNames.AnalysisWindow, 1);
+                //SetWindowLocate(MZWindowNames.AnalysisWindow, 1);
 
                 ShowWindow(MZWindowNames.DashboardWindow);
-                ShowWindow(MZWindowNames.AnalysisWindow);
+                //ShowWindow(MZWindowNames.AnalysisWindow);
             }, ThreadOption.UIThread, true);
         }
     }
