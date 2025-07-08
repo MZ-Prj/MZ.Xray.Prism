@@ -11,5 +11,8 @@ namespace MZ.Xray.Engine
         XrayDataSaveManager SaveManager { get; set; }
         SocketReceiveProcesser SocketReceive { get; set; }
         void InitializeSocket();
+        void Play();
+        void Stop();
+        bool IsPlaying();
     }
 }

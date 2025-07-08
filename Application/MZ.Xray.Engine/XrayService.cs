@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Threading.Channels;
 using Prism.Mvvm;
 using MZ.Logger;
 using MZ.Vision;
@@ -9,14 +10,14 @@ using MZ.Domain.Models;
 using OpenCvSharp;
 using Prism.Events;
 using static MZ.Event.MZEvent;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MZ.Xray.Engine
 {
     public partial class XrayService : BindableBase, IXrayService
     {
-        public readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         private readonly IEventAggregator _eventAggregator;
+        private readonly Channel<Mat> _imageProcessingChannel = Channel.CreateBounded<Mat>(100);
 
         public XrayService(IEventAggregator eventAggregator)
         {
@@ -29,72 +30,101 @@ namespace MZ.Xray.Engine
 
         public void InitializeEvent()
         {
-            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe( async (FileModel file) =>
+            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe( (FileModel file) =>
             {
-                await Process(file.Image);
+                _imageProcessingChannel.Writer.TryWrite(file.Image);
             }, ThreadOption.UIThread, true);
+
+            Task.Run(ProcessImagesFromChannel);
+        }
+
+        private async Task ProcessImagesFromChannel()
+        {
+            await foreach (var image in _imageProcessingChannel.Reader.ReadAllAsync())
+            {
+                await Process(image);
+            }
         }
     }
 
     public partial class XrayService : BindableBase, IXrayService
     {
         #region Fields & Properties
-        private readonly ProcessThread _mediaProcess = new();
+        private CancellationTokenSource _mediaCts;
+        private Task _mediaTask;
+        private bool _isRunning => _mediaCts != null && !_mediaCts.IsCancellationRequested;
         #endregion
 
-        private void StartMediaProcess()
+        private void StartMediaTask()
         {
-            _mediaProcess.IsRunning = true;
-            _mediaProcess.Thread = new Thread(() =>
+            if (_isRunning)
+            {
+                return;
+            }
+
+            _mediaCts = new CancellationTokenSource();
+
+            _mediaTask = Task.Run(async () =>
             {
                 try
                 {
-                    while (_mediaProcess.IsRunning)
+                    while (!_mediaCts.Token.IsCancellationRequested)
                     {
-                        MediaProcess();
-                        Thread.Sleep((1000 / Media.Information.FPS));
+                        MediaTask();
+                        await Task.Delay(1000 / Media.Information.FPS, _mediaCts.Token);
                     }
+                }
+                catch (OperationCanceledException)
+                {
                 }
                 catch (Exception ex)
                 {
                     MZLogger.Error(ex.ToString());
                 }
-
-            });
-            _mediaProcess.Thread.Start();
+            }, _mediaCts.Token);
         }
 
 
-        private void StopMediaProcess()
+        private void StopMediaTask()
         {
-            _mediaProcess.IsRunning = false;
-            if (_mediaProcess.Thread != null && _mediaProcess.Thread.IsAlive)
+            if (!_isRunning)
             {
-                _mediaProcess.Thread.Join(_mediaProcess.LazyTime);
+                return;
             }
+
+            _mediaCts?.Cancel();
+            _mediaTask.Wait(TimeSpan.FromMilliseconds(100));
+
+            _mediaCts?.Dispose();
+            _mediaCts = null;
+            _mediaTask = null;
         }
 
+        private void MediaTask()
+        {
+            _dispatcher.Invoke(() =>
+            {
+                Media.UpdateImageSource();
+                //TODO : Frames와 연결후 slider 만들기
+            });
+        }
 
         public void Play()
         {
             Stop();
 
-            StartMediaProcess();
+            StartMediaTask();
         }
 
         public void Stop()
         {
-            StopMediaProcess();
+            StopMediaTask();
         }
 
-        private void MediaProcess()
+        public bool IsPlaying()
         {
-            _dispatcher.Invoke(() =>
-            {
-                
-            });
+            return _isRunning;
         }
-
     }
 
     public partial class XrayService : BindableBase, IXrayService

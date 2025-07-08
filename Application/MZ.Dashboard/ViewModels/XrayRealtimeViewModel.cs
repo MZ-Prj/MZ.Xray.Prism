@@ -64,14 +64,31 @@ namespace MZ.Dashboard.ViewModels
 
         private void PickerButton()
         {
-            var pickerButton = VideoButtons.FirstOrDefault(vb => vb.Command == PickerCommand);
-            if (pickerButton != null)
+            //ui
+            var button = VideoButtons.FirstOrDefault(vb => vb.Command == PickerCommand);
+            if (button != null)
             {
-                pickerButton.IconKind = pickerButton.IconKind == nameof(PackIconMaterialKind.PinOff) ? nameof(PackIconMaterialKind.Pin) : nameof(PackIconMaterialKind.PinOff);
+                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.PinOff) ? nameof(PackIconMaterialKind.Pin) : nameof(PackIconMaterialKind.PinOff);
             }
         }
         private void PlayStopButton()
         {
+            // ui
+            var button = VideoButtons.FirstOrDefault(vb => vb.Command == PlayStopCommand);
+            if (button != null)
+            {
+                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.Play) ? nameof(PackIconMaterialKind.Stop) : nameof(PackIconMaterialKind.Play);
+            }
+
+            // logic
+            if (_xrayService.IsPlaying())
+            {
+                _xrayService.Stop();
+            }
+            else
+            {
+                _xrayService.Play();
+            }
         }
 
         private void PreviousButton()

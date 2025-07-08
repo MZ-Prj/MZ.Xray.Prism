@@ -4,6 +4,8 @@ using Prism.Mvvm;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using System.Threading.Tasks;
+using System;
+using System.Windows.Media.Imaging;
 
 namespace MZ.Xray.Engine
 {
@@ -24,6 +26,7 @@ namespace MZ.Xray.Engine
                 if (_model.Information.Slider != slider)
                 {
                     _model.Information.Slider = slider;
+
                     if (_model.Frames.Count > 0 && _model.Information.Slider - 1 >= 0 && _model.Information.Slider - 1 < _model.Frames.Count)
                     {
                         var bitmap = _model.Frames[_model.Information.Slider - 1].Image.ToBitmapSource();
@@ -65,12 +68,18 @@ namespace MZ.Xray.Engine
                 : Model.Image;
         }
 
+
         public async Task UpdateOnResizeAsync(Mat line, int width)
         {
             await Task.Run(() =>
             {
                 UpdateOnResize(line, width);
             });
+        }
+
+        public void UpdateImageSource()
+        {
+            Model.ImageSource = CanFreezeImageSource(Model.Image.ToBitmapSource());
         }
 
         public void Shift(Mat color)
@@ -95,5 +104,15 @@ namespace MZ.Xray.Engine
         {
             Model.Information.Count = 0;
         }
+
+        public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        {
+            if (bitmap.CanFreeze)
+            {
+                bitmap.Freeze();
+            }
+            return bitmap;
+        }
+
     }
 }
