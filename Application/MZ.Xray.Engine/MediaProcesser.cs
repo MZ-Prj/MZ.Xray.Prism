@@ -1,11 +1,15 @@
 ﻿using MZ.Domain.Models;
 using MZ.Vision;
+using Prism.Commands;
 using Prism.Mvvm;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Collections.ObjectModel;
 
 namespace MZ.Xray.Engine
 {
@@ -16,33 +20,25 @@ namespace MZ.Xray.Engine
         public MediaModel Model { get => _model; set => SetProperty(ref _model, value); }
         #endregion
 
-        #region Wrapper
-        public int Slider
-        {
-            get => _model.Information.Slider;
-            set
-            {
-                int slider = (value < 0 ? 0 : value);
-                if (_model.Information.Slider != slider)
-                {
-                    _model.Information.Slider = slider;
+        #region Command
 
-                    if (_model.Frames.Count > 0 && _model.Information.Slider - 1 >= 0 && _model.Information.Slider - 1 < _model.Frames.Count)
-                    {
-                        var bitmap = _model.Frames[_model.Information.Slider - 1].Image.ToBitmapSource();
-                        _model.ImageSource = VisionBase.CanFreezeImageSource(bitmap);
-                    }
-                    else
-                    {
-                        _model.ImageSource = null;
-                    }
-                }
-            }
-        }
+        private DelegateCommand _changedSliderCommand;
+        public ICommand ChangedSliderCommand => _changedSliderCommand ??= new DelegateCommand(ChangedSlider);
+
+        #endregion
+
+        #region Wrapper
+
         public Mat Image
         {
             get => Model.Image;
             set => Model.Image = value;
+        }
+
+        public ImageSource ImageSource
+        {
+            get => Model.ImageSource;
+            set => Model.ImageSource = value;
         }
 
         public FrameInformationModel Information
@@ -50,24 +46,34 @@ namespace MZ.Xray.Engine
             get => Model.Information;
             set => Model.Information = value;
         }
+
+
+        public ObservableCollection<FrameModel> Frames
+        {
+            get => Model.Frames;
+            set => Model.Frames = value;
+        }
+
         #endregion
 
         public void Create(int width, int height)
         {
-            Model.Image = VisionBase.Create(height, width, MatType.CV_8UC4);
-            Model.ImageSource = Model.Image.ToBitmapSource();
+            Image = VisionBase.Create(height, width, MatType.CV_8UC4);
+            ImageSource = Image.ToBitmapSource();
 
-            Model.Information.Width = width;
-            Model.Information.Height = height;
+            Information.Width = width;
+            Information.Height = height;
+
+            Information.Size = new(width, height);
         }
 
         public void UpdateOnResize(Mat line, int width)
         {
-            Model.Image = (Model.Image.Width != width)
-                ? VisionBase.Create((line.Height / 2), width, MatType.CV_8UC4, new Scalar(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue))
-                : Model.Image;
+            if (Image.Width != width)
+            {
+                Image = VisionBase.Create((line.Height / 2), width, MatType.CV_8UC4, new Scalar(byte.MaxValue, byte.MaxValue, byte.MaxValue, 0));
+            }
         }
-
 
         public async Task UpdateOnResizeAsync(Mat line, int width)
         {
@@ -77,14 +83,38 @@ namespace MZ.Xray.Engine
             });
         }
 
-        public void UpdateImageSource()
+        public void ChangedSlider()
         {
-            Model.ImageSource = CanFreezeImageSource(Model.Image.ToBitmapSource());
+            if (IsShowFrame(Information.Slider))
+            {
+                ImageSource = CanFreezeImageSource(Frames[Information.Slider-1].Image.ToBitmapSource());
+            }
+        }
+
+        public void Update()
+        {
+            ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
+
+            if (Information.Interval % Information.MaxInterval == 0)
+            {
+                Frames.Add(new() { Image = Image, DateTime = DateTime.Now });
+
+                if (Information.Slider >= Information.MaxSlider)
+                {
+                    Frames.RemoveAt(0);
+                    Information.Slider = Information.MaxSlider;
+                    Information.LastestSlider = Information.MaxSlider; 
+                }
+                Information.Slider++;
+                Information.LastestSlider++;
+                Information.Interval = 0;
+            }
+            Information.Interval++;
         }
 
         public void Shift(Mat color)
         {
-            Model.Image = VisionBase.ShiftCol(Model.Image, color);
+            Image = VisionBase.ShiftCol(Image, color);
         }
 
         public async Task ShiftAsync(Mat color)
@@ -95,14 +125,24 @@ namespace MZ.Xray.Engine
             });
         }
 
+        public void PrevNextSlider(int rule)
+        {
+            int slider = Information.Slider + rule;
+            if (IsShowFrame(slider))
+            {
+                ImageSource = CanFreezeImageSource(Frames[slider-1].Image.ToBitmapSource());
+                Information.Slider = slider;
+            }
+        }
+
         public void IncreaseCount()
         {
-            Model.Information.Count++;
+            Information.Count++;
         }
 
         public void ClearCount()
         {
-            Model.Information.Count = 0;
+            Information.Count = 0;
         }
 
         public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
@@ -112,6 +152,16 @@ namespace MZ.Xray.Engine
                 bitmap.Freeze();
             }
             return bitmap;
+        }
+
+        public void LastestSlider()
+        {
+            Information.Slider = Information.LastestSlider;
+        }
+
+        private bool IsShowFrame(int slider)
+        {
+            return slider <= Frames.Count && slider > 0 && slider <= Information.MaxSlider;
         }
 
     }

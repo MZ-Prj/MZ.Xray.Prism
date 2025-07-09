@@ -9,8 +9,6 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -62,23 +60,16 @@ namespace MZ.Dashboard.ViewModels
             VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronDoubleRight), NextCommand));
         }
 
+        #region Button
         private void PickerButton()
         {
             //ui
-            var button = VideoButtons.FirstOrDefault(vb => vb.Command == PickerCommand);
-            if (button != null)
-            {
-                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.PinOff) ? nameof(PackIconMaterialKind.Pin) : nameof(PackIconMaterialKind.PinOff);
-            }
+            ToggleVideoButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff));
         }
         private void PlayStopButton()
         {
             // ui
-            var button = VideoButtons.FirstOrDefault(vb => vb.Command == PlayStopCommand);
-            if (button != null)
-            {
-                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.Play) ? nameof(PackIconMaterialKind.Stop) : nameof(PackIconMaterialKind.Play);
-            }
+            ToggleVideoButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop));
 
             // logic
             if (_xrayService.IsPlaying())
@@ -93,15 +84,30 @@ namespace MZ.Dashboard.ViewModels
 
         private void PreviousButton()
         {
+            _xrayService.Media.PrevNextSlider(-1);
         }
 
         private void NextButton()
         {
+            _xrayService.Media.PrevNextSlider(+1);
         }
 
-        public void MediaCreate(int width, int height)
+        private void ToggleVideoButton(ICommand targetCommand, string iconOn, string iconOff)
+        {
+            var button = VideoButtons.FirstOrDefault(vb => vb.Command == targetCommand);
+            if (button != null)
+            {
+                button.IconKind = button.IconKind == iconOff ? iconOn : iconOff;
+            }
+        }
+        #endregion
+
+        #region Service
+        public void CreateMedia(int width, int height)
         {
             _xrayService.Media.Create(width, height);
         }
+        #endregion
+
     }
 }

@@ -32,11 +32,15 @@ namespace MZ.Xray.Engine
         {
             _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe( (FileModel file) =>
             {
-                _imageProcessingChannel.Writer.TryWrite(file.Image);
+                if (IsRunning)
+                {
+                    _imageProcessingChannel.Writer.TryWrite(file.Image);
+                }
             }, ThreadOption.UIThread, true);
 
             Task.Run(ProcessImagesFromChannel);
         }
+
 
         private async Task ProcessImagesFromChannel()
         {
@@ -52,12 +56,12 @@ namespace MZ.Xray.Engine
         #region Fields & Properties
         private CancellationTokenSource _mediaCts;
         private Task _mediaTask;
-        private bool _isRunning => _mediaCts != null && !_mediaCts.IsCancellationRequested;
+        private bool IsRunning => _mediaCts != null && !_mediaCts.IsCancellationRequested;
         #endregion
 
         private void StartMediaTask()
         {
-            if (_isRunning)
+            if (IsRunning)
             {
                 return;
             }
@@ -68,9 +72,11 @@ namespace MZ.Xray.Engine
             {
                 try
                 {
+                    Media.LastestSlider();
+
                     while (!_mediaCts.Token.IsCancellationRequested)
                     {
-                        MediaTask();
+                        Media.Update();
                         await Task.Delay(1000 / Media.Information.FPS, _mediaCts.Token);
                     }
                 }
@@ -87,7 +93,7 @@ namespace MZ.Xray.Engine
 
         private void StopMediaTask()
         {
-            if (!_isRunning)
+            if (!IsRunning)
             {
                 return;
             }
@@ -98,15 +104,6 @@ namespace MZ.Xray.Engine
             _mediaCts?.Dispose();
             _mediaCts = null;
             _mediaTask = null;
-        }
-
-        private void MediaTask()
-        {
-            _dispatcher.Invoke(() =>
-            {
-                Media.UpdateImageSource();
-                //TODO : Frames와 연결후 slider 만들기
-            });
         }
 
         public void Play()
@@ -123,7 +120,7 @@ namespace MZ.Xray.Engine
 
         public bool IsPlaying()
         {
-            return _isRunning;
+            return IsRunning;
         }
     }
 
@@ -149,7 +146,6 @@ namespace MZ.Xray.Engine
                 }
             });
         }
-
     }
 
     public partial class XrayService : BindableBase, IXrayService

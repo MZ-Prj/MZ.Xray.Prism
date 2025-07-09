@@ -40,11 +40,14 @@ namespace MZ.Xray.Engine
             Model.Image = VisionBase.Create(byte.MaxValue, byte.MaxValue, MatType.CV_8UC4);
             Model.Image.SetTo(Scalar.All(0));
 
-            SetMaterialControls();
+            UpdateMaterialControls();
             UpdateAllMaterialGraph();
         }
 
-        public void SetMaterialControls()
+        /// <summary>
+        /// 데이터 베이스에서 불러오지 못할 경우 기존 값
+        /// </summary>
+        public void UpdateMaterialControls()
         {
             Model.Controls.Add(new MaterialControlModel() { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
             Model.Controls.Add(new MaterialControlModel() { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
