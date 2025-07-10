@@ -6,6 +6,9 @@ namespace MZ.Dashboard.Models
 {
     public class IconButtonModel : BindableBase
     {
+        private object _uid;
+        public object UId { get => _uid; set => SetProperty(ref _uid, value); }
+
         private bool _isVisibility = true;
         public bool IsVisibility { get => _isVisibility; set => SetProperty(ref _isVisibility, value); }
 
@@ -18,12 +21,13 @@ namespace MZ.Dashboard.Models
         private Brush _colorBrush;
         public Brush ColorBrush { get => _colorBrush; set => SetProperty(ref _colorBrush, value); }
 
-        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true)
+        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null)
         {
             IsVisibility = isVisibility;
             Command = command;
             IconKind = iconKind;
             ColorBrush = colorBrush ?? Brushes.Gray;
+            UId = uid ?? iconKind;
         }
     }
 }

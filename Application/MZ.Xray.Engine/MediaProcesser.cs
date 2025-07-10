@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
+using MZ.Domain.Enums;
 
 namespace MZ.Xray.Engine
 {
@@ -41,12 +42,17 @@ namespace MZ.Xray.Engine
             set => Model.ImageSource = value;
         }
 
+        public FilterModel Filter
+        {
+            get => Model.Filter;
+            set => Model.Filter = value;
+        }
+
         public FrameInformationModel Information
         {
             get => Model.Information;
             set => Model.Information = value;
         }
-
 
         public ObservableCollection<FrameModel> Frames
         {
@@ -134,7 +140,6 @@ namespace MZ.Xray.Engine
                 Information.Slider = slider;
             }
         }
-
         public void IncreaseCount()
         {
             Information.Count++;
@@ -145,23 +150,48 @@ namespace MZ.Xray.Engine
             Information.Count = 0;
         }
 
-        public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        public void LastestSlider()
+        {
+            Information.Slider = Information.LastestSlider;
+        }
+
+        public void ChangedFilterColor(ColorRole color)
+        {
+            Filter.ColorMode = color;
+        }
+
+        public void ChangedFilterBrightness(float bright)
+        {
+            Filter.Brightness += bright;
+        }
+
+        public void ChangedFilterContrast(float contrast)
+        {
+            Filter.Contrast += contrast;
+        }
+
+        public void ChangedFilterZoom(float zoom)
+        {
+            Filter.Zoom += zoom;
+        }
+
+        public void ClearFilter()
+        {
+            Filter = new ();
+        }
+
+        private bool IsShowFrame(int slider)
+        {
+            return slider <= Frames.Count && slider > 0 && slider <= Information.MaxSlider;
+        }
+
+        private BitmapSource CanFreezeImageSource(BitmapSource bitmap)
         {
             if (bitmap.CanFreeze)
             {
                 bitmap.Freeze();
             }
             return bitmap;
-        }
-
-        public void LastestSlider()
-        {
-            Information.Slider = Information.LastestSlider;
-        }
-
-        private bool IsShowFrame(int slider)
-        {
-            return slider <= Frames.Count && slider > 0 && slider <= Information.MaxSlider;
         }
 
     }

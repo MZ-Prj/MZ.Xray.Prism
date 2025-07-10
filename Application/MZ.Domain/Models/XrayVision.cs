@@ -11,16 +11,16 @@ namespace MZ.Domain.Models
     public class FilterModel : BindableBase, IFilter
     {
         private float _zoom = 1.0f;
-        public float Zoom { get => _zoom; set => SetProperty(ref _zoom, value); }
+        public float Zoom { get => _zoom; set => SetProperty(ref _zoom, Math.Clamp(value, 1.0f, 5.0f)); }
 
         private float _sharpness = 0.0f;
         public float Sharpness { get => _sharpness; set => SetProperty(ref _sharpness, value); }
 
         private float _brightness = 0.0f;
-        public float Brightness { get => _brightness; set => SetProperty(ref _brightness, value); }
+        public float Brightness { get => _brightness; set => SetProperty(ref _brightness, Math.Clamp(value, 0.0f, 1.0f)); }
 
         private float _contrast = 2.0f;
-        public float Contrast { get => _contrast; set => SetProperty(ref _contrast, value); }
+        public float Contrast { get => _contrast; set => SetProperty(ref _contrast, Math.Clamp(value, 0.0f, 5.0f)); }
 
         private ColorRole _colorMode = ColorRole.Color;
         public ColorRole ColorMode { get => _colorMode; set => SetProperty(ref _colorMode, value); }
