@@ -52,6 +52,7 @@ namespace MZ.Auth.ViewModels
                 var data = response.Data;
 
                 User.Username = data.IsUsernameSave ? data.LastestUsername : string.Empty;
+                User.Password = string.Empty;
                 User.IsUsernameSave = data.IsUsernameSave;
             }
             catch (Exception ex)

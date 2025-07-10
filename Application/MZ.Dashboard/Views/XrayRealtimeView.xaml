@@ -7,10 +7,16 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:behaviors="clr-namespace:MZ.Dashboard.Bahaviors"
              xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
-             xmlns:managers="clr-namespace:MZ.Resource.Managers;assembly=MZ.Resource"
+             xmlns:managers="clr-namespace:MZ.Resource.Managers;assembly=MZ.Resource" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:XrayRealtimeViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
+        <converters:NumericFloatConverter x:Key="NumericFloatConverter"/>
         <converters:VisibilityConverter x:Key="VisibilityConverter"/>
         <converters:ContrastColorConverter  x:Key="ContrastColorConverter"/>
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
@@ -25,7 +31,7 @@
         </i:Interaction.Behaviors>
 
         <Canvas x:Name="CanvasImageView" 
-                DataContext="{Binding Path=Media}"
+                DataContext="{Binding Path=Media.Model}"
                 CacheMode="BitmapCache"
                 ClipToBounds="True" 
                 IsManipulationEnabled="true" 
@@ -35,23 +41,20 @@
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderOptions.EdgeMode="Aliased"
                 RenderTransformOrigin="0.5, 0.5">
-            <!--
             <Canvas.Effect>
-                <managers:XrayShaderManager Input="{Binding Path=ViewParameters.ImageBrush}"
-                                            TextureSize="{Binding Path=ViewParameters.CanvasSize, Mode=TwoWay}"
-                                            SharpnessLevel="{Binding Path=ViewParameters.SharpnessLevel, Mode=TwoWay}"
-                                            BrightnessLevel="{Binding Path=ViewParameters.BrightnessLevel, Mode=TwoWay}" 
-                                            ContrastLevel="{Binding Path=ViewParameters.ContrastLevel, Mode=TwoWay}"
-                                            ColorMode="{Binding Path=ViewParameters.ColorMode, Mode=TwoWay}"/>
-
+                <managers:XrayShaderManager Input="{Binding Path=ImageSource}"
+                                            TextureSize="{Binding Path=Information.Size, Mode=TwoWay}"
+                                            SharpnessLevel="{Binding Path=Filter.Sharpness, Mode=TwoWay}"
+                                            BrightnessLevel="{Binding Path=Filter.Brightness, Mode=TwoWay}" 
+                                            ContrastLevel="{Binding Path=Filter.Contrast, Mode=TwoWay}"
+                                            ColorMode="{Binding Path=Filter.ColorMode, Mode=TwoWay, Converter={StaticResource NumericFloatConverter}}"/>
             </Canvas.Effect>
             <Canvas.RenderTransform>
-                <ScaleTransform ScaleX="{Binding Path=ViewParameters.Zoom}" ScaleY="{Binding Path=ViewParameters.Zoom}"/>
+                <ScaleTransform ScaleX="{Binding Path=Filter.Zoom}" ScaleY="{Binding Path=Filter.Zoom}"/>
             </Canvas.RenderTransform>
-            -->
             
             <Canvas.Background>
-                <ImageBrush ImageSource="{Binding Path=Model.ImageSource, Mode=OneWay}"/>
+                <ImageBrush ImageSource="{Binding Path=ImageSource, Mode=OneWay}"/>
             </Canvas.Background>
         </Canvas>
 
@@ -131,9 +134,9 @@
                 CacheMode="BitmapCache"
                 IsManipulationEnabled="true" 
                 Visibility="Collapsed"
-                DataContext="{Binding Path=VisionService}"
-                Width="{Binding Path=ViewParameters.CanvasSize.Width}" 
-                Height="{Binding Path=ViewParameters.CanvasSize.Height}"
+                DataContext="{Binding Path=Media}"
+                Width="{Binding Path=Information.Size.Width}" 
+                Height="{Binding Path=Information.Size.Height}"
                 SnapsToDevicePixels="True"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderOptions.EdgeMode="Aliased"
@@ -193,12 +196,18 @@
                 Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}">
 
             <Grid Grid.Row="0" Margin="4">
-                <Slider DataContext="{Binding Path=VisionService}"
-                    Minimum="0" 
-                    Maximum="{Binding Path=ViewParameters.MaximumVideoFrameCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                    Value="{Binding Path=VideoSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    TickFrequency="1"
-                    IsSnapToTickEnabled="True"/>
+                <Slider DataContext="{Binding Path=Media.Model}"
+                        Minimum="1" 
+                        Maximum="{Binding Path=Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        Value="{Binding Path=Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        TickFrequency="1"
+                        IsSnapToTickEnabled="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ValueChanged">
+                            <i:InvokeCommandAction Command="{Binding Path=ChangedSliderCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>
             </Grid>
 
             <Grid Grid.Row="1" Margin="4" >
@@ -244,10 +253,10 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ColorCommand}" 
-                                CommandParameter="{Binding Path=Id}" 
-                                Foreground="{Binding Path=ColorBrush}"
-                                BorderThickness="0" Width="48" Height="48">
+                            <Button Command="{Binding Path=Command}" 
+                                    CommandParameter="{Binding Path=UId}"
+                                    Foreground="{Binding Path=ColorBrush}"
+                                    BorderThickness="0" Width="48" Height="48">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
                             </Button>
                         </DataTemplate>
@@ -267,54 +276,9 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <DockPanel LastChildFill="False">
-                                <RepeatButton DockPanel.Dock="Left" Command="{Binding Path=MinusCommand}" BorderThickness="0" Width="48" Height="48">
-                                    <iconPacks:PackIconMaterial Kind="{Binding Path=MinusIconKind}" Width="24" Height="24"/>
-                                </RepeatButton>
-
-                                <RepeatButton DockPanel.Dock="Right" Command="{Binding Path=PlusCommand}" BorderThickness="0" Width="48" Height="48">
-                                    <iconPacks:PackIconMaterial Kind="{Binding Path=PlusIconKind}" Width="24" Height="24"/>
-                                </RepeatButton>
-
-                                <Grid Width="48" Height="48" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0" Panel.ZIndex="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="1*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" Text="{Binding Path=Value, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"
-                                           TextAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"
-                                           FontSize="20"
-                                           Padding="0"/>
-                                    <TextBlock Grid.Row="1" Text="{Binding Path=LngName, Converter={StaticResource LanguageConverter}}"
-                                           TextAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"
-                                           FontSize="10"/>
-                                </Grid>
-                            </DockPanel>
-
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <ItemsControl Grid.Column="3" ItemsSource="{Binding Path=FilterResetButtons}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel HorizontalAlignment="Stretch"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
+                            <RepeatButton Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}"  Width="24" Height="24"/>
-                            </Button>
+                            </RepeatButton>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

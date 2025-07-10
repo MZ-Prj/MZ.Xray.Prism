@@ -111,13 +111,11 @@ namespace MZ.Dashboard.Bahaviors
         private void OnAttachedLoaded()
         {
             this.AssociatedObject.Loaded += OnLoaded;
-            this.AssociatedObject.LayoutUpdated += OnLayoutUpdated;
         }
 
         private void OnDetachingLoaded()
         {
             this.AssociatedObject.Loaded -= OnLoaded;
-            this.AssociatedObject.LayoutUpdated -= OnLayoutUpdated;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -127,7 +125,7 @@ namespace MZ.Dashboard.Bahaviors
                 int width = (int)Math.Max(this.AssociatedObject.ActualWidth, 1.0);
                 int height = (int)Math.Max(this.AssociatedObject.ActualHeight, 1.0);
 
-                viewModel.MediaCreate(width, height);
+                viewModel.CreateMedia(width, height);
 
                 var canvas = MZFramework.FindChildByName(this.AssociatedObject, "CanvasImageView") as Canvas;
                 var predict = MZFramework.FindChildByName(this.AssociatedObject, "CanvasAIPredictView") as Canvas;
@@ -140,17 +138,6 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
 
-        private void OnLayoutUpdated(object sender, EventArgs e)
-        {
-            if (this.AssociatedObject.DataContext is XrayRealtimeViewModel viewModel)
-            {
-                int width = (int)Math.Max(this.AssociatedObject.ActualWidth, 1.0);
-                int height = (int)Math.Max(this.AssociatedObject.ActualHeight, 1.0);
-
-                viewModel.MediaCreate(width, height);
-
-            }
-        }
     }
 
 }

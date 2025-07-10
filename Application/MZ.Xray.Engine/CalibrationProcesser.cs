@@ -65,9 +65,10 @@ namespace MZ.Xray.Engine
             Model.Gain ??= line;
             Model.Offset ??= line;
 
-            Model.Origin = (width != Model.MaxImageWidth)
-                ? VisionBase.Create(line.Height, (int)Model.MaxImageWidth, MatType.CV_16UC1, new Scalar(0))
-                : Model.Origin;
+            if (width != Model.MaxImageWidth)
+            {
+                Model.Origin = VisionBase.Create(line.Height, (int)Model.MaxImageWidth, MatType.CV_16UC1, new Scalar(0));
+            }
         }
 
         public async Task UpdateOnResizeAsync(Mat line, int width)

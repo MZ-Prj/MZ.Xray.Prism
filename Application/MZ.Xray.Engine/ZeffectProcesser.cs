@@ -60,8 +60,10 @@ namespace MZ.Xray.Engine
 
         public void UpdateOnResize(Mat line, int width, int maxImageWidth)
         {
-            Model.Image = (width != maxImageWidth)
-                ? VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC4, new Scalar(0)) : Model.Image;
+            if (width != maxImageWidth)
+            {
+                Model.Image = VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC4, new Scalar(0));
+            }
         }
 
         public async Task UpdateOnResizeAsync(Mat line, int width, int maxImageWidth)

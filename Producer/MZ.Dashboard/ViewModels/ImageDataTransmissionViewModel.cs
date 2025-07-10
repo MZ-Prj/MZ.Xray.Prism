@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using static MZ.Sidebar.MZEvents;
+using System.Threading.Tasks;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -71,16 +72,19 @@ namespace MZ.Dashboard.ViewModels
         #region Button
         private async void LoadButton()
         {
+            // logic
             using (_loadingService[MZRegionNames.DashboardRegion].Show())
             {
                 await _producerService.LoadAsync();
             }
 
+            // ui
             foreach (var button in ActionButtons)
             {
                 button.IsVisibility = Socket.Model.IsConnected;
             }
 
+            // logic 
             if (Socket.Model.IsConnected)
             {
                 await _producerService.RunAsync();
@@ -94,18 +98,35 @@ namespace MZ.Dashboard.ViewModels
 
         private void PlayPauseButton()
         {
-            var pickerButton = ActionButtons.FirstOrDefault(vb => vb.Command == PlayPauseCommand);
-            if (pickerButton != null)
+            //ui
+            var button = ActionButtons.FirstOrDefault(vb => vb.Command == PlayPauseCommand);
+            if (button != null)
             {
-                pickerButton.IconKind = pickerButton.IconKind == nameof(PackIconMaterialKind.Play) ? nameof(PackIconMaterialKind.Pause) : nameof(PackIconMaterialKind.Play);
+                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.Play) ? nameof(PackIconMaterialKind.Pause) : nameof(PackIconMaterialKind.Play);
             }
 
+            //logic
             _producerService.Pause();
+
         }
 
         private void StopButton()
         {
+            // ui
+            foreach (var actionButton in ActionButtons)
+            {
+                actionButton.IsVisibility = false;
+            }
+
+            var button = ActionButtons.FirstOrDefault(vb => vb.Command == PlayPauseCommand);
+            if (button != null)
+            {
+                button.IconKind = nameof(PackIconMaterialKind.Play);
+            }
+
+            // logic
             _producerService.Stop();
+
         }
         #endregion
     }

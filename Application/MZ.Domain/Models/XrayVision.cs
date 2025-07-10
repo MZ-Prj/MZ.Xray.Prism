@@ -11,16 +11,16 @@ namespace MZ.Domain.Models
     public class FilterModel : BindableBase, IFilter
     {
         private float _zoom = 1.0f;
-        public float Zoom { get => _zoom; set => SetProperty(ref _zoom, value); }
+        public float Zoom { get => _zoom; set => SetProperty(ref _zoom, Math.Clamp(value, 1.0f, 5.0f)); }
 
         private float _sharpness = 0.0f;
         public float Sharpness { get => _sharpness; set => SetProperty(ref _sharpness, value); }
 
         private float _brightness = 0.0f;
-        public float Brightness { get => _brightness; set => SetProperty(ref _brightness, value); }
+        public float Brightness { get => _brightness; set => SetProperty(ref _brightness, Math.Clamp(value, 0.0f, 1.0f)); }
 
         private float _contrast = 2.0f;
-        public float Contrast { get => _contrast; set => SetProperty(ref _contrast, value); }
+        public float Contrast { get => _contrast; set => SetProperty(ref _contrast, Math.Clamp(value, 0.0f, 5.0f)); }
 
         private ColorRole _colorMode = ColorRole.Color;
         public ColorRole ColorMode { get => _colorMode; set => SetProperty(ref _colorMode, value); }
@@ -36,39 +36,37 @@ namespace MZ.Domain.Models
         public DateTime DateTime { get => _dateTime; set => SetProperty(ref _dateTime, value); }
     }
 
-
     public class FrameInformationModel : BindableBase
     {
-
         private int _slider = 0;
         public int Slider { get => _slider; set => SetProperty(ref _slider, value); }
+
+        private int _lastestSlider = 0;
+        public int LastestSlider { get => _lastestSlider; set => SetProperty(ref _lastestSlider, value); }
+
+        private int _maxSlider = 100;
+        public int MaxSlider { get => _maxSlider; set => SetProperty(ref _maxSlider, value); }
+
+        private int _interval = 0;
+        public int Interval { get => _interval; set => SetProperty(ref _interval, value); }
+
+        private int _maxInterval = 32;
+        public int MaxInterval { get => _maxInterval; set => SetProperty(ref _maxInterval, value); }
 
         private int _count = 0;
         public int Count { get => _count; set => SetProperty(ref _count, value); }
 
-        private int _captureCount = 0;
-        public int CaptureCount { get => _captureCount; set => SetProperty(ref _captureCount, value); }
-
-        private int _captureCapacity = 32;
-        public int CaptureCapacity { get => _captureCapacity; set => SetProperty(ref _captureCapacity, value); }
-
         private int _fps = 60;
         public int FPS { get => _fps; set => SetProperty(ref _fps, value); }
-
-        private int _maxStackCount = 100;
-        public int MaxStackCount { get => _maxStackCount; set => SetProperty(ref _maxStackCount, value); }
-
-        private int _stackCount = 0;
-        public int StackCount { get => _stackCount; set => SetProperty(ref _stackCount, value); }
-
-        private bool _isPlaying = false;
-        public bool IsPlaying { get => _isPlaying; set => SetProperty(ref _isPlaying, value); }
 
         private double _width = 0;
         public double Width { get => _width; set => SetProperty(ref _width, value); }
 
         private double _height = 0;
         public double Height { get => _height; set => SetProperty(ref _height, value); }
+
+        private System.Windows.Size _size = new(1, 1);
+        public System.Windows.Size Size { get => _size; set => SetProperty(ref _size, value); }
 
     }
 

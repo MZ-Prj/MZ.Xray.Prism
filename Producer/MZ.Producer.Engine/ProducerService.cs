@@ -1,8 +1,8 @@
 ﻿using MZ.Logger;
+using MZ.Domain.Models;
 using Prism.Mvvm;
 using System;
 using System.Threading.Tasks;
-using MZ.Domain.Models;
 using System.Threading;
 using System.Windows.Threading;
 
@@ -92,7 +92,7 @@ namespace MZ.Producer.Engine
 
         public void Stop()
         {
-            XrayData.CurrentIndex = 0;
+            MessageCleanUp();
             Socket.Disconnect();
             _cancellationTokenSource?.Cancel();
         }
@@ -114,9 +114,14 @@ namespace MZ.Producer.Engine
                         continue;
                     }
 
-                    if (XrayData.Models.Count == 0 || XrayData.CurrentIndex >= XrayData.Models.Count)
+                    if (XrayData.Models.Count == 0 || XrayData.CurrentIndex > XrayData.Models.Count)
                     {
                         break;
+                    }
+
+                    if (XrayData.CurrentIndex == XrayData.Models.Count)
+                    {
+                        MessageCleanUp();
                     }
 
                     FileModel data = XrayData.GetCurrentFile();
@@ -125,13 +130,22 @@ namespace MZ.Producer.Engine
                     XrayData.Models[XrayData.CurrentIndex].Message = check ? "Success" : "Fail";
                     XrayData.CurrentIndex++;
 
-                    await Task.Delay(SendInterval, _cancellationTokenSource.Token);
+                    await Task.Delay(SendInterval);
                 }
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 MZLogger.Error(ex.Message);
+            }
+        }
+
+        private void MessageCleanUp()
+        {
+            XrayData.CurrentIndex = 0;
+            foreach (var item in XrayData.Models)
+            {
+                item.Message = string.Empty;
             }
         }
 

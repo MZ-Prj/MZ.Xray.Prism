@@ -27,7 +27,7 @@ namespace MZ.Dashboard
         {
             _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
             {
-                SetWindowLocate(MZWindowNames.DashboardWindow, 0);
+                SetWindowLocate(MZWindowNames.DashboardWindow, 1);
                 //SetWindowLocate(MZWindowNames.AnalysisWindow, 1);
 
                 ShowWindow(MZWindowNames.DashboardWindow);
