@@ -61,4 +61,15 @@ namespace MZ.Domain.Entities
         [ForeignKey("UserId")]
         public UserEntity User { get; set; }
     }
+
+    [Table("UserParameterSetting")]
+    public class UserParameterSettingEntity
+    {
+        public int UserId { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
+
+        [ForeignKey("UserId")]
+        public UserEntity User { get; set; }
+    }
 }

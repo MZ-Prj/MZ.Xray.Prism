@@ -26,6 +26,7 @@ namespace MZ.Util
 
             return gradientBrush;
         }
+
         public static LinearGradientBrush CreateHsvGradientBrush()
         {
             var gradientBrush = new LinearGradientBrush
@@ -35,10 +36,30 @@ namespace MZ.Util
             };
 
             int hueStep = 30;
-            for (double hue = 0; hue <= 360; hue += hueStep)
+            for (double hue = 0; hue <= 270; hue += hueStep)
             {
                 var color = HsvToRgb(hue, 1.0, 1.0);
-                gradientBrush.GradientStops.Add(new GradientStop(color, hue / 360.0));
+                gradientBrush.GradientStops.Add(new GradientStop(color, hue / 270));
+            }
+
+            return gradientBrush;
+        }
+
+        public static RadialGradientBrush CreateHsvRadialGradientBrush()
+        {
+            var gradientBrush = new RadialGradientBrush
+            {
+                Center = new Point(0.5, 0.5),
+                GradientOrigin = new Point(0.5, 0.5),
+                RadiusX = 0.8,
+                RadiusY = 0.8
+            };
+
+            int hueStep = 30;
+            for (double hue = 30; hue <= 120; hue += hueStep)
+            {
+                var color = HsvToRgb(hue, 1.0, 1.0);
+                gradientBrush.GradientStops.Add(new GradientStop(color, hue / 90));
             }
 
             return gradientBrush;

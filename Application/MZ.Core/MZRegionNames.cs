@@ -16,6 +16,10 @@
         //UI
         public static string SidebarRegion = "SidebarRegion";
         public static string ToolbarRegion = "ToolbarRegion";
+
+        //application
+        public static string DashboardFooterButtonControlRegion = "DashboardFooterButtonControlRegion";
+
         //producer
         public static string IpNetworkRegion = "IpNetworkRegion";
 

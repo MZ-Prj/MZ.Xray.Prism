@@ -1,5 +1,4 @@
 ﻿using MZ.Core;
-using MZ.Dashboard.Models;
 using MZ.Loading;
 using MZ.Util;
 using MZ.Resource;
@@ -15,6 +14,10 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using System;
+using MZ.Blank.Views;
+using MZ.Dashboard.Views;
+using System.Windows;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -33,6 +36,10 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
         #region Commands
+
+        private DelegateCommand windowClosingCommand;
+        public ICommand WindowClosingCommand => windowClosingCommand ??= new DelegateCommand(WindowClosing);
+
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
 
@@ -41,6 +48,10 @@ namespace MZ.Dashboard.ViewModels
 
         private DelegateCommand _logoutCommand;
         public ICommand LogoutCommand => _logoutCommand ??= new DelegateCommand(MZAction.Wrapper(LogoutButton));
+
+        private DelegateCommand _analysisCommand;
+        public ICommand AnalysisCommand => _analysisCommand ??= new DelegateCommand(MZAction.Wrapper(AnalysisButton));
+
         #endregion
 
 
@@ -55,7 +66,7 @@ namespace MZ.Dashboard.ViewModels
 
         public override void InitializeModel()
         {
-            
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Graph), AnalysisCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand));
@@ -68,6 +79,14 @@ namespace MZ.Dashboard.ViewModels
                 _regionManager.RequestNavigate(model.Region, model.View);
 
             }, ThreadOption.UIThread, true);
+        }
+
+        private void WindowClosing()
+        {
+            _eventAggregator.GetEvent<WindowCloseEvent>().Publish(MZWindowNames.AnalysisWindow);
+            _eventAggregator.GetEvent<WindowCloseEvent>().Publish(MZWindowNames.DashboardWindow);
+
+            Application.Current.Shutdown();
         }
 
         private void ThemeButton()
@@ -94,5 +113,12 @@ namespace MZ.Dashboard.ViewModels
             _databaseService.User.Logout();
             _regionManager.RequestNavigate(MZRegionNames.DashboardRegion, nameof(UserLoginView));
         }
+
+        private void AnalysisButton()
+        {
+            _eventAggregator.GetEvent<WindowOpenEvent>().Publish(MZWindowNames.AnalysisWindow);
+
+        }
+
     }
 }

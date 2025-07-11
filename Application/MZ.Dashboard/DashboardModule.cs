@@ -15,7 +15,7 @@ namespace MZ.Dashboard
         public override void OnInitialized(IContainerProvider containerProvider)
         {
             SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardControlView)));
-            //SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
+            SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
         }
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -25,14 +25,32 @@ namespace MZ.Dashboard
 
         public override void InitializeEvent()
         {
-            _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>
-            {
-                SetWindowLocate(MZWindowNames.DashboardWindow, 1);
-                //SetWindowLocate(MZWindowNames.AnalysisWindow, 1);
+            _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(SplashCloseEvent, ThreadOption.UIThread, true);
 
-                ShowWindow(MZWindowNames.DashboardWindow);
-                //ShowWindow(MZWindowNames.AnalysisWindow);
-            }, ThreadOption.UIThread, true);
+            _eventAggregator.GetEvent<WindowOpenEvent>().Subscribe(WindowOpenEvent);
+            _eventAggregator.GetEvent<WindowCloseEvent>().Subscribe(WindowCloseEvent);
+            _eventAggregator.GetEvent<WindowHideEvent>().Subscribe(WindowHideEvent);
+        }
+
+        private void WindowOpenEvent(string model)
+        {
+            ShowWindow(model);
+        }
+        
+        private void WindowCloseEvent(string model)
+        {
+            CloseWindow(model);
+        }
+
+        private void WindowHideEvent(string model)
+        {
+            HideWindow(model);
+        }
+
+        private void SplashCloseEvent()
+        {
+            SetWindowLocate(MZWindowNames.DashboardWindow, 0);
+            ShowWindow(MZWindowNames.DashboardWindow);
         }
     }
 }

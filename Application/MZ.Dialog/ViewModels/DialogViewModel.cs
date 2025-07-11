@@ -1,12 +1,13 @@
 ﻿using Prism.Commands;
 using System;
 using MZ.Core;
+using MZ.Util;
 using MZ.Domain.Models;
 using MZ.Loading;
 using Prism.Ioc;
 using Prism.Services.Dialogs;
 using System.Windows.Input;
-using MZ.Util;
+using Prism.Regions;
 
 namespace MZ.Dialog.ViewModels
 {
@@ -57,6 +58,7 @@ namespace MZ.Dialog.ViewModels
             {
                 RegionName = parameters.GetValue<string>("RegionName");
             }
+
             if (parameters.ContainsKey("Title"))
             {
                 Title = parameters.GetValue<string>("Title");
@@ -66,6 +68,21 @@ namespace MZ.Dialog.ViewModels
         private void ClosingButton()
         {
             RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
+        }
+
+        private NavigationParameters ToNavigationParameters(IDialogParameters parameters)
+        {
+            var param = new NavigationParameters();
+            foreach (var key in parameters.Keys)
+            {
+                param.Add(key, parameters.GetValue<object>(key));
+            }
+            return param;
+        }
+
+        private string ChangedReigionToViewName(string region)
+        {
+            return region.Replace("Region", "View");
         }
     }
 }

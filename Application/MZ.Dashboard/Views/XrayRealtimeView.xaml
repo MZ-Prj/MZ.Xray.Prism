@@ -21,6 +21,7 @@
         <converters:ContrastColorConverter  x:Key="ContrastColorConverter"/>
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
         <converters:LanguageConverter x:Key="LanguageConverter"/>
+        <converters:MahappForegroundBrushConverter x:Key="MahappForegroundBrushConverter"/>
     </UserControl.Resources>
     
     <Canvas x:Name="VideoCanvas" 
@@ -196,10 +197,10 @@
                 Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}">
 
             <Grid Grid.Row="0" Margin="4">
-                <Slider DataContext="{Binding Path=Media.Model}"
+                <Slider DataContext="{Binding Path=Media}"
                         Minimum="1" 
-                        Maximum="{Binding Path=Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Value="{Binding Path=Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Maximum="{Binding Path=Model.Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                        Value="{Binding Path=Model.Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         TickFrequency="1"
                         IsSnapToTickEnabled="True">
                     <i:Interaction.Triggers>
@@ -211,12 +212,9 @@
             </Grid>
 
             <Grid Grid.Row="1" Margin="4" >
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
@@ -233,14 +231,19 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <RepeatButton Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
-                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}"  Width="24" Height="24"/>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                          CommandParameter="{Binding Path=UId}"
+                                          Background="{Binding Path=ColorBrush}"
+                                          ToolTip="{Binding Path=ToolTip}"
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
+                                                            Width="24" Height="24"/>
                             </RepeatButton>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=ColorButtons}">
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=ActionButtons}" HorizontalAlignment="Right">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel HorizontalAlignment="Stretch"/>
@@ -253,37 +256,20 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Command="{Binding Path=Command}" 
-                                    CommandParameter="{Binding Path=UId}"
-                                    Foreground="{Binding Path=ColorBrush}"
-                                    BorderThickness="0" Width="48" Height="48">
-                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-
-                <ItemsControl Grid.Column="2" ItemsSource="{Binding Path=FilterButtons}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel HorizontalAlignment="Stretch"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <RepeatButton Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
-                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}"  Width="24" Height="24"/>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                          CommandParameter="{Binding Path=UId}"
+                                          Background="{Binding Path=ColorBrush}"
+                                          ToolTip="{Binding Path=ToolTip}"
+                                          Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
+                                                            Width="24" Height="24"/>
                             </RepeatButton>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl Grid.Column="4" ItemsSource="{Binding Path=AIButtons}">
+                <ItemsControl Grid.Column="2" ItemsSource="{Binding Path=EtcButtons}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel HorizontalAlignment="Stretch"/>
@@ -296,55 +282,18 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
-                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}"  Width="24" Height="24"/>
-                            </Button>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                          CommandParameter="{Binding Path=UId}"
+                                          Background="{Binding Path=ColorBrush}"
+                                          ToolTip="{Binding Path=ToolTip}"
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
+                                                            Width="24" Height="24"/>
+                            </RepeatButton>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-            </Grid>
-        </StackPanel>
-
-        <StackPanel x:Name="OverlayTopControls"
-                Visibility="Collapsed"
-                Canvas.Right="0" Canvas.Bottom="0">
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <ToggleButton x:Name="MoreButton" 
-                          Grid.Row="1"
-                          Width="48" Height="48"
-                          BorderThickness="0" 
-                          Margin="4">
-                    <iconPacks:PackIconMaterial Kind="DotsVertical" Width="24" Height="24"/>
-                </ToggleButton>
-
-                <ItemsControl x:Name="DropdownMenu"
-                          Grid.Row="0"
-                          Visibility="{Binding Path=IsChecked, ElementName=MoreButton, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          ItemsSource="{Binding Path=TopButtons}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel HorizontalAlignment="Stretch" Orientation="Vertical"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Command="{Binding Path=Command}" BorderThickness="0" Width="48" Height="48">
-                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}"  Width="24" Height="24"/>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
             </Grid>
         </StackPanel>
 

@@ -1,6 +1,5 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Dashboard.Models;
 using MZ.Producer.Engine;
 using MZ.Sidebar.Models;
 using MZ.Domain.Models;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using static MZ.Sidebar.MZEvents;
-using System.Threading.Tasks;
 
 namespace MZ.Dashboard.ViewModels
 {
