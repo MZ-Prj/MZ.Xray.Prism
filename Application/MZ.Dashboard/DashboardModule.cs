@@ -15,7 +15,6 @@ namespace MZ.Dashboard
         public override void OnInitialized(IContainerProvider containerProvider)
         {
             SetRegion<DashboardWindowView>(MZWindowNames.DashboardWindow, (MZRegionNames.DashboardRegion, nameof(DashboardControlView)));
-            SetRegion<AnalysisWindowView>(MZWindowNames.AnalysisWindow, (MZRegionNames.AnalysisRegion, nameof(AnalysisControlView)));
         }
 
         public override void RegisterTypes(IContainerRegistry containerRegistry)
