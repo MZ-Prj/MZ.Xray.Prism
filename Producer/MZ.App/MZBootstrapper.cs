@@ -93,7 +93,7 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<IProducerService, ProducerService>();
 
             //custom dialog
-            containerRegistry.RegisterDialogWindow<MZDialogWindow>();
+            containerRegistry.RegisterDialogWindow<MZDialogMetroWindowChrome>();
         }
 
         /// <summary>

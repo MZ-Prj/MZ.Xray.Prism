@@ -7,6 +7,7 @@
         public static string SplashRegion = "SplashRegion";
 
         public static string DialogRegion = "DialogRegion";
+        public static string WindowDialogRegion = "WindowDialogRegion";
         public static string LanguageRegion = "LanguageRegion";
         public static string LoadingRegion = "LoadingRegion";
 
@@ -19,6 +20,8 @@
 
         //application
         public static string DashboardFooterButtonControlRegion = "DashboardFooterButtonControlRegion";
+        public static string LogStorageControl = "LogStorageControlRegion";
+
 
         //producer
         public static string IpNetworkRegion = "IpNetworkRegion";

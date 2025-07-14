@@ -75,11 +75,6 @@ namespace MZ.Auth.ViewModels
                                 MZRegionNames.DashboardRegion,
                                 MZViewNames.DashboardControlView));
 
-
-                _eventAggregator.GetEvent<AnalysisNavigationEvent>().Publish(
-                            new NavigationModel(
-                                MZRegionNames.AnalysisRegion,
-                                MZViewNames.AnalysisControlView));
             }
         }
 

@@ -2,18 +2,14 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <UseWPF>true</UseWPF>
-    <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MZ.Auth\MZ.Auth.csproj" />
-    <ProjectReference Include="..\MZ.Blank\MZ.Blank.csproj" />
     <ProjectReference Include="..\MZ.Core\MZ.Core.csproj" />
+    <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
     <ProjectReference Include="..\MZ.Loading\MZ.Loading.csproj" />
     <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
-    <ProjectReference Include="..\MZ.WindowDialog\MZ.WindowDialog.csproj" />
-    <ProjectReference Include="..\MZ.Xray.Engine\MZ.Xray.Engine.csproj" />
   </ItemGroup>
 </Project>

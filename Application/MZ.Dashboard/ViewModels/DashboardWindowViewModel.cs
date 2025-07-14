@@ -5,7 +5,10 @@ using MZ.Resource;
 using MZ.Infrastructure;
 using MZ.Auth.Views;
 using MZ.Domain.Models;
+using MZ.WindowDialog;
+using MZ.Dashboard.Views;
 using MahApps.Metro.IconPacks;
+using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Prism.Ioc;
@@ -14,10 +17,6 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using System;
-using MZ.Blank.Views;
-using MZ.Dashboard.Views;
-using System.Windows;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -26,6 +25,7 @@ namespace MZ.Dashboard.ViewModels
         #region Services
         private readonly ILoadingService _loadingService;
         private readonly IDatabaseService _databaseService;
+        private readonly IWindowDialogService _windowDialogService;
         #endregion
 
         #region Models
@@ -36,6 +36,21 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
         #region Commands
+
+        private DelegateCommand _imageStorageCommand;
+        public ICommand ImageStorageCommand => _imageStorageCommand ??= new DelegateCommand(MZAction.Wrapper(ImageStorageButton));
+
+        private DelegateCommand _logStorageCommand;
+        public ICommand LogStorageCommand => _logStorageCommand ??= new DelegateCommand(MZAction.Wrapper(LogStorageButton));
+
+        private DelegateCommand _recordCommand;
+        public ICommand RecordCommand => _recordCommand ??= new DelegateCommand(MZAction.Wrapper(RecordButton));
+
+        private DelegateCommand _materialCommand;
+        public ICommand MaterialCommand => _materialCommand ??= new DelegateCommand(MZAction.Wrapper(MaterialButton));
+
+        private DelegateCommand aiCommand;
+        public ICommand AICommand => aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
 
         private DelegateCommand windowClosingCommand;
         public ICommand WindowClosingCommand => windowClosingCommand ??= new DelegateCommand(WindowClosing);
@@ -49,16 +64,14 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _logoutCommand;
         public ICommand LogoutCommand => _logoutCommand ??= new DelegateCommand(MZAction.Wrapper(LogoutButton));
 
-        private DelegateCommand _analysisCommand;
-        public ICommand AnalysisCommand => _analysisCommand ??= new DelegateCommand(MZAction.Wrapper(AnalysisButton));
-
         #endregion
 
 
-        public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService) : base(container)
+        public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService, IWindowDialogService windowDialogService) : base(container)
         {
             _databaseService = databaseService;
             _loadingService = loadingService;
+            _windowDialogService = windowDialogService;
 
             base.Initialize();
 
@@ -66,10 +79,15 @@ namespace MZ.Dashboard.ViewModels
 
         public override void InitializeModel()
         {
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Graph), AnalysisCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), aiCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), RecordCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false));
+
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand, isVisibility: false));
         }
 
         public override void InitializeEvent()
@@ -77,15 +95,12 @@ namespace MZ.Dashboard.ViewModels
             _eventAggregator.GetEvent<DashboardNavigationEvent>().Subscribe((NavigationModel model) =>
             {
                 _regionManager.RequestNavigate(model.Region, model.View);
-
+                UpdateWindowCommandButton(model.View == MZViewNames.DashboardControlView);
             }, ThreadOption.UIThread, true);
         }
 
         private void WindowClosing()
         {
-            _eventAggregator.GetEvent<WindowCloseEvent>().Publish(MZWindowNames.AnalysisWindow);
-            _eventAggregator.GetEvent<WindowCloseEvent>().Publish(MZWindowNames.DashboardWindow);
-
             Application.Current.Shutdown();
         }
 
@@ -111,14 +126,45 @@ namespace MZ.Dashboard.ViewModels
         private void LogoutButton()
         {
             _databaseService.User.Logout();
-            _regionManager.RequestNavigate(MZRegionNames.DashboardRegion, nameof(UserLoginView));
+            _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
+                        new NavigationModel(
+                            MZRegionNames.DashboardRegion,
+                            nameof(UserLoginView)));
         }
 
-        private void AnalysisButton()
+        private void ImageStorageButton()
         {
-            _eventAggregator.GetEvent<WindowOpenEvent>().Publish(MZWindowNames.AnalysisWindow);
-
         }
 
+        private async void LogStorageButton()
+        {
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.LogStorageControl,
+                regionName: nameof(LogStorageControlView),
+                isMultiple:false);
+        }
+
+        private void RecordButton()
+        {
+        }
+
+        private void MaterialButton()
+        {
+        }
+
+        private void AIButton()
+        {
+        }
+
+
+        private void UpdateWindowCommandButton(bool check)
+        {
+            foreach (var button in WindowCommandButtons)
+            {
+                button.IsVisibility = check ||
+                                      button.IconKind == nameof(PackIconMaterialKind.Earth) ||
+                                      button.IconKind == nameof(PackIconMaterialKind.ThemeLightDark);
+            }
+        }
     }
 }
