@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Threading.Channels;
 using Prism.Mvvm;
+using Prism.Events;
 using MZ.Logger;
 using MZ.Vision;
 using MZ.Domain.Models;
 using OpenCvSharp;
-using Prism.Events;
 using static MZ.Event.MZEvent;
 
 namespace MZ.Xray.Engine
@@ -329,7 +329,6 @@ namespace MZ.Xray.Engine
 
             (int start, int end) = SaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
-            //이미지 저장 background
             Task.Run(async () =>
             {
                 await Task.WhenAll(

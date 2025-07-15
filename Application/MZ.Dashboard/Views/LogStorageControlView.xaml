@@ -1,6 +1,8 @@
 ﻿<UserControl x:Class="MZ.Dashboard.Views.LogStorageControlView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
              xmlns:prism="http://prismlibrary.com/" 
@@ -65,9 +67,7 @@
                   CanUserAddRows="False" 
                   CanUserDeleteRows="False"
                   HeadersVisibility="Column"
-                  Margin="4"
-                  Width="1600" 
-                  Height="900">
+                  Margin="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" 
                                     Binding="{Binding Path=Date, StringFormat=yyyy-MM-dd}" 

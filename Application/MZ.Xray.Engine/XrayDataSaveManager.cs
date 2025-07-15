@@ -12,7 +12,7 @@ namespace MZ.Xray.Engine
     public class XrayDataSaveManager : BindableBase
     {
 
-        private string _absoluteRoot = $"..\\Save\\Image"; 
+        private string _absoluteRoot = Path.Combine(AppContext.BaseDirectory, "Save", "Image");
         public string AbsoluteRoot { get => _absoluteRoot; set => SetProperty(ref _absoluteRoot, value); }
 
         public void Base(Mat input, string path, string filename)

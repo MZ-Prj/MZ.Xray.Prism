@@ -1,9 +1,95 @@
 ﻿<UserControl x:Class="MZ.Dashboard.Views.ImageStorageControlView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:prism="http://prismlibrary.com/"   
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
              prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
+        <converters:UppercaseConverter x:Key="UppercaseConverter"/>
+        <converters:ContrastColorConverter x:Key="ContrastColorConverter"/>
+        <converters:VisibilityConverter x:Key="VisibilityConverter" />
+    </UserControl.Resources>
+    
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+            <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
+                <iconPacks:PackIconMaterial Kind="TableSearch"  Width="16" Height="16"/>
+            </Button>
+            <Button Margin="0,0,4,0" Command="{Binding Path=RefreshCommand}">
+                <iconPacks:PackIconMaterial Kind="Refresh" Width="16" Height="16"/>
+            </Button>
+            <Border CornerRadius="4"
+                    BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                    BorderThickness="1"
+                    Margin="0,0,4,0"
+                    Width="320">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <iconPacks:PackIconMaterial Margin="4" 
+                                            Grid.Column="0" 
+                                            Kind="Magnify"/>
+                    <TextBox Grid.Column="1"
+                         BorderThickness="0"
+                         FontSize="12"
+                         Text="{Binding Path=SearchImageText, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Background="Transparent"/>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+        <ScrollViewer Grid.Row="1">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ScrollChanged">
+                    <prism:InvokeCommandAction Command="{Binding Path=ScrollChangedCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <ItemsControl ItemsSource="{Binding Path=ImageFiles, Mode=TwoWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="8"
+                                BorderBrush="{DynamicResource MahApps.Brushes.Gray9}" BorderThickness="1" CornerRadius="8"
+                                Background="Transparent">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <prism:InvokeCommandAction Command="{Binding DataContext.ImageSelectedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                           CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <StackPanel>
+                                <Image Source="{Binding Path=Path}" Height="150" Stretch="Uniform"/>
+                                <TextBlock Text="{Binding Path=Filename}" 
+                                       Margin="4,4,4,0" 
+                                       FontWeight="Bold" 
+                                       HorizontalAlignment="Center" />
+                                <TextBlock Text="{Binding Path=CreateDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" 
+                                       Margin="4,0,4,4" 
+                                       FontSize="10" 
+                                       HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </UserControl>

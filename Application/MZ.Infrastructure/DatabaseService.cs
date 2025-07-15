@@ -17,7 +17,7 @@ namespace MZ.Infrastructure
             IUserService userService,
             IAppSettingService appSettingService)
         {
-            _cts = new CancellationTokenSource();
+            _cts = new ();
 
             User = userService;
             AppSetting = appSettingService;

@@ -84,9 +84,11 @@ namespace MZ.Dashboard.ViewModels
         public ICommand SearchCommand => _searchCommand ??= new DelegateCommand(MZAction.Wrapper(SearchButton));
         #endregion
 
-        public LogStorageControlViewModel(IContainerExtension container, ILoadingService loadingService, IXrayService xrayService) : base(container)
+        public LogStorageControlViewModel(IContainerExtension container, ILoadingService loadingService) : base(container)
         {
             _loadingService = loadingService;
+
+            base.Initialize();
         }
 
         public override void InitializeModel()
