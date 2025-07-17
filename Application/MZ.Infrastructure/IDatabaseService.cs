@@ -8,6 +8,8 @@ namespace MZ.Infrastructure
     {
         public IUserService User { get; }
         public IAppSettingService AppSetting { get; }
+        public IXrayVisionImageService Image { get; }
+
         public Task MakeAdmin();
         public Task<bool> MakeUserAsync(string username, string password, CancellationToken cancellationToken = default);
         public Task MakeAppSettingAsync(string username, CancellationToken cancellationToken = default);

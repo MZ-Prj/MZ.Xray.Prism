@@ -6,11 +6,11 @@ using MahApps.Metro.Controls;
 namespace MZ.Core
 {
 
-    public class MZDialogWindow : MetroWindow, IDialogWindow
+    public class MZDialogMetroWindowChrome : MetroWindow, IDialogWindow
     {
         public IDialogResult Result { get; set; }
 
-        public MZDialogWindow()
+        public MZDialogMetroWindowChrome()
         {
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             this.SizeToContent = SizeToContent.WidthAndHeight;

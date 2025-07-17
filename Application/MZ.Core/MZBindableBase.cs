@@ -91,7 +91,6 @@ namespace MZ.Core
         }
         #endregion
 
-
         #region Navigate
         public virtual void OnNavigatedTo(NavigationContext navigationContext)
         {

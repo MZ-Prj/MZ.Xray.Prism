@@ -15,6 +15,7 @@ using MZ.Language;
 using MZ.Loading;
 using MZ.Resource;
 using MZ.Splash;
+using MZ.WindowDialog;
 using MZ.Xray.Engine;
 using Prism.DryIoc;
 using Prism.Ioc;
@@ -66,6 +67,7 @@ namespace MZ.App
             moduleCatalog.AddModule<BlankModule>();
             moduleCatalog.AddModule<LanguageModule>();
             moduleCatalog.AddModule<DialogModule>();
+            moduleCatalog.AddModule<WindowDialogModule>();
             moduleCatalog.AddModule<LoadingModule>();
 
         }
@@ -107,6 +109,7 @@ namespace MZ.App
             // Business
             containerRegistry.Register<IUserService, UserService>();
             containerRegistry.Register<IAppSettingService, AppSettingService>();
+            containerRegistry.Register<IXrayVisionImageService, XrayVisionImageService>();
         }
 
         private void RegisterRepositories(IContainerRegistry containerRegistry)
@@ -115,19 +118,20 @@ namespace MZ.App
             containerRegistry.Register<IUserRepository, UserRepository>();
             containerRegistry.Register<IUserSettingRepository, UserSettingRepository>();
             containerRegistry.Register<IAppSettingRepository, AppSettingRepository>();
+            containerRegistry.Register<IXrayVisionImageRepository, XrayVisionImageRepository>();
         }
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<ILoadingService, LoadingService>();
+            containerRegistry.RegisterSingleton<IWindowDialogService, WindowDialogService>();
             containerRegistry.RegisterSingleton<IXrayService, XrayService>();
-
         }
 
         private void RegisterUIService(IContainerRegistry containerRegistry)
         {
-            //custom dialog
-            containerRegistry.RegisterDialogWindow<MZDialogWindow>();
+            //mahapp : custom dialog
+            containerRegistry.RegisterDialogWindow<MZDialogMetroWindowChrome>();
         }
 
         /// <summary>

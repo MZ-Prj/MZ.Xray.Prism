@@ -15,7 +15,6 @@
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                  WindowState="Maximized"
-                 ResizeMode="CanMinimize"
                  Title="MZ.Application">
 
     <Window.Resources>

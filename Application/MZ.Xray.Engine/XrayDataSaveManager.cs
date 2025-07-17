@@ -1,21 +1,30 @@
-﻿using MZ.Util;
+﻿using MZ.Domain.Models;
+using MZ.Util;
 using MZ.Vision;
 using OpenCvSharp;
-using Prism.Mvvm;
+using OpenCvSharp.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MZ.Xray.Engine
 {
-    public class XrayDataSaveManager : BindableBase
+    public class XrayDataSaveManager 
     {
+        public static string AbsoluteRoot = Path.Combine(AppContext.BaseDirectory, "Save");
 
-        private string _absoluteRoot = $"..\\Save\\Image"; 
-        public string AbsoluteRoot { get => _absoluteRoot; set => SetProperty(ref _absoluteRoot, value); }
+        public static void Base(Mat input, string root)
+        {
+            VisionBase.Save(input, root);
+        }
 
-        public void Base(Mat input, string path, string filename)
+        public static void Base(Mat input, string path, string filename)
         {
             MZIO.TryMakeDirectory(path);
 
@@ -26,11 +35,13 @@ namespace MZ.Xray.Engine
             }
         }
 
-        public void Image(Mat input, int start, int end, string path, string filename)
+        public static void Image(Mat input, int start, int end, string path, string filename)
         {
-            MZIO.TryMakeDirectory(path);
+            string subPath = "Image";
 
-            string root = $"{path}/{filename}";
+            MZIO.TryMakeDirectory($"{path}\\{subPath}");
+
+            string root = $"{path}\\{subPath}\\{filename}";
 
             if (!File.Exists(path))
             {
@@ -39,7 +50,7 @@ namespace MZ.Xray.Engine
             }
         }
 
-        public async Task ImageAsync(Mat input, int start, int end, string path, string filename)
+        public static async Task ImageAsync(Mat input, int start, int end, string path, string filename)
         {
             await Task.Run(() =>
             {
@@ -47,11 +58,13 @@ namespace MZ.Xray.Engine
             });
         }
 
-        public void Origin(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
+        public static void Origin(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
         {
-            MZIO.TryMakeDirectory(path);
+            string subPath = "Origin";
 
-            string root = $"{path}/{filename}";
+            MZIO.TryMakeDirectory($"{path}\\{subPath}");
+
+            string root = $"{path}\\{subPath}\\{filename}";
 
             if (!File.Exists(root))
             {
@@ -68,7 +81,7 @@ namespace MZ.Xray.Engine
             }
         }
 
-        public async Task OriginAsync(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
+        public static async Task OriginAsync(Mat origin, Mat offset, Mat gain, int start, int end, string path, string filename)
         {
             await Task.Run(() =>
             {
@@ -76,39 +89,70 @@ namespace MZ.Xray.Engine
             });
         }
 
-        public void Video(List<Mat> list, string path, string filename)
+        public static void Screen(Mat input, string path, string filename)
         {
-            MZIO.TryMakeDirectory(path);
+            string subPath = "Screen";
+            string root = $"{path}\\{subPath}\\{filename}";
 
-            string root = $"{path}/{filename}";
-            if (!File.Exists(root))
+            MZIO.TryMakeDirectory($"{path}\\{subPath}");
+
+            if (!File.Exists(path))
             {
-                VisionBase.Save(list, root);
+                VisionBase.Save(input, root);
             }
         }
 
-        public void AI()
+        public static async Task ScreenAsync(Mat input, string path, string filename)
+        {
+            await Task.Run(() =>
+            {
+                Screen(input, path, filename);
+            });
+        }
+
+        public static void Video(List<FrameModel> list, string path, string filename)
+        {
+            string subPath = "Video";
+
+            MZIO.TryMakeDirectory($"{path}\\{subPath}");
+
+            string root = $"{path}\\{subPath}\\{filename}";
+
+            if (!File.Exists(root))
+            {
+                VisionBase.Save([.. list.Select(item => item.Image)], root);
+            }
+        }
+
+        public static async Task VideoAsync(List<FrameModel> list, string path, string filename)
+        {
+            await Task.Run(() =>
+            {
+                Video(list, path, filename);
+            });
+        }
+
+        public static void AI()
         {
 
         }
 
-        public void Database()
+        public static void Database()
         {
 
         }
 
-
-        public string GetPath()
+        public static string GetPath()
         {
-            return Path.GetFullPath($"{_absoluteRoot}\\{DateTime.Now:yyyy-MM-dd}");
+            return Path.GetFullPath($"{AbsoluteRoot}\\{DateTime.Now:yyyy-MM-dd}");
         }
 
-        public string GetCurrentTime()
+        public static string GetCurrentTime()
         {
             return DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
         }
 
-        public (int, int) GetSplitPosition(int width, int sensorWidth, int frameCount)
+        public static  (int, int) GetSplitPosition(int width, int sensorWidth, int frameCount)
         {
             int start = width - (sensorWidth * frameCount) >= 0 ? width - (sensorWidth * frameCount) : 0;
             start = start < 0 ? 0 : start;

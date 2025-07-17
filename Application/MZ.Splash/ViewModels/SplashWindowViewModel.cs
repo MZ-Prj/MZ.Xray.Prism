@@ -69,10 +69,6 @@ namespace MZ.Splash.ViewModels
                                 MZRegionNames.DashboardRegion,
                                 nameof(UserLoginView)));
 
-                        _eventAggregator.GetEvent<AnalysisNavigationEvent>().Publish(
-                            new NavigationModel(
-                                MZRegionNames.AnalysisRegion,
-                                nameof(BlankView)));
                         await Task.CompletedTask;
                     })
                 };

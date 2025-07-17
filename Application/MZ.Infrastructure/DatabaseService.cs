@@ -10,17 +10,20 @@ namespace MZ.Infrastructure
     {
         public IUserService User { get; } 
         public IAppSettingService AppSetting { get; }
-
+        public IXrayVisionImageService Image { get; }
+        
         private readonly CancellationTokenSource _cts;
 
         public DatabaseService(
             IUserService userService,
-            IAppSettingService appSettingService)
+            IAppSettingService appSettingService,
+            IXrayVisionImageService xrayVisionImageService)
         {
-            _cts = new CancellationTokenSource();
+            _cts = new ();
 
             User = userService;
             AppSetting = appSettingService;
+            Image = xrayVisionImageService;
         }
 
         public async Task MakeAdmin()

@@ -1,16 +1,18 @@
 ﻿using MZ.Core;
-using MZ.Dashboard.Models;
 using MZ.Xray.Engine;
 using MZ.Util;
+using MZ.Domain.Enums;
+using MZ.Resource;
+using MZ.Domain.Models;
 using MahApps.Metro.IconPacks;
 using Prism.Commands;
 using Prism.Ioc;
-using System.Linq;
+using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using MZ.Domain.Enums;
+using Microsoft.Win32;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -29,24 +31,39 @@ namespace MZ.Dashboard.ViewModels
 
         #region Params
         private Canvas _canvasImageView;
-        public Canvas CanvasImageView { get => _canvasImageView; set => SetProperty(ref _canvasImageView, value); }
+        public Canvas CanvasImageView 
+        {
+            get => _canvasImageView;
+            set
+            {
+                if (SetProperty(ref _canvasImageView, value))
+                {
+                    Media.Screen = value;
+                }
+            }
+        }
 
         private Canvas _canvasPredictView;
         public Canvas CanvasPredictView { get => _canvasPredictView; set => SetProperty(ref _canvasPredictView, value); }
 
+        public ObservableCollection<IconButtonModel> ActionButtons { get; } = [];
         public ObservableCollection<IconButtonModel> VideoButtons { get; } = [];
-        public ObservableCollection<IconButtonModel> ColorButtons { get; } = [];
-        public ObservableCollection<IconButtonModel> FilterButtons { get; } = [];
-
+        public ObservableCollection<IconButtonModel> EtcButtons { get; } = [];
         #endregion
 
         #region Command
+        private DelegateCommand _settingCommand;
+        public ICommand SettingCommand => _settingCommand ??= new(MZAction.Wrapper(SettingButton));
+
         private DelegateCommand _pickerCommand;
         public ICommand PickerCommand => _pickerCommand ??= new(MZAction.Wrapper(PickerButton));
+
         private DelegateCommand _playStopCommand;
         public ICommand PlayStopCommand => _playStopCommand ??= new(MZAction.Wrapper(PlayStopButton));
+        
         private DelegateCommand _previousCommand;
         public ICommand PreviousCommand => _previousCommand ??= new(MZAction.Wrapper(PreviousButton));
+
         private DelegateCommand _nextCommand;
         public ICommand NextCommand => _nextCommand ??= new(MZAction.Wrapper(NextButton));
 
@@ -74,6 +91,12 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _filterClearCommand;
         public ICommand FilterClearCommand => _filterClearCommand ??= new(MZAction.Wrapper(FilterClearButton));
 
+        private DelegateCommand _aiOnOffCommand;
+        public ICommand AIOnOffCommand => _aiOnOffCommand ??= new(MZAction.Wrapper(AIOnOffButton));
+
+        private DelegateCommand _saveImageCommand;
+        public ICommand SaveImageCommand => _saveImageCommand ??= new(MZAction.Wrapper(SaveImageButton));
+
         #endregion
         public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService) : base(container)
         {
@@ -86,34 +109,61 @@ namespace MZ.Dashboard.ViewModels
         {
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayStopCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false));
 
-            ColorButtons.Add(new(nameof(PackIconMaterialKind.FormatPaint), ColorCommand, new SolidColorBrush(Colors.Gray), uid:ColorRole.Gray));
-            ColorButtons.Add(new(nameof(PackIconMaterialKind.FormatPaint), ColorCommand, MZBrush.CreateHsvGradientBrush(), uid: ColorRole.Color));
-            ColorButtons.Add(new(nameof(PackIconMaterialKind.FormatPaint), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic));
-            ColorButtons.Add(new(nameof(PackIconMaterialKind.FormatPaint), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic));
-            ColorButtons.Add(new(nameof(PackIconMaterialKind.FormatPaint), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal));
+            EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4")));
 
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus),ZoomOutCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus),ZoomInCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand));
-            FilterButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand));
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Gray), uid:ColorRole.Gray));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaC), ColorCommand, MZBrush.CreateHsvRadialGradientBrush(), uid: ColorRole.Color));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaR), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaB), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal));
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand));
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand));
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand));
+
         }
 
         #region Button
+
+        private void SettingButton()
+        {
+            _dialogService.ShowDialog(
+                "DashboardFooterButtonControlView",
+                new DialogParameters
+                {
+                    {"Title",  MZRegionNames.DashboardFooterButtonControlRegion},
+                    {"RegionName", MZRegionNames.DashboardFooterButtonControlRegion},
+                    {"ActionButtons", ActionButtons}
+                },
+                (IDialogResult result) => {
+                });
+
+        }
+
         private void PickerButton()
         {
             //ui
-            ToggleVideoButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff));
+            ToggleFooterButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff), VideoButtons);
         }
         private void PlayStopButton()
         {
             // ui
-            ToggleVideoButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop));
+            ToggleFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
+
+            VisibilityFooterButton(PreviousCommand, _xrayService.IsPlaying(), VideoButtons);
+            VisibilityFooterButton(NextCommand, _xrayService.IsPlaying(), VideoButtons);
 
             // logic
             if (_xrayService.IsPlaying())
@@ -138,32 +188,32 @@ namespace MZ.Dashboard.ViewModels
 
         private void ZoomOutButton()
         {
-            Media.ChangedFilterZoom(-0.05f);
+            Media.ChangedFilterZoom(-0.1f);
         }
 
         private void ZoomInButton()
         {
-            Media.ChangedFilterZoom(+0.05f);
+            Media.ChangedFilterZoom(+0.1f);
         }
 
         private void BrightDownButton()
         {
-            Media.ChangedFilterBrightness(-0.05f);
+            Media.ChangedFilterBrightness(-0.01f);
         }
 
         private void BrightUpButton()
         {
-            Media.ChangedFilterBrightness(+0.05f);
+            Media.ChangedFilterBrightness(+0.01f);
         }
 
         private void ContrastDownButton()
         {
-            Media.ChangedFilterContrast(-0.05f);
+            Media.ChangedFilterContrast(-0.1f);
         }
 
         private void ContrastUpButton()
         {
-            Media.ChangedFilterContrast(+0.05f);
+            Media.ChangedFilterContrast(+0.1f);
         }
 
         private void FilterClearButton()
@@ -171,21 +221,64 @@ namespace MZ.Dashboard.ViewModels
             Media.ClearFilter();
         }
 
-        private void ToggleVideoButton(ICommand targetCommand, string iconOn, string iconOff)
+        private void AIOnOffButton()
         {
-            var button = VideoButtons.FirstOrDefault(vb => vb.Command == targetCommand);
-            if (button != null)
+            // ui
+            ToggleFooterButton(AIOnOffCommand, nameof(PackIconMaterialKind.HeadRemoveOutline), nameof(PackIconMaterialKind.HeadCheckOutline), ActionButtons);
+
+            // logic
+        }
+
+        private void SaveImageButton()
+        {
+            SaveFileDialog saveFileDialog = new()
             {
-                button.IconKind = button.IconKind == iconOff ? iconOn : iconOff;
+                Title = "Save Capture Image",
+                Filter = "PNG  (*.png)|*.png",
+                DefaultExt = ".png"
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                XrayDataSaveManager.Base(Media.ChangedScreenToMat(), saveFileDialog.FileName);
             }
         }
 
+
+        private void ToggleFooterButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IconKind = button.IconKind == iconOff ? iconOn : iconOff;
+                    }
+                }
+            }
+        }
+
+        private void VisibilityFooterButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IsVisibility = isVisibility;
+                    }
+                }
+            }
+        }
 
         private void ColorButton(object color)
         {
             if (color is ColorRole colorRole)
             {
-                _xrayService.Media.ChangedFilterColor(colorRole);
+                Media.ChangedFilterColor(colorRole);
             }
         }
 
@@ -194,7 +287,7 @@ namespace MZ.Dashboard.ViewModels
         #region Service
         public void CreateMedia(int width, int height)
         {
-            _xrayService.Media.Create(width, height);
+            Media.Create(width, height);
         }
         #endregion
 

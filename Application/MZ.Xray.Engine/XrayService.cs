@@ -4,28 +4,35 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Threading.Channels;
 using Prism.Mvvm;
+using Prism.Events;
 using MZ.Logger;
 using MZ.Vision;
 using MZ.Domain.Models;
 using OpenCvSharp;
-using Prism.Events;
 using static MZ.Event.MZEvent;
+using MZ.Infrastructure;
+using MZ.DTO;
 
 namespace MZ.Xray.Engine
 {
     public partial class XrayService : BindableBase, IXrayService
     {
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        
         private readonly IEventAggregator _eventAggregator;
+        private readonly IDatabaseService _databaseService;
+
         private readonly Channel<Mat> _imageProcessingChannel = Channel.CreateBounded<Mat>(100);
 
-        public XrayService(IEventAggregator eventAggregator)
+        public XrayService(IEventAggregator eventAggregator, IDatabaseService databaseService)
         {
             _eventAggregator = eventAggregator;
+            _databaseService = databaseService;
 
             _socketReceive = new SocketReceiveProcesser(_eventAggregator);
 
             InitializeEvent();
+            InitializeProcess();
         }
 
         public void InitializeEvent()
@@ -38,6 +45,10 @@ namespace MZ.Xray.Engine
                 }
             }, ThreadOption.UIThread, true);
 
+        }
+
+        public void InitializeProcess()
+        {
             Task.Run(ProcessImagesFromChannel);
         }
 
@@ -54,30 +65,32 @@ namespace MZ.Xray.Engine
     public partial class XrayService : BindableBase, IXrayService
     {
         #region Fields & Properties
-        private CancellationTokenSource _mediaCts;
-        private Task _mediaTask;
-        private bool IsRunning => _mediaCts != null && !_mediaCts.IsCancellationRequested;
+        private CancellationTokenSource _screenCts;
+        private CancellationTokenSource _videoCts;
+
+        private Task _screenTask;
+        private Task _videoTask;
+        private bool IsRunning => _screenCts != null && !_screenCts.IsCancellationRequested;
         #endregion
 
-        private void StartMediaTask()
+        private void StartVideoTask()
         {
+
             if (IsRunning)
             {
                 return;
             }
 
-            _mediaCts = new CancellationTokenSource();
+            _videoCts = new ();
 
-            _mediaTask = Task.Run(async () =>
+            _videoTask = Task.Run(async () =>
             {
                 try
                 {
-                    Media.LastestSlider();
-
-                    while (!_mediaCts.Token.IsCancellationRequested)
+                    while (!_videoCts.Token.IsCancellationRequested)
                     {
-                        Media.Update();
-                        await Task.Delay(1000 / Media.Information.FPS, _mediaCts.Token);
+                        await Task.Delay(1000 * Media.Information.VideoDelay , _videoCts.Token);
+                        //Media.UpdateVideo();
                     }
                 }
                 catch (OperationCanceledException)
@@ -87,35 +100,82 @@ namespace MZ.Xray.Engine
                 {
                     MZLogger.Error(ex.ToString());
                 }
-            }, _mediaCts.Token);
+            }, _videoCts.Token);
         }
 
+        private void StartScreenTask()
+        {
+            if (IsRunning)
+            {
+                return;
+            }
 
-        private void StopMediaTask()
+            _screenCts = new ();
+
+            _screenTask = Task.Run(async () =>
+            {
+                try
+                {
+                    Media.LastestSlider();
+
+                    while (!_screenCts.Token.IsCancellationRequested)
+                    {
+                        Media.UpdateScreen();
+                        await Task.Delay(1000 / Media.Information.FPS, _screenCts.Token);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    MZLogger.Error(ex.ToString());
+                }
+            }, _screenCts.Token);
+        }
+
+        private void StopVideoTask()
         {
             if (!IsRunning)
             {
                 return;
             }
 
-            _mediaCts?.Cancel();
-            _mediaTask.Wait(TimeSpan.FromMilliseconds(100));
+            _videoCts?.Cancel();
+            _videoTask.Wait(TimeSpan.FromMilliseconds(100));
 
-            _mediaCts?.Dispose();
-            _mediaCts = null;
-            _mediaTask = null;
+            _videoCts?.Dispose();
+            _videoCts = null;
+            _videoTask = null;
+        }
+
+        private void StopScreenTask()
+        {
+            if (!IsRunning)
+            {
+                return;
+            }
+
+            _screenCts?.Cancel();
+            _screenTask.Wait(TimeSpan.FromMilliseconds(100));
+
+            _screenCts?.Dispose();
+            _screenCts = null;
+            _screenTask = null;
         }
 
         public void Play()
         {
             Stop();
 
-            StartMediaTask();
+            StartVideoTask();
+            StartScreenTask();
         }
 
         public void Stop()
         {
-            StopMediaTask();
+            StopVideoTask();
+            StopScreenTask();
         }
 
         public bool IsPlaying()
@@ -164,11 +224,6 @@ namespace MZ.Xray.Engine
         private ZeffectProcesser _zeffect = new();
         public ZeffectProcesser Zeffect { get => _zeffect; set => SetProperty(ref _zeffect, value); }
 
-        #endregion
-
-        #region Manager (관리)
-        private XrayDataSaveManager _saveManager = new();
-        public XrayDataSaveManager SaveManager { get => _saveManager; set => SetProperty(ref _saveManager, value); }
         #endregion
 
         /// <summary>
@@ -318,23 +373,26 @@ namespace MZ.Xray.Engine
             int frameCount = Media.Information.Count;
             int sensorWidth = Calibration.SensorImageWidth;
             int width = Media.Image.Width;
+            int height = Media.Image.Height;
 
             if (frameCount <= 0)
             {
                 return;
             }
 
-            string path = SaveManager.GetPath();
-            string time = SaveManager.GetCurrentTime();
+            string path = XrayDataSaveManager.GetPath();
+            string time = XrayDataSaveManager.GetCurrentTime();
 
-            (int start, int end) = SaveManager.GetSplitPosition(width, sensorWidth, frameCount);
+            (int start, int end) = XrayDataSaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
-            //이미지 저장 background
             Task.Run(async () =>
             {
                 await Task.WhenAll(
-                    SaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
-                    SaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"));
+                    XrayDataSaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
+                    XrayDataSaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"),
+                    XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"));
+
+                await _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height));
             });
         }
     }

@@ -9,13 +9,13 @@
                  xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
                  xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  d:DataContext="{d:DesignInstance Type=viewmodels:DashboardWindowViewModel}"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  mc:Ignorable="d"
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                  WindowState="Maximized"
-                 ResizeMode="CanMinimize"
+                 ResizeMode="NoResize"
                  Title="MZ.Application">
 
     <Window.Resources>

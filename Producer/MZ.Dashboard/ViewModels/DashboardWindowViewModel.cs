@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Dashboard.Models;
 using MZ.Domain.Models;
 using MZ.Loading;
 using MZ.Resource;

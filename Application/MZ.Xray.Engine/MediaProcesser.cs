@@ -1,4 +1,5 @@
 ﻿using MZ.Domain.Models;
+using MZ.Domain.Enums;
 using MZ.Vision;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -10,12 +11,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
-using MZ.Domain.Enums;
+using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace MZ.Xray.Engine
 {
     public class MediaProcesser : BindableBase
     {
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         #region Params
         private MediaModel _model = new();
         public MediaModel Model { get => _model; set => SetProperty(ref _model, value); }
@@ -34,6 +39,12 @@ namespace MZ.Xray.Engine
         {
             get => Model.Image;
             set => Model.Image = value;
+        }
+
+        public Canvas Screen
+        {
+            get => Model.Screen;
+            set => Model.Screen = value;
         }
 
         public ImageSource ImageSource
@@ -97,7 +108,18 @@ namespace MZ.Xray.Engine
             }
         }
 
-        public void Update()
+        public void UpdateVideo()
+        {
+            string path = XrayDataSaveManager.GetPath();
+            string time = XrayDataSaveManager.GetCurrentTime();
+
+            Task.Run(async () =>
+            {
+                await XrayDataSaveManager.VideoAsync([.. Frames], path, $"{time}.avi");
+            });
+        }
+
+        public void UpdateScreen()
         {
             ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
 
@@ -178,6 +200,28 @@ namespace MZ.Xray.Engine
         public void ClearFilter()
         {
             Filter = new ();
+        }
+
+        public Mat ChangedScreenToMat()
+        {
+            Mat mat = null;
+            _dispatcher.Invoke(() =>
+            {
+                var parent = Screen.Parent as FrameworkElement;
+                parent.UpdateLayout();
+
+                double width = parent.ActualWidth;
+                double height = parent.ActualHeight;
+
+                RenderTargetBitmap renderBitmap = new((int)width, (int)height, 96, 96, PixelFormats.Pbgra32);
+                renderBitmap.Render(parent);
+
+                var converted = new FormatConvertedBitmap(renderBitmap, PixelFormats.Bgra32, null, 0);
+                mat = BitmapSourceConverter.ToMat(converted);
+            });
+            
+            return mat;
+
         }
 
         private bool IsShowFrame(int slider)
