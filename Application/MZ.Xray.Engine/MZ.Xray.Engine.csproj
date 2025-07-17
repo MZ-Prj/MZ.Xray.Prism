@@ -10,6 +10,7 @@
     <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
     <ProjectReference Include="..\MZ.DTO\MZ.DTO.csproj" />
     <ProjectReference Include="..\MZ.Event\MZ.Event.csproj" />
+    <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />
     <ProjectReference Include="..\MZ.Vision\MZ.Vision.csproj" />
   </ItemGroup>
 </Project>

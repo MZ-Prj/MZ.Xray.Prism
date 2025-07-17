@@ -132,8 +132,12 @@ namespace MZ.Dashboard.ViewModels
                             nameof(UserLoginView)));
         }
 
-        private void ImageStorageButton()
+        private async void ImageStorageButton()
         {
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.ImageStorageControl,
+                regionName: nameof(ImageStorageControlView),
+                isMultiple: false);
         }
 
         private async void LogStorageButton()

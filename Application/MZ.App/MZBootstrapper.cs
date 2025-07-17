@@ -109,6 +109,7 @@ namespace MZ.App
             // Business
             containerRegistry.Register<IUserService, UserService>();
             containerRegistry.Register<IAppSettingService, AppSettingService>();
+            containerRegistry.Register<IXrayVisionImageService, XrayVisionImageService>();
         }
 
         private void RegisterRepositories(IContainerRegistry containerRegistry)
@@ -117,6 +118,7 @@ namespace MZ.App
             containerRegistry.Register<IUserRepository, UserRepository>();
             containerRegistry.Register<IUserSettingRepository, UserSettingRepository>();
             containerRegistry.Register<IAppSettingRepository, AppSettingRepository>();
+            containerRegistry.Register<IXrayVisionImageRepository, XrayVisionImageRepository>();
         }
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
@@ -124,7 +126,6 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<ILoadingService, LoadingService>();
             containerRegistry.RegisterSingleton<IWindowDialogService, WindowDialogService>();
             containerRegistry.RegisterSingleton<IXrayService, XrayService>();
-
         }
 
         private void RegisterUIService(IContainerRegistry containerRegistry)

@@ -5,6 +5,7 @@ using OpenCvSharp;
 using Prism.Mvvm;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace MZ.Domain.Models
 {
@@ -55,9 +56,15 @@ namespace MZ.Domain.Models
 
         private int _count = 0;
         public int Count { get => _count; set => SetProperty(ref _count, value); }
+        
+        private int _videoCaptureCount = 0;
+        public int VideoCaptureCount { get => _videoCaptureCount; set => SetProperty(ref _videoCaptureCount, value); }
 
-        private int _fps = 60;
+        private int _fps = 120;
         public int FPS { get => _fps; set => SetProperty(ref _fps, value); }
+
+        private int _videoDelay = 30;
+        public int VideoDelay { get => _videoDelay; set => SetProperty(ref _videoDelay, value); }
 
         private double _width = 0;
         public double Width { get => _width; set => SetProperty(ref _width, value); }
@@ -72,6 +79,9 @@ namespace MZ.Domain.Models
 
     public class MediaModel : BindableBase
     {
+        public Canvas _screen;
+        public Canvas Screen { get => _screen; set => SetProperty(ref _screen, value); }
+
         private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
@@ -96,7 +106,7 @@ namespace MZ.Domain.Models
 
         private ObservableCollection<FrameModel> _frames = [];
         public ObservableCollection<FrameModel> Frames { get => _frames; set => SetProperty(ref _frames, value); }
-
+        
         private FrameInformationModel _information = new();
         public FrameInformationModel Information { get => _information; set => SetProperty(ref _information, value); }
 

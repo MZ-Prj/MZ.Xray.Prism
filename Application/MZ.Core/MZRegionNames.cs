@@ -21,6 +21,7 @@
         //application
         public static string DashboardFooterButtonControlRegion = "DashboardFooterButtonControlRegion";
         public static string LogStorageControl = "LogStorageControlRegion";
+        public static string ImageStorageControl = "ImageStorageControlRegion";
 
 
         //producer

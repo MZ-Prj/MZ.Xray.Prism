@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using OpenCvSharp;
@@ -86,70 +87,67 @@ namespace MZ.Vision
             Cv2.ImWrite(root, input);
         }
 
+
         public static void Save(List<Mat> input, string root, double fps = 2.0)
         {
             Size frameSize = new(input[0].Width, input[0].Height);
             FourCC fourCC = FourCC.XVID;
 
-            using (var writer = new VideoWriter(root, fourCC, fps, frameSize, true))
+            using var writer = new VideoWriter(root, fourCC, fps, frameSize, true);
+            if (!writer.IsOpened())
             {
-                if (!writer.IsOpened())
+                throw new Exception("VideoWriter Open Error");
+            }
+
+            for (int i = 0; i < input.Count; i++)
+            {
+                Mat resizedImage = input[i].Clone();
+                if (resizedImage.Size() != frameSize)
                 {
-                    throw new Exception("VideoWriter Open Error");
+                    Cv2.Resize(resizedImage, resizedImage, frameSize);
+                }
+                else
+                {
+                    resizedImage = BlendWithBackground(resizedImage);
                 }
 
-                for (int i = 0; i < input.Count; i++)
-                {
-                    Mat resizedImage = input[i].Clone();
-                    if (resizedImage.Size() != frameSize)
-                    {
-                        Cv2.Resize(resizedImage, resizedImage, frameSize);
-                    }
-                    else
-                    {
-                        resizedImage = BlendWithBackground(resizedImage);
-                    }
-
-                    writer.Write(resizedImage);
-                }
+                writer.Write(resizedImage);
             }
         }
 
-        public static void Save(List<Mat> input, List<DateTime> time, string root, double split, double fps = 2.0)
+        public static void Save(List<Mat> input, List<DateTime> time, string root, double fps = 2.0)
         {
             Size frameSize = new(input[0].Width, input[0].Height);
             FourCC fourCC = FourCC.XVID;
 
-            using (var writer = new VideoWriter(root, fourCC, fps, frameSize, true))
+            using var writer = new VideoWriter(root, fourCC, fps, frameSize, true);
+            if (!writer.IsOpened())
             {
-                if (!writer.IsOpened())
+                throw new Exception("VideoWriter Open Error");
+            }
+
+            for (int i = 0; i < input.Count; i++)
+            {
+                Mat resizedImage = input[i].Clone();
+                if (resizedImage.Size() != frameSize)
                 {
-                    throw new Exception("VideoWriter Open Error");
+                    Cv2.Resize(resizedImage, resizedImage, frameSize);
+                }
+                else
+                {
+                    resizedImage = BlendWithBackground(resizedImage);
                 }
 
-                for (int i = 0; i < input.Count; i++)
-                {
-                    Mat resizedImage = input[i].Clone();
-                    if (resizedImage.Size() != frameSize)
-                    {
-                        Cv2.Resize(resizedImage, resizedImage, frameSize);
-                    }
-                    else
-                    {
-                        resizedImage = BlendWithBackground(resizedImage);
-                    }
+                //시간 추가
+                string timeText = time[i].ToString("yyyy-MM-dd HH:mm:ss");
+                Point textPosition = new(10, 20);
+                Scalar textColor = Scalar.Red;
+                double fontScale = 0.5;
+                int thickness = 2;
 
-                    //시간 추가
-                    string timeText = time[i].ToString("yyyy-MM-dd HH:mm:ss");
-                    Point textPosition = new(10, 20);
-                    Scalar textColor = Scalar.Red;
-                    double fontScale = 0.5;
-                    int thickness = 2;
+                Cv2.PutText(resizedImage, timeText, textPosition, HersheyFonts.HersheySimplex, fontScale, textColor, thickness);
 
-                    Cv2.PutText(resizedImage, timeText, textPosition, HersheyFonts.HersheySimplex, fontScale, textColor, thickness);
-
-                    writer.Write(resizedImage);
-                }
+                writer.Write(resizedImage);
             }
         }
 
@@ -669,6 +667,7 @@ namespace MZ.Vision
 
             return average;
         }
+
         public static void View(Mat input, string title = "title")
         {
             Mat output = new Mat();
@@ -679,16 +678,14 @@ namespace MZ.Vision
 
             Cv2.WaitKey(0);
         }
+
         public static Mat ImageSourceToMat(ImageSource imageSource)
         {
-            BitmapSource bitmapSource = imageSource as BitmapSource;
-            var outStream = new System.IO.MemoryStream();
-            BitmapEncoder enc = new BmpBitmapEncoder();
-            enc.Frames.Add(BitmapFrame.Create(bitmapSource));
-            enc.Save(outStream);
-            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-
-            return bitmap.ToMat();
+            if (imageSource is BitmapSource bitmapSource)
+            {
+                return BitmapSourceConverter.ToMat(bitmapSource);
+            }
+            return new Mat();
         }
 
         public static Mat BitmapSourceToMat(BitmapSource bitmapSource)

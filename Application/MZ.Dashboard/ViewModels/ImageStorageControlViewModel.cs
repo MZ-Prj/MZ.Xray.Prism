@@ -11,7 +11,6 @@ namespace MZ.Dashboard.ViewModels
     public class ImageStorageControlViewModel : MZBindableBase
     {
         #region Services
-
         private readonly IDatabaseService _databaseService;
         #endregion
 
@@ -64,6 +63,8 @@ namespace MZ.Dashboard.ViewModels
         public ImageStorageControlViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
         {
             _databaseService = databaseService;
+
+            base.Initialize();
         }
 
         public override void InitializeModel()
@@ -71,20 +72,19 @@ namespace MZ.Dashboard.ViewModels
             LoadImages();
         }
 
-
-        private void LoadImages()
+        private async void LoadImages()
         {
             if (StartSelectedDate.HasValue && EndSelectedDate.HasValue)
             {
-                //var newImages = _databaseService.GetImageFiles(StartSelectedDate.Value, EndSelectedDate.Value, CurrentPage, PageSize);
-                //if (newImages != null && newImages.Any())
-                //{
-                //    foreach (var image in newImages)
-                //    {
-                //        ImageFiles.Add(image);
-                //    }
-                //    CurrentPage++;
-                //}
+                var images = await _databaseService.Image.Load(new(StartSelectedDate.Value, EndSelectedDate.Value, CurrentPage, PageSize));
+                if (images != null && images.Data.Count != 0)
+                {
+                    foreach (var image in images.Data)
+                    {
+                        ImageFiles.Add(image);
+                    }
+                    CurrentPage++;
+                }
             }
         }
 

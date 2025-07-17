@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Win32;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -30,7 +31,17 @@ namespace MZ.Dashboard.ViewModels
 
         #region Params
         private Canvas _canvasImageView;
-        public Canvas CanvasImageView { get => _canvasImageView; set => SetProperty(ref _canvasImageView, value); }
+        public Canvas CanvasImageView 
+        {
+            get => _canvasImageView;
+            set
+            {
+                if (SetProperty(ref _canvasImageView, value))
+                {
+                    Media.Screen = value;
+                }
+            }
+        }
 
         private Canvas _canvasPredictView;
         public Canvas CanvasPredictView { get => _canvasPredictView; set => SetProperty(ref _canvasPredictView, value); }
@@ -98,8 +109,8 @@ namespace MZ.Dashboard.ViewModels
         {
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayStopCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false));
 
             EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4")));
 
@@ -151,6 +162,9 @@ namespace MZ.Dashboard.ViewModels
             // ui
             ToggleFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
 
+            VisibilityFooterButton(PreviousCommand, _xrayService.IsPlaying(), VideoButtons);
+            VisibilityFooterButton(NextCommand, _xrayService.IsPlaying(), VideoButtons);
+
             // logic
             if (_xrayService.IsPlaying())
             {
@@ -184,12 +198,12 @@ namespace MZ.Dashboard.ViewModels
 
         private void BrightDownButton()
         {
-            Media.ChangedFilterBrightness(-0.1f);
+            Media.ChangedFilterBrightness(-0.01f);
         }
 
         private void BrightUpButton()
         {
-            Media.ChangedFilterBrightness(+0.1f);
+            Media.ChangedFilterBrightness(+0.01f);
         }
 
         private void ContrastDownButton()
@@ -217,6 +231,18 @@ namespace MZ.Dashboard.ViewModels
 
         private void SaveImageButton()
         {
+            SaveFileDialog saveFileDialog = new()
+            {
+                Title = "Save Capture Image",
+                Filter = "PNG  (*.png)|*.png",
+                DefaultExt = ".png"
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+            if (result == true)
+            {
+                XrayDataSaveManager.Base(Media.ChangedScreenToMat(), saveFileDialog.FileName);
+            }
         }
 
 
@@ -234,12 +260,25 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        private void VisibilityFooterButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IsVisibility = isVisibility;
+                    }
+                }
+            }
+        }
 
         private void ColorButton(object color)
         {
             if (color is ColorRole colorRole)
             {
-                _xrayService.Media.ChangedFilterColor(colorRole);
+                Media.ChangedFilterColor(colorRole);
             }
         }
 
@@ -248,7 +287,7 @@ namespace MZ.Dashboard.ViewModels
         #region Service
         public void CreateMedia(int width, int height)
         {
-            _xrayService.Media.Create(width, height);
+            Media.Create(width, height);
         }
         #endregion
 

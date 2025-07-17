@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MZ.Domain.Entities;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 

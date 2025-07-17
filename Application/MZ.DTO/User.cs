@@ -38,7 +38,7 @@ namespace MZ.DTO
     //) : BaseResponse(Success, Message);
     #endregion
 
-    #region User DTO
+    #region DTO
     public record UserDto(
         int Id,
         string Username,

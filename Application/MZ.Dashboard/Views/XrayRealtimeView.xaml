@@ -235,6 +235,7 @@
                                           CommandParameter="{Binding Path=UId}"
                                           Background="{Binding Path=ColorBrush}"
                                           ToolTip="{Binding Path=ToolTip}"
+                                          IsEnabled="{Binding Path=IsVisibility}"
                                           BorderThickness="0" Width="48" Height="48" Cursor="Hand">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
                                                             Width="24" Height="24"/>
