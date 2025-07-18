@@ -28,7 +28,7 @@ namespace MZ.Dashboard.ViewModels
         private readonly IWindowDialogService _windowDialogService;
         #endregion
 
-        #region Models
+        #region Params
         private LoadingModel _loadingModel;
         public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.DashboardRegion]; set => SetProperty(ref _loadingModel, value); }
 

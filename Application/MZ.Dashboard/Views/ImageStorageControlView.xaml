@@ -4,8 +4,14 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
              xmlns:prism="http://prismlibrary.com/"   
-             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ImageStorageControlViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
@@ -19,7 +25,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="4">
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
@@ -51,14 +64,14 @@
             </Border>
 
         </StackPanel>
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Grid.Column="0">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ScrollChanged">
                     <prism:InvokeCommandAction Command="{Binding Path=ScrollChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ItemsControl ItemsSource="{Binding Path=ImageFiles, Mode=TwoWay}">
+            <ItemsControl ItemsSource="{Binding Path=Images, Mode=TwoWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" IsItemsHost="True" />
@@ -75,15 +88,10 @@
                                                            CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <StackPanel>
-                                <Image Source="{Binding Path=Path}" Height="150" Stretch="Uniform"/>
+                            <StackPanel Margin="8">
+                                <Image Source="{Binding Path=PathName}" Height="160" Stretch="Uniform"/>
                                 <TextBlock Text="{Binding Path=Filename}" 
-                                       Margin="4,4,4,0" 
                                        FontWeight="Bold" 
-                                       HorizontalAlignment="Center" />
-                                <TextBlock Text="{Binding Path=CreateDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" 
-                                       Margin="4,0,4,4" 
-                                       FontSize="10" 
                                        HorizontalAlignment="Center" />
                             </StackPanel>
                         </Border>
@@ -91,5 +99,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
+        <loading:LoadingView Grid.RowSpan="2" Grid.ColumnSpan="3" DataContext="{Binding Path=LoadingModel}"/>
     </Grid>
 </UserControl>

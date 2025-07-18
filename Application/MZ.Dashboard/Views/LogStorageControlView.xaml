@@ -21,7 +21,7 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <ComboBox ItemsSource="{Binding Path=LogLevelItems}" 
+            <ComboBox ItemsSource="{Binding Path=LogLevels}" 
                       SelectedItem="{Binding Path=SelectedLogLevel, Mode=TwoWay}"
                       Margin="0,0,4,0" 
                       Width="120">
@@ -59,7 +59,7 @@
             </Border>
         </StackPanel>
 
-        <DataGrid ItemsSource="{Binding Path=LogItems, Mode=TwoWay}" 
+        <DataGrid ItemsSource="{Binding Path=Logs, Mode=TwoWay}" 
                   Grid.Row="1" 
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Hidden"
