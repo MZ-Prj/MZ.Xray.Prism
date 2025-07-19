@@ -7,6 +7,7 @@
              xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
              xmlns:prism="http://prismlibrary.com/"   
              xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource" 
+             xmlns:managers="clr-namespace:MZ.Resource.Managers;assembly=MZ.Resource" 
              xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              d:DataContext="{d:DesignInstance Type=viewmodels:ImageStorageControlViewModel}"
@@ -18,6 +19,7 @@
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
         <converters:ContrastColorConverter x:Key="ContrastColorConverter"/>
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
+        <converters:ImagePathToBrushConverter x:Key="ImagePathToBrushConverter" />
     </UserControl.Resources>
     
     <Grid>
@@ -27,9 +29,9 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="4">
@@ -52,14 +54,14 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <iconPacks:PackIconMaterial Margin="4" 
-                                            Grid.Column="0" 
-                                            Kind="Magnify"/>
+                                                Grid.Column="0" 
+                                                Kind="Magnify"/>
                     <TextBox Grid.Column="1"
-                         BorderThickness="0"
-                         FontSize="12"
-                         Text="{Binding Path=SearchImageText, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalAlignment="Center"
-                         Background="Transparent"/>
+                             BorderThickness="0"
+                             FontSize="12"
+                             Text="{Binding Path=SearchImageText, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Background="Transparent"/>
                 </Grid>
             </Border>
 
@@ -79,26 +81,54 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="8"
-                                BorderBrush="{DynamicResource MahApps.Brushes.Gray9}" BorderThickness="1" CornerRadius="8"
-                                Background="Transparent">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeftButtonUp">
-                                    <prism:InvokeCommandAction Command="{Binding DataContext.ImageSelectedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                           CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <StackPanel Margin="8">
+                        <Button Margin="4" 
+                                Background="{x:Null}"
+                                Command="{Binding Path=DataContext.SelectedImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                ToolTip="{Binding Path=Filename}"
+                                Cursor="Hand">
+                            <StackPanel>
                                 <Image Source="{Binding Path=PathName}" Height="160" Stretch="Uniform"/>
                                 <TextBlock Text="{Binding Path=Filename}" 
-                                       FontWeight="Bold" 
-                                       HorizontalAlignment="Center" />
+                                           Margin="4"
+                                           FontWeight="Bold" 
+                                           HorizontalAlignment="Center" />
                             </StackPanel>
-                        </Border>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
+        <GridSplitter Grid.Row="1" Grid.Column="1"
+                      Width="4"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Columns" 
+                      Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <StackPanel Grid.Row="1" Grid.Column="2" 
+                    Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel LastChildFill="False"  Margin="4">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Margin="0,0,4,0" Command="{Binding Path=CloseCommand}">
+                        <iconPacks:PackIconMaterial Kind="Close"  Width="16" Height="16"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <Image Source="{Binding Path=SelectedPathName}" Stretch="Uniform"
+                   MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}">
+                <Image.Effect>
+                    <managers:XrayShaderManager Input="{Binding Path=SelectedPathName, Converter={StaticResource ImagePathToBrushConverter}}"
+                                            TextureSize="1,1"
+                                            SharpnessLevel="0"
+                                            BrightnessLevel="0" 
+                                            ContrastLevel="2"
+                                            ColorMode="1"/>
+                </Image.Effect>
+            </Image>
+        </StackPanel>
         
         <loading:LoadingView Grid.RowSpan="2" Grid.ColumnSpan="3" DataContext="{Binding Path=LoadingModel}"/>
     </Grid>

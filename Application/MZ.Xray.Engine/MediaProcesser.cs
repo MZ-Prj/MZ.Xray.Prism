@@ -81,7 +81,7 @@ namespace MZ.Xray.Engine
             Information.Width = width;
             Information.Height = height;
 
-            Information.Size = new(width, height);
+            Filter.Size = new(width, height);
         }
 
         public void UpdateOnResize(Mat line, int width)

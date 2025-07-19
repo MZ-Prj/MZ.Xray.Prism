@@ -23,6 +23,9 @@ namespace MZ.Domain.Models
         private float _contrast = 2.0f;
         public float Contrast { get => _contrast; set => SetProperty(ref _contrast, Math.Clamp(value, 0.0f, 5.0f)); }
 
+        private System.Windows.Size _size = new(1, 1);
+        public System.Windows.Size Size { get => _size; set => SetProperty(ref _size, value); }
+
         private ColorRole _colorMode = ColorRole.Color;
         public ColorRole ColorMode { get => _colorMode; set => SetProperty(ref _colorMode, value); }
 
@@ -72,18 +75,10 @@ namespace MZ.Domain.Models
         private double _height = 0;
         public double Height { get => _height; set => SetProperty(ref _height, value); }
 
-        private System.Windows.Size _size = new(1, 1);
-        public System.Windows.Size Size { get => _size; set => SetProperty(ref _size, value); }
-
     }
 
-    public class MediaModel : BindableBase
+    public class ImageModel : BindableBase
     {
-        public Canvas _screen;
-        public Canvas Screen { get => _screen; set => SetProperty(ref _screen, value); }
-
-        private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
-        public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
         private ImageSource _imageSource = null;
         public ImageSource ImageSource
@@ -103,6 +98,16 @@ namespace MZ.Domain.Models
 
         private FilterModel _filter = new();
         public FilterModel Filter { get => _filter; set => SetProperty(ref _filter, value); }
+
+    }
+
+    public class MediaModel : ImageModel
+    {
+        public Canvas _screen;
+        public Canvas Screen { get => _screen; set => SetProperty(ref _screen, value); }
+
+        private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
+        public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
         private ObservableCollection<FrameModel> _frames = [];
         public ObservableCollection<FrameModel> Frames { get => _frames; set => SetProperty(ref _frames, value); }
