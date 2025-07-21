@@ -148,18 +148,26 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple:false);
         }
 
-        private void RecordButton()
-        {
-        }
-
         private void MaterialButton()
         {
+            _dialogService.ShowDialog(
+                "DialogView",
+                new DialogParameters
+                {
+                    {"Title",  MZRegionNames.MaterialControl},
+                    {"RegionName", MZRegionNames.MaterialControl}
+                },
+                (IDialogResult result) => {
+                });
         }
 
         private void AIButton()
         {
         }
 
+        private void RecordButton()
+        {
+        }
 
         private void UpdateWindowCommandButton(bool check)
         {

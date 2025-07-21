@@ -2,10 +2,31 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                    xmlns:converters="clr-namespace:MZ.Resource.Converters">
+                    xmlns:converters="clr-namespace:MZ.Resource.Converters" InvalidatesImplicitDataTemplateResources="False">
     
+    <!-- 동적 처리 하거나 중복사용 많을 때 (ui관점)-->
     <converters:NumericDecimalConverter x:Key="NumericDecimalConverter" />
     <converters:NumericIntegerConverter x:Key="NumericIntegerConverter" />
+
+    <DataTemplate x:Key="StringLabelEditorTemplate">
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="{Binding Path=Name}"
+                   VerticalAlignment="Center"
+                   Margin="4" />
+
+            <TextBox Grid.Column="1"
+                 Margin="4"
+                 Text="{Binding Path=Content,
+                                RelativeSource={RelativeSource AncestorType=ContentControl},
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+    </DataTemplate>
     
     <DataTemplate x:Key="StringEditorTemplate">
         <TextBox Margin="4"
@@ -13,6 +34,28 @@
                                 RelativeSource={RelativeSource AncestorType=ContentControl},
                                 Mode=TwoWay,
                                 UpdateSourceTrigger=PropertyChanged}" />
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="Int32LabelEditorTemplate">
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="{Binding Path=Name}"
+                   VerticalAlignment="Center"
+                   Margin="4" />
+
+            <TextBox Grid.Column="1"
+                     Margin="4"
+                     Text="{Binding Path=Content,
+                                    RelativeSource={RelativeSource AncestorType=ContentControl},
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Converter={StaticResource NumericIntegerConverter}}" />
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="Int32EditorTemplate">
@@ -25,6 +68,27 @@
     </DataTemplate>
 
 
+    <DataTemplate x:Key="DoubleLabelEditorTemplate">
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="{Binding Path=Name}"
+                   VerticalAlignment="Center"
+                   Margin="4" />
+
+            <TextBox Grid.Column="1"
+                     Margin="4"
+                     Text="{Binding Path=Content,
+                                    RelativeSource={RelativeSource AncestorType=ContentControl},
+                                    Mode=TwoWay,
+                                    UpdateSourceTrigger=PropertyChanged,
+                                    Converter={StaticResource NumericDecimalConverter}}" />
+        </Grid>
+    </DataTemplate>
+    
     <DataTemplate x:Key="DoubleEditorTemplate">
         <TextBox Margin="4"
                  Text="{Binding Path=Content,
@@ -40,5 +104,31 @@
                   IsChecked="{Binding Path=Content,
                                       RelativeSource={RelativeSource AncestorType=ContentControl},
                                       Mode=TwoWay}" />
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="ColorLabelEditorTemplate">
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="{Binding Path=Name}"
+                   VerticalAlignment="Center"
+                   Margin="4" />
+
+            <TextBox Grid.Column="1"
+                     Margin="4"
+                     Background="{Binding Path=Background,
+                                          RelativeSource={RelativeSource AncestorType=ContentControl},
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="2"
+                    Margin="4"
+                    Content="Action"
+                    Command="{Binding Path=Command}" />
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>

@@ -155,7 +155,7 @@ namespace MZ.Domain.Models
         private Mat _image;
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
-        private ImageSource _imageSource;
+        private ImageSource _imageSource = null;
         public ImageSource ImageSource { get => _imageSource; set => SetProperty(ref _imageSource, value); }
 
         private ObservableCollection<MaterialControlModel> _controls = [];
@@ -180,14 +180,21 @@ namespace MZ.Domain.Models
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
+        private readonly Action _updateGraphAction;
+
+        public MaterialControlModel(Action updateGraphAction)
+        {
+            _updateGraphAction = updateGraphAction;
+        }
+
         private double _y = 0.0;
-        public double Y { get => _y; set => SetProperty(ref _y, value); }
+        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { InvokeUpdateGraph(); } } }
 
         private double _xMin = byte.MinValue;
-        public double XMin { get => _xMin; set => SetProperty(ref _xMin, value); }
+        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { InvokeUpdateGraph(); } } }
 
         private double _xMax = byte.MaxValue;
-        public double XMax { get => _xMax; set => SetProperty(ref _xMax, value); }
+        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { InvokeUpdateGraph(); } } }
 
         private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
@@ -197,20 +204,38 @@ namespace MZ.Domain.Models
             {
                 if (SetProperty(ref _scalar, value))
                 {
+                    _color = Color.FromRgb((byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
+                    RaisePropertyChanged(nameof(Color));
                     RaisePropertyChanged(nameof(ColorBrush));
+
+                    InvokeUpdateGraph();
                 }
             }
         }
 
-        public Brush ColorBrush
+        private Color _color;
+        public Color Color 
         {
-            get
+            get => _color;
+            set
             {
-                byte blue = (byte)Scalar.Val0;
-                byte green = (byte)Scalar.Val1;
-                byte red = (byte)Scalar.Val2;
-                return new SolidColorBrush(Color.FromRgb(red, green, blue));
+                if (SetProperty(ref _color, value))
+                {
+                    _scalar = new Scalar(value.B, value.G, value.R, byte.MaxValue);
+                    RaisePropertyChanged(nameof(Scalar));
+                    RaisePropertyChanged(nameof(ColorBrush));
+
+                    InvokeUpdateGraph();
+                }
             }
+        }
+
+        public Brush ColorBrush => new SolidColorBrush(Color);
+
+
+        private void InvokeUpdateGraph()
+        {
+            _updateGraphAction?.Invoke();
         }
     }
 

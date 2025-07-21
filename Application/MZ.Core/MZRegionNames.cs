@@ -2,30 +2,31 @@
 {
     public static class MZRegionNames
     {
-        public static string DashboardRegion = "DashboardRegion";
-        public static string AnalysisRegion = "AnalysisRegion";
-        public static string SplashRegion = "SplashRegion";
+        public readonly static string DashboardRegion = "DashboardRegion";
+        public readonly static string AnalysisRegion = "AnalysisRegion";
+        public readonly static string SplashRegion = "SplashRegion";
 
-        public static string DialogRegion = "DialogRegion";
-        public static string WindowDialogRegion = "WindowDialogRegion";
-        public static string LanguageRegion = "LanguageRegion";
-        public static string LoadingRegion = "LoadingRegion";
+        public readonly static string DialogRegion = "DialogRegion";
+        public readonly static string WindowDialogRegion = "WindowDialogRegion";
+        public readonly static string LanguageRegion = "LanguageRegion";
+        public readonly static string LoadingRegion = "LoadingRegion";
 
-        public static string UserLoginRegion = "UserLoginRegion";
-        public static string UserRegisterRegion = "UserRegisterRegion";
+        public readonly static string UserLoginRegion = "UserLoginRegion";
+        public readonly static string UserRegisterRegion = "UserRegisterRegion";
 
         //UI
-        public static string SidebarRegion = "SidebarRegion";
-        public static string ToolbarRegion = "ToolbarRegion";
+        public readonly static string SidebarRegion = "SidebarRegion";
+        public readonly static string ToolbarRegion = "ToolbarRegion";
 
-        //application
-        public static string DashboardFooterButtonControlRegion = "DashboardFooterButtonControlRegion";
-        public static string LogStorageControl = "LogStorageControlRegion";
-        public static string ImageStorageControl = "ImageStorageControlRegion";
+        //Application
+        public readonly static string DashboardFooterButtonControlRegion = "DashboardFooterButtonControlRegion";
+        public readonly static string LogStorageControl = "LogStorageControlRegion";
+        public readonly static string ImageStorageControl = "ImageStorageControlRegion";
+        public readonly static string MaterialControl = "MaterialControlRegion";
 
 
         //producer
-        public static string IpNetworkRegion = "IpNetworkRegion";
+        public readonly static string IpNetworkRegion = "IpNetworkRegion";
 
     }
 }

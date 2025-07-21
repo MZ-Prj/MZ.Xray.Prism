@@ -229,7 +229,7 @@ namespace MZ.Xray.Engine
             return slider <= Frames.Count && slider > 0 && slider <= Information.MaxSlider;
         }
 
-        private BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        private static BitmapSource CanFreezeImageSource(BitmapSource bitmap)
         {
             if (bitmap.CanFreeze)
             {

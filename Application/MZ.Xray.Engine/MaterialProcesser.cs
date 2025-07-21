@@ -2,10 +2,12 @@
 using MZ.Vision;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using Prism.Mvvm;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Prism.Mvvm;
+using System.Windows.Media;
+using System.Collections.ObjectModel;
 using static MZ.Vision.VisionEnums;
 
 namespace MZ.Xray.Engine
@@ -15,7 +17,6 @@ namespace MZ.Xray.Engine
     /// </summary>
     public class MaterialProcesser : BindableBase
     {
-
         #region Params
         private MaterialModel _model = new();
         public MaterialModel Model { get => _model; set => SetProperty(ref _model, value); }
@@ -28,6 +29,12 @@ namespace MZ.Xray.Engine
             set => Model.HighLowRate = value;
         }
 
+        public ObservableCollection<MaterialControlModel> Controls
+        {
+            get => Model.Controls;
+            set => Model.Controls = value;
+        }
+         
         #endregion
 
         public MaterialProcesser()
@@ -49,9 +56,9 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void UpdateMaterialControls()
         {
-            Model.Controls.Add(new MaterialControlModel() { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
-            Model.Controls.Add(new MaterialControlModel() { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
-            Model.Controls.Add(new MaterialControlModel() { Y = 100, XMin = -10, XMax = 255, Scalar = new Scalar(255, 128, 0, 255) });
+            Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
+            Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
+            Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 100, XMin = -10, XMax = 255, Scalar = new Scalar(255, 128, 0, 255) });
         }
 
         public void SetMaterialControlsInDatabase(ICollection<MaterialControlModel> controls)
@@ -60,7 +67,7 @@ namespace MZ.Xray.Engine
             foreach (var control in controls)
             {
                 Model.Controls.Add(
-                    new MaterialControlModel()
+                    new (UpdateAllMaterialGraph)
                     {
                         Y = control.Y,
                         XMin = control.XMin,
@@ -97,9 +104,23 @@ namespace MZ.Xray.Engine
             }
 
             // 그래프 보여주는 용도
-            var image = VisionBase.Flip(Model.Image, FlipMode.X);
+            var image = GridViewImage(); 
+
             Model.ImageSource = image.ToBitmapSource();
         }
+
+        public Mat GridViewImage()
+        {
+            Mat image = VisionBase.Flip(Model.Image, FlipMode.X);
+            
+            Mat result = VisionBase.SplitRow(image, image.Height / 2, image.Height);
+
+            int width = result.Width;
+            int height = result.Height;
+
+            return result;
+        }
+
 
         public void DrawControl(MaterialControlModel control, int width, int height)
         {
@@ -187,5 +208,9 @@ namespace MZ.Xray.Engine
             return new Vec4b(b, g, r, a);
         }
 
+        public ImageSource GetImageSource()
+        {
+            return Model.ImageSource;
+        }
     }
 }

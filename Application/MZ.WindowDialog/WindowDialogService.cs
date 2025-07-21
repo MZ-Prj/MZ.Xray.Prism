@@ -6,6 +6,7 @@ using Prism.Regions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace MZ.WindowDialog
 {
@@ -61,7 +62,9 @@ namespace MZ.WindowDialog
             {
                 _windows[regionName].Remove(window);
                 if (_windows[regionName].Count == 0)
+                {
                     _windows.Remove(regionName);
+                }
             };
 
             window.Show();

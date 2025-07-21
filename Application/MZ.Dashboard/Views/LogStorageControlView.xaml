@@ -67,6 +67,7 @@
                   CanUserAddRows="False" 
                   CanUserDeleteRows="False"
                   HeadersVisibility="Column"
+                  IsReadOnly="True"
                   Margin="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Date" 

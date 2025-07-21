@@ -202,7 +202,7 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private string ReadFileContent(string filePath)
+        private static string ReadFileContent(string filePath)
         {
             var tempPath = Path.GetTempFileName();
             try
