@@ -112,11 +112,7 @@ namespace MZ.Xray.Engine
         public Mat GridViewImage()
         {
             Mat image = VisionBase.Flip(Model.Image, FlipMode.X);
-            
             Mat result = VisionBase.SplitRow(image, image.Height / 2, image.Height);
-
-            int width = result.Width;
-            int height = result.Height;
 
             return result;
         }

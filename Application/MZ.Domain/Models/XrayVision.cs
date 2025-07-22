@@ -180,7 +180,7 @@ namespace MZ.Domain.Models
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
-        private readonly Action _updateGraphAction;
+        public readonly Action _updateGraphAction;
 
         public MaterialControlModel(Action updateGraphAction)
         {
