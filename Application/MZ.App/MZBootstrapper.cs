@@ -43,9 +43,6 @@ namespace MZ.App
             // Initialize Database
             RegisterDatabaseServices(containerRegistry);
 
-            // Repository
-            RegisterRepositories(containerRegistry);
-
             // Service
             RegisterApplicationServices(containerRegistry);
 
@@ -106,19 +103,22 @@ namespace MZ.App
             // Session
             containerRegistry.RegisterSingleton<IUserSession, UserSession>();
 
-            // Business
-            containerRegistry.Register<IUserService, UserService>();
-            containerRegistry.Register<IAppSettingService, AppSettingService>();
-            containerRegistry.Register<IXrayVisionImageService, XrayVisionImageService>();
-        }
-
-        private void RegisterRepositories(IContainerRegistry containerRegistry)
-        {
             // Repository
             containerRegistry.Register<IUserRepository, UserRepository>();
             containerRegistry.Register<IUserSettingRepository, UserSettingRepository>();
             containerRegistry.Register<IAppSettingRepository, AppSettingRepository>();
             containerRegistry.Register<IXrayVisionImageRepository, XrayVisionImageRepository>();
+            containerRegistry.Register<IXrayVisionCalibrationRepository, XrayVisionCalibrationRepository>();
+            containerRegistry.Register<IXrayVisionFilterRepository, XrayVisionFilterRepository>();
+            containerRegistry.Register<IXrayVisionMaterialRepository, XrayVisionMaterialRepository>();
+
+            // Business
+            containerRegistry.Register<IUserService, UserService>();
+            containerRegistry.Register<IAppSettingService, AppSettingService>();
+            containerRegistry.Register<IXrayVisionImageService, XrayVisionImageService>();
+            containerRegistry.Register<IXrayVisionFilterService, XrayVisionFilterService>();
+            containerRegistry.Register<IXrayVisionCalibrationService, XrayVisionCalibrationService>();
+            containerRegistry.Register<IXrayVisionMaterialService, XrayVisionMaterialService>();
         }
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)

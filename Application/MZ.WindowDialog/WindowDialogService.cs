@@ -6,7 +6,9 @@ using Prism.Regions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace MZ.WindowDialog
 {
@@ -25,12 +27,12 @@ namespace MZ.WindowDialog
 
         public Task ShowWindow(string title, string regionName, NavigationParameters parameters = null)
         {
-            return ShowWindow(title, regionName, isMultiple: true, parameters);
+            return ShowWindow(title, regionName, isMultiple: true, parameters: parameters);
         }
 
-
-        public Task ShowWindow(string title, string regionName, bool isMultiple, NavigationParameters parameters = null)
+        public Task ShowWindow(string title, string regionName, bool isMultiple, ResizeMode resizeMode = ResizeMode.CanMinimize, int width = 1024, int height = 768, NavigationParameters parameters = null)
         {
+
             // isMultiple == false & Opened Window
             if (!isMultiple
                 && _windows.TryGetValue(regionName, out var list)
@@ -56,6 +58,11 @@ namespace MZ.WindowDialog
             {
                 _windows[regionName] = [];
             }
+
+            window.ResizeMode = resizeMode;
+            window.Width = width;
+            window.Height = height;
+            
             _windows[regionName].Add(window);
 
             window.Closed += (s, e) =>

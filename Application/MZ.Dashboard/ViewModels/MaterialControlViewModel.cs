@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
 using MZ.Domain.Models;
+using MZ.Infrastructure;
 using MZ.Loading;
 using MZ.Util;
 using MZ.Xray.Engine;
@@ -16,7 +17,6 @@ namespace MZ.Dashboard.ViewModels
     {
         #region Services
         private readonly IXrayService _xrayService;
-        private readonly ILoadingService _loadingService;
         #endregion
 
         #region Manager
@@ -64,11 +64,10 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
-        public MaterialControlViewModel(IContainerExtension container, IXrayService xrayService, ILoadingService loadingService)
+        public MaterialControlViewModel(IContainerExtension container, IXrayService xrayService)
             : base(container)
         {
             _xrayService = xrayService;
-            _loadingService = loadingService;
 
             _undoRedoManager = new UndoRedoManager<MaterialControlModel>(model =>
                 new MaterialControlModel(Material.UpdateAllMaterialGraph)
@@ -88,9 +87,9 @@ namespace MZ.Dashboard.ViewModels
             Controls = Material.Controls ?? [];
             SetControls.Add(new(Material.UpdateAllMaterialGraph));
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand, tooltip: "tooltip"));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand, tooltip: "tooltip"));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, tooltip: "tooltip"));
 
             _undoRedoManager.SaveState(Controls);
         }

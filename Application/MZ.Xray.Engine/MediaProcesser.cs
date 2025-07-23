@@ -14,6 +14,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Threading;
+using MZ.Domain.Entities;
+using MZ.DTO;
+using MZ.Domain.Interfaces;
 
 namespace MZ.Xray.Engine
 {
@@ -237,6 +240,53 @@ namespace MZ.Xray.Engine
             }
             return bitmap;
         }
+
+        #region Mapper(Filter)
+        public void ConvertEntityToModel(FilterEntity entity)
+        {
+            Filter = EntityToModel(entity);
+        }
+
+        public FilterModel EntityToModel(FilterEntity entity)
+        {
+            return new FilterModel
+            {
+                Zoom = entity.Zoom,
+                Sharpness = entity.Sharpness,
+                Brightness = entity.Brightness,
+                Contrast = entity.Contrast,
+                ColorMode = entity.ColorMode,
+            };
+        }
+
+        public FilterEntity ModelToEntity()
+        {
+            FilterModel model = Filter;
+
+            return new FilterEntity
+            {
+                Zoom = model.Zoom,
+                Sharpness = model.Sharpness,
+                Brightness = model.Brightness,
+                Contrast = model.Contrast,
+                ColorMode = model.ColorMode,
+
+            };
+        }
+
+        public FilterSaveRequest ModelToRequest()
+        {
+            FilterModel model = Filter;
+
+            return new FilterSaveRequest(
+                Zoom: model.Zoom,
+                Sharpness: model.Sharpness,
+                Brightness: model.Brightness,
+                Contrast: model.Contrast,
+                ColorMode: model.ColorMode
+            );
+        }
+        #endregion
 
     }
 }

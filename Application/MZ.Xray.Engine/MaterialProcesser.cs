@@ -1,5 +1,7 @@
 ﻿using MZ.Domain.Models;
+using MZ.Domain.Entities;
 using MZ.Vision;
+using MZ.DTO;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Prism.Mvvm;
@@ -59,25 +61,6 @@ namespace MZ.Xray.Engine
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 100, XMin = -10, XMax = 255, Scalar = new Scalar(255, 128, 0, 255) });
-        }
-
-        public void SetMaterialControlsInDatabase(ICollection<MaterialControlModel> controls)
-        {
-            Model.Controls.Clear();
-            foreach (var control in controls)
-            {
-                Model.Controls.Add(
-                    new (UpdateAllMaterialGraph)
-                    {
-                        Y = control.Y,
-                        XMin = control.XMin,
-                        XMax = control.XMax,
-                        Scalar = control.Scalar
-                    }
-                );
-            }
-            SortControls();
-            UpdateAllMaterialGraph();
         }
 
         public void UpdateAllMaterialGraph()
@@ -204,9 +187,88 @@ namespace MZ.Xray.Engine
             return new Vec4b(b, g, r, a);
         }
 
-        public ImageSource GetImageSource()
+
+        #region Mapper
+        public void ConvertEntityToModel(MaterialEntity entity)
         {
-            return Model.ImageSource;
+            Model = EntityToModel(entity);
+        }
+
+        public MaterialModel EntityToModel(MaterialEntity entity)
+        {
+            var model = new MaterialModel
+            {
+                Blur = entity.Blur,
+                HighLowRate = entity.HighLowRate,
+                Density = entity.Density,
+                EdgeBinary = entity.EdgeBinary,
+                Transparency = entity.Transparency,
+                Controls = [.. entity.MaterialControls?.Select(e => new MaterialControlModel(UpdateAllMaterialGraph)
+                    {
+                        Y = e.Y,
+                        XMin = e.XMin,
+                        XMax = e.XMax,
+                        Color = ParseColor(e.Color)
+                    }) ?? []]
+            };
+
+            return model;
+        }
+
+        public MaterialEntity ModelToEntity()
+        {
+            MaterialModel model = Model;
+
+            return new MaterialEntity
+            {
+                Blur = model.Blur,
+                HighLowRate = model.HighLowRate,
+                Density = model.Density,
+                EdgeBinary = model.EdgeBinary,
+                Transparency = model.Transparency,
+                MaterialControls = [.. model.Controls.Select(c => new MaterialControlEntity
+                {
+                    Y = c.Y,
+                    XMin = c.XMin,
+                    XMax = c.XMax,
+                    Color = $"#{c.Color.A:X2}{c.Color.R:X2}{c.Color.G:X2}{c.Color.B:X2}"
+                })]
+            };
+        }
+
+        public MaterialSaveRequest ModelToRequest()
+        {
+            MaterialModel model = Model;
+
+            var materialControls = model.Controls.Select(c => new MaterialControlEntity
+            {
+                Y = c.Y,
+                XMin = c.XMin,
+                XMax = c.XMax,
+                Color = $"#{c.Color.A:X2}{c.Color.R:X2}{c.Color.G:X2}{c.Color.B:X2}"
+            }).ToList();
+
+            return new MaterialSaveRequest(
+                Blur: model.Blur,
+                HighLowRate: model.HighLowRate,
+                Density: model.Density,
+                EdgeBinary: model.EdgeBinary,
+                Transparency: model.Transparency,
+                MaterialControls: materialControls
+            );
+        }
+        #endregion
+
+        private Color ParseColor(string colorString)
+        {
+            try
+            {
+                return (Color)ColorConverter.ConvertFromString(colorString);
+            }
+            catch
+            {
+                return Colors.White;
+            }
         }
     }
 }

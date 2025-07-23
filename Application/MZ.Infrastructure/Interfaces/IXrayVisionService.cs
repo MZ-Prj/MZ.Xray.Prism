@@ -1,5 +1,4 @@
-﻿
-using MZ.Domain.Entities;
+﻿using MZ.Domain.Entities;
 using MZ.DTO.Enums;
 using MZ.DTO;
 using System.Threading.Tasks;
@@ -15,9 +14,18 @@ namespace MZ.Infrastructure.Interfaces
 
     public interface IXrayVisionFilterService
     {
+        Task<BaseResponse<BaseRole, FilterEntity>> Save(FilterSaveRequest request);
+        Task<BaseResponse<BaseRole, FilterEntity>> Load(FilterLoadRequest request);
+    }
+    public interface IXrayVisionCalibrationService
+    {
+        Task<BaseResponse<BaseRole, CalibrationEntity>> Save(CalibrationSaveRequest request);
+        Task<BaseResponse<BaseRole, CalibrationEntity>> Load(CalibrationLoadRequest request);
     }
 
     public interface IXrayVisionMaterialService
     {
+        Task<BaseResponse<BaseRole, MaterialEntity>> Save(MaterialSaveRequest request);
+        Task<BaseResponse<BaseRole, MaterialEntity>> Load(MaterialLoadRequest request);
     }
 }
