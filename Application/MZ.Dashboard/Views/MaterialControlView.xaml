@@ -10,8 +10,7 @@
              d:DataContext="{d:DesignInstance Type=viewmodels:MaterialControlViewModel}"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             prism:ViewModelLocator.AutoWireViewModel="True"
-             Width="480">
+             prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
     </UserControl.Resources>
@@ -38,7 +37,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding Path=Command}" >
-                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="16" Height="16"/>
+                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="16" Height="16" ToolTip="{Binding Path=ToolTip}"/>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -98,7 +97,7 @@
                   Margin="4"
                   Width="Auto"
                   HorizontalAlignment="Stretch"
-                  MaxHeight="320">
+                  MaxHeight="250">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Color" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>

@@ -8,10 +8,10 @@ using Prism.Events;
 using MZ.Logger;
 using MZ.Vision;
 using MZ.Domain.Models;
-using OpenCvSharp;
-using static MZ.Event.MZEvent;
 using MZ.Infrastructure;
 using MZ.DTO;
+using OpenCvSharp;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Xray.Engine
 {
@@ -90,7 +90,7 @@ namespace MZ.Xray.Engine
                     while (!_videoCts.Token.IsCancellationRequested)
                     {
                         await Task.Delay(1000 * Media.Information.VideoDelay , _videoCts.Token);
-                        //Media.UpdateVideo();
+                        Media.UpdateVideo();
                     }
                 }
                 catch (OperationCanceledException)
@@ -394,6 +394,45 @@ namespace MZ.Xray.Engine
 
                 await _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height));
             });
+        }
+
+        public void SaveDatabase()
+        {
+            _databaseService.Calibration.Save(Calibration.ModelToRequest());
+            _databaseService.Filter.Save(Media.ModelToRequest());
+            _databaseService.Material.Save(Material.ModelToRequest());
+            _databaseService.User.Logout();
+        }
+
+        public async void LoadDatabase()
+        {
+            //current username
+            var currentUser = _databaseService.User.CurrentUser();
+            string username = currentUser.Data;
+
+            //calibration
+            var calibration = await _databaseService.Calibration.Load(new(username));
+            if (calibration.Success)
+            {
+                Calibration.ConvertEntityToModel(calibration.Data);
+            }
+
+            //filter
+            var filter = await _databaseService.Filter.Load(new(username));
+            if (filter.Success)
+            {
+                Media.ConvertEntityToModel(filter.Data);
+            }
+
+            //material
+            var material = await _databaseService.Material.Load(new(username));
+            if (material.Success)
+            {
+                Material.ConvertEntityToModel(material.Data);
+            }
+
+
+
         }
     }
 }

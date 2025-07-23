@@ -17,6 +17,7 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using MZ.Xray.Engine;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -25,6 +26,7 @@ namespace MZ.Dashboard.ViewModels
         #region Services
         private readonly ILoadingService _loadingService;
         private readonly IDatabaseService _databaseService;
+        private readonly IXrayService _xrayService;
         private readonly IWindowDialogService _windowDialogService;
         #endregion
 
@@ -67,12 +69,12 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
 
-        public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService, IWindowDialogService windowDialogService) : base(container)
+        public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService, IWindowDialogService windowDialogService, IXrayService xrayService) : base(container)
         {
             _databaseService = databaseService;
             _loadingService = loadingService;
             _windowDialogService = windowDialogService;
-
+            _xrayService = xrayService;
             base.Initialize();
 
         }
@@ -96,11 +98,14 @@ namespace MZ.Dashboard.ViewModels
             {
                 _regionManager.RequestNavigate(model.Region, model.View);
                 UpdateWindowCommandButton(model.View == MZViewNames.DashboardControlView);
+                LoadDatabase(model.View == MZViewNames.DashboardControlView);
             }, ThreadOption.UIThread, true);
         }
 
         private void WindowClosing()
         {
+            _xrayService.SaveDatabase();
+
             Application.Current.Shutdown();
         }
 
@@ -125,7 +130,8 @@ namespace MZ.Dashboard.ViewModels
 
         private void LogoutButton()
         {
-            _databaseService.User.Logout();
+            _xrayService.SaveDatabase();
+
             _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                         new NavigationModel(
                             MZRegionNames.DashboardRegion,
@@ -148,17 +154,15 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple:false);
         }
 
-        private void MaterialButton()
+        private async void MaterialButton()
         {
-            _dialogService.ShowDialog(
-                "DialogView",
-                new DialogParameters
-                {
-                    {"Title",  MZRegionNames.MaterialControl},
-                    {"RegionName", MZRegionNames.MaterialControl}
-                },
-                (IDialogResult result) => {
-                });
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.MaterialControl,
+                regionName: nameof(MaterialControlView),
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 480,
+                height: 640);
         }
 
         private void AIButton()
@@ -176,6 +180,14 @@ namespace MZ.Dashboard.ViewModels
                 button.IsVisibility = check ||
                                       button.IconKind == nameof(PackIconMaterialKind.Earth) ||
                                       button.IconKind == nameof(PackIconMaterialKind.ThemeLightDark);
+            }
+        }
+
+        private void LoadDatabase(bool check)
+        {
+            if (check)
+            {
+                _xrayService.LoadDatabase();
             }
         }
     }

@@ -2,8 +2,10 @@
 using System.Threading.Tasks;
 using MZ.Vision;
 using MZ.Domain.Models;
+using MZ.Domain.Entities;
 using OpenCvSharp;
 using Prism.Mvvm;
+using MZ.DTO;
 
 namespace MZ.Xray.Engine
 {
@@ -108,7 +110,7 @@ namespace MZ.Xray.Engine
             });
         }
 
-        public double  Normalize(double value, double offset, double gain, double rate)
+        public double Normalize(double value, double offset, double gain, double rate)
         {
             double result = (value - offset) / Math.Max(1.0, (gain - offset)) * rate;
             return Math.Clamp(result, 0.0, 1.0);
@@ -180,5 +182,58 @@ namespace MZ.Xray.Engine
             Model.Gain = line;
         }
 
+        #region Mapper
+        public void ConvertEntityToModel(CalibrationEntity entity)
+        {
+            Model = EntityToModel(entity);
+        }
+
+        public CalibrationModel EntityToModel(CalibrationEntity entity)
+        {
+            var model = new CalibrationModel
+            {
+                RelativeWidthRatio = entity.RelativeWidthRatio,
+                OffsetRegion = entity.OffsetRegion,
+                GainRegion = entity.GainRegion,
+                BoundaryArtifact = entity.BoundaryArtifact,
+                ActivationThresholdRatio = entity.ActivationThresholdRatio,
+                MaxImageWidth = entity.MaxImageWidth,
+                SensorImageWidth = entity.SensorImageWidth
+            };
+
+            return model;
+        }
+
+        public CalibrationEntity ModelToEntity()
+        {
+            CalibrationModel model = Model;
+
+            return new CalibrationEntity
+            {
+                RelativeWidthRatio = model.RelativeWidthRatio,
+                OffsetRegion = model.OffsetRegion,
+                GainRegion = model.GainRegion,
+                BoundaryArtifact = model.BoundaryArtifact,
+                ActivationThresholdRatio = model.ActivationThresholdRatio,
+                MaxImageWidth = model.MaxImageWidth,
+                SensorImageWidth = model.SensorImageWidth,
+            };
+        }
+        public CalibrationSaveRequest ModelToRequest()
+        {
+            CalibrationModel model = Model;
+
+            return new CalibrationSaveRequest(
+                RelativeWidthRatio : model.RelativeWidthRatio,
+                OffsetRegion : model.OffsetRegion,
+                GainRegion : model.GainRegion,
+                BoundaryArtifact : model.BoundaryArtifact,
+                ActivationThresholdRatio : model.ActivationThresholdRatio,
+                MaxImageWidth : model.MaxImageWidth,
+                SensorImageWidth : model.SensorImageWidth
+            );
+        }
+
+        #endregion
     }
 }

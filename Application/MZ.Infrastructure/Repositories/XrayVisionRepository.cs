@@ -2,10 +2,11 @@
 using MZ.Domain.Entities;
 using MZ.Infrastructure.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
+#nullable enable
 namespace MZ.Infrastructure.Repositories
 {
     public class XrayVisionImageRepository : RepositoryBase<ImageEntity>, IXrayVisionImageRepository
@@ -45,10 +46,30 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    public class XrayVisionCalibrationRepository : RepositoryBase<CalibrationEntity>, IXrayVisionCalibrationRepository
+    {
+        public XrayVisionCalibrationRepository(AppDbContext context) : base(context)
+        {
+        }
+
+
+        public async Task<CalibrationEntity?> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<CalibrationEntity>()
+                       .FirstOrDefaultAsync(m => m.UserId == userId);
+        }
+    }
+
     public class XrayVisionFilterRepository : RepositoryBase<FilterEntity>, IXrayVisionFilterRepository
     {
         public XrayVisionFilterRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<FilterEntity?> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<FilterEntity>()
+                       .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
 
@@ -56,6 +77,13 @@ namespace MZ.Infrastructure.Repositories
     {
         public XrayVisionMaterialRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<MaterialEntity?> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<MaterialEntity>()
+                        .Include(m => m.MaterialControls) 
+                        .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
 }

@@ -12,5 +12,8 @@ namespace MZ.Xray.Engine
         void Play();
         void Stop();
         bool IsPlaying();
+
+        void LoadDatabase();
+        void SaveDatabase();
     }
 }

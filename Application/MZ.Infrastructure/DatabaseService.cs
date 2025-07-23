@@ -11,19 +11,28 @@ namespace MZ.Infrastructure
         public IUserService User { get; } 
         public IAppSettingService AppSetting { get; }
         public IXrayVisionImageService Image { get; }
-        
+        public IXrayVisionFilterService Filter { get; }
+        public IXrayVisionMaterialService Material { get; }
+        public IXrayVisionCalibrationService Calibration { get; }
+
         private readonly CancellationTokenSource _cts;
 
         public DatabaseService(
             IUserService userService,
             IAppSettingService appSettingService,
-            IXrayVisionImageService xrayVisionImageService)
+            IXrayVisionImageService xrayVisionImageService,
+            IXrayVisionFilterService xrayVisionFilterService,
+            IXrayVisionMaterialService xrayVisionMaterialService,
+            IXrayVisionCalibrationService xrayVisionCalibrationService)
         {
             _cts = new ();
 
             User = userService;
             AppSetting = appSettingService;
             Image = xrayVisionImageService;
+            Filter = xrayVisionFilterService;
+            Material = xrayVisionMaterialService;
+            Calibration = xrayVisionCalibrationService;
         }
 
         public async Task MakeAdmin()
