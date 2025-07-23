@@ -67,7 +67,8 @@ namespace MZ.Xray.Engine
         {
             if (Model.Image == null)
             {
-                return;
+                Model.Image = VisionBase.Create(byte.MaxValue, byte.MaxValue, MatType.CV_8UC4);
+                Model.Image.SetTo(Scalar.All(0));
             }
 
             Model.Image.SetTo(Scalar.All(0));

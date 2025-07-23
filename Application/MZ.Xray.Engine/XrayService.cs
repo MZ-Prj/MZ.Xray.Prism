@@ -9,6 +9,7 @@ using MZ.Logger;
 using MZ.Vision;
 using MZ.Domain.Models;
 using MZ.Infrastructure;
+using MZ.AI.Engine;
 using MZ.DTO;
 using OpenCvSharp;
 using static MZ.Event.MZEvent;
@@ -21,13 +22,15 @@ namespace MZ.Xray.Engine
         
         private readonly IEventAggregator _eventAggregator;
         private readonly IDatabaseService _databaseService;
+        private readonly IAIService _aiService;
 
         private readonly Channel<Mat> _imageProcessingChannel = Channel.CreateBounded<Mat>(100);
 
-        public XrayService(IEventAggregator eventAggregator, IDatabaseService databaseService)
+        public XrayService(IEventAggregator eventAggregator, IDatabaseService databaseService, IAIService aIService)
         {
             _eventAggregator = eventAggregator;
             _databaseService = databaseService;
+            _aiService = aIService;
 
             _socketReceive = new SocketReceiveProcesser(_eventAggregator);
 

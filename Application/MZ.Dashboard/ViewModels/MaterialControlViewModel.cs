@@ -1,8 +1,6 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
 using MZ.Domain.Models;
-using MZ.Infrastructure;
-using MZ.Loading;
 using MZ.Util;
 using MZ.Xray.Engine;
 using Prism.Commands;
@@ -92,6 +90,7 @@ namespace MZ.Dashboard.ViewModels
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, tooltip: "tooltip"));
 
             _undoRedoManager.SaveState(Controls);
+
         }
 
         private void AddButton(MaterialControlModel model)
