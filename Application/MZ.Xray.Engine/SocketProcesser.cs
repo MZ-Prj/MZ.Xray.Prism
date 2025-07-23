@@ -44,7 +44,7 @@ namespace MZ.Xray.Engine
                 _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _listener.Start();
             }
-            catch (Exception ex)
+            catch 
             {
             }
         }

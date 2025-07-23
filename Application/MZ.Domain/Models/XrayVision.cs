@@ -23,6 +23,9 @@ namespace MZ.Domain.Models
         private float _contrast = 2.0f;
         public float Contrast { get => _contrast; set => SetProperty(ref _contrast, Math.Clamp(value, 0.0f, 5.0f)); }
 
+        private System.Windows.Size _size = new(1, 1);
+        public System.Windows.Size Size { get => _size; set => SetProperty(ref _size, value); }
+
         private ColorRole _colorMode = ColorRole.Color;
         public ColorRole ColorMode { get => _colorMode; set => SetProperty(ref _colorMode, value); }
 
@@ -72,18 +75,10 @@ namespace MZ.Domain.Models
         private double _height = 0;
         public double Height { get => _height; set => SetProperty(ref _height, value); }
 
-        private System.Windows.Size _size = new(1, 1);
-        public System.Windows.Size Size { get => _size; set => SetProperty(ref _size, value); }
-
     }
 
-    public class MediaModel : BindableBase
+    public class ImageModel : BindableBase
     {
-        public Canvas _screen;
-        public Canvas Screen { get => _screen; set => SetProperty(ref _screen, value); }
-
-        private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
-        public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
         private ImageSource _imageSource = null;
         public ImageSource ImageSource
@@ -103,6 +98,16 @@ namespace MZ.Domain.Models
 
         private FilterModel _filter = new();
         public FilterModel Filter { get => _filter; set => SetProperty(ref _filter, value); }
+
+    }
+
+    public class MediaModel : ImageModel
+    {
+        public Canvas _screen;
+        public Canvas Screen { get => _screen; set => SetProperty(ref _screen, value); }
+
+        private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
+        public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
         private ObservableCollection<FrameModel> _frames = [];
         public ObservableCollection<FrameModel> Frames { get => _frames; set => SetProperty(ref _frames, value); }
@@ -150,7 +155,7 @@ namespace MZ.Domain.Models
         private Mat _image;
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
-        private ImageSource _imageSource;
+        private ImageSource _imageSource = null;
         public ImageSource ImageSource { get => _imageSource; set => SetProperty(ref _imageSource, value); }
 
         private ObservableCollection<MaterialControlModel> _controls = [];
@@ -175,14 +180,21 @@ namespace MZ.Domain.Models
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
+        public readonly Action _updateGraphAction;
+
+        public MaterialControlModel(Action updateGraphAction)
+        {
+            _updateGraphAction = updateGraphAction;
+        }
+
         private double _y = 0.0;
-        public double Y { get => _y; set => SetProperty(ref _y, value); }
+        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { InvokeUpdateGraph(); } } }
 
         private double _xMin = byte.MinValue;
-        public double XMin { get => _xMin; set => SetProperty(ref _xMin, value); }
+        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { InvokeUpdateGraph(); } } }
 
         private double _xMax = byte.MaxValue;
-        public double XMax { get => _xMax; set => SetProperty(ref _xMax, value); }
+        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { InvokeUpdateGraph(); } } }
 
         private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
@@ -192,20 +204,38 @@ namespace MZ.Domain.Models
             {
                 if (SetProperty(ref _scalar, value))
                 {
+                    _color = Color.FromRgb((byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
+                    RaisePropertyChanged(nameof(Color));
                     RaisePropertyChanged(nameof(ColorBrush));
+
+                    InvokeUpdateGraph();
                 }
             }
         }
 
-        public Brush ColorBrush
+        private Color _color;
+        public Color Color 
         {
-            get
+            get => _color;
+            set
             {
-                byte blue = (byte)Scalar.Val0;
-                byte green = (byte)Scalar.Val1;
-                byte red = (byte)Scalar.Val2;
-                return new SolidColorBrush(Color.FromRgb(red, green, blue));
+                if (SetProperty(ref _color, value))
+                {
+                    _scalar = new Scalar(value.B, value.G, value.R, byte.MaxValue);
+                    RaisePropertyChanged(nameof(Scalar));
+                    RaisePropertyChanged(nameof(ColorBrush));
+
+                    InvokeUpdateGraph();
+                }
             }
+        }
+
+        public Brush ColorBrush => new SolidColorBrush(Color);
+
+
+        private void InvokeUpdateGraph()
+        {
+            _updateGraphAction?.Invoke();
         }
     }
 

@@ -4,14 +4,22 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:loading="clr-namespace:MZ.Loading.Views;assembly=MZ.Loading"
              xmlns:prism="http://prismlibrary.com/"   
-             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource" 
+             xmlns:managers="clr-namespace:MZ.Resource.Managers;assembly=MZ.Resource" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ImageStorageControlViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
         <converters:ContrastColorConverter x:Key="ContrastColorConverter"/>
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
+        <converters:ImagePathToBrushConverter x:Key="ImagePathToBrushConverter" />
     </UserControl.Resources>
     
     <Grid>
@@ -19,7 +27,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="4">
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
@@ -39,26 +54,26 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <iconPacks:PackIconMaterial Margin="4" 
-                                            Grid.Column="0" 
-                                            Kind="Magnify"/>
+                                                Grid.Column="0" 
+                                                Kind="Magnify"/>
                     <TextBox Grid.Column="1"
-                         BorderThickness="0"
-                         FontSize="12"
-                         Text="{Binding Path=SearchImageText, UpdateSourceTrigger=PropertyChanged}"
-                         VerticalAlignment="Center"
-                         Background="Transparent"/>
+                             BorderThickness="0"
+                             FontSize="12"
+                             Text="{Binding Path=SearchImageText, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Background="Transparent"/>
                 </Grid>
             </Border>
 
         </StackPanel>
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Grid.Column="0">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ScrollChanged">
                     <prism:InvokeCommandAction Command="{Binding Path=ScrollChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
-            <ItemsControl ItemsSource="{Binding Path=ImageFiles, Mode=TwoWay}">
+            <ItemsControl ItemsSource="{Binding Path=Images, Mode=TwoWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" IsItemsHost="True" />
@@ -66,30 +81,55 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="8"
-                                BorderBrush="{DynamicResource MahApps.Brushes.Gray9}" BorderThickness="1" CornerRadius="8"
-                                Background="Transparent">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeftButtonUp">
-                                    <prism:InvokeCommandAction Command="{Binding DataContext.ImageSelectedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                           CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                        <Button Margin="4" 
+                                Background="{x:Null}"
+                                Command="{Binding Path=DataContext.SelectedImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                ToolTip="{Binding Path=Filename}"
+                                Cursor="Hand">
                             <StackPanel>
-                                <Image Source="{Binding Path=Path}" Height="150" Stretch="Uniform"/>
+                                <Image Source="{Binding Path=PathName}" Height="160" Stretch="Uniform"/>
                                 <TextBlock Text="{Binding Path=Filename}" 
-                                       Margin="4,4,4,0" 
-                                       FontWeight="Bold" 
-                                       HorizontalAlignment="Center" />
-                                <TextBlock Text="{Binding Path=CreateDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" 
-                                       Margin="4,0,4,4" 
-                                       FontSize="10" 
-                                       HorizontalAlignment="Center" />
+                                           Margin="4"
+                                           FontWeight="Bold" 
+                                           HorizontalAlignment="Center" />
                             </StackPanel>
-                        </Border>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
+        <GridSplitter Grid.Row="1" Grid.Column="1"
+                      Width="4"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Columns" 
+                      Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <StackPanel Grid.Row="1" Grid.Column="2" 
+                    Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel LastChildFill="False"  Margin="4">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Margin="0,0,4,0" Command="{Binding Path=CloseCommand}">
+                        <iconPacks:PackIconMaterial Kind="Close"  Width="16" Height="16"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <Image Source="{Binding Path=SelectedPathName}" Stretch="Uniform"
+                   MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}">
+                <Image.Effect>
+                    <managers:XrayShaderManager Input="{Binding Path=SelectedPathName, Converter={StaticResource ImagePathToBrushConverter}}"
+                                            TextureSize="1,1"
+                                            SharpnessLevel="0"
+                                            BrightnessLevel="0" 
+                                            ContrastLevel="2"
+                                            ColorMode="1"/>
+                </Image.Effect>
+            </Image>
+        </StackPanel>
+        
+        <loading:LoadingView Grid.RowSpan="2" Grid.ColumnSpan="3" DataContext="{Binding Path=LoadingModel}"/>
     </Grid>
 </UserControl>

@@ -22,6 +22,11 @@ namespace MZ.DTO
     #endregion
 
     #region Response
+    public record ImageLoadResponse(
+        string PathName,
+        string Filename,
+        DateTime CreateDate
+    );
     #endregion
 
     #region DTO

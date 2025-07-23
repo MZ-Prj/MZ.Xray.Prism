@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace MZ.Infrastructure.Services
 {
@@ -22,16 +23,21 @@ namespace MZ.Infrastructure.Services
             this.xrayVisionImageRepository = xrayVisionImageRepository;
         }
 
-        public async Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ImageLoadRequest request)
+        public async Task<BaseResponse<BaseRole, ICollection<ImageLoadResponse>>> Load(ImageLoadRequest request)
         {
             try
             {
-                var images = await xrayVisionImageRepository.GetImageByDateTimeBetweenStartEndAndPageSize(request.Start,request.End, request.Page,request.Size);
+                var loads = await xrayVisionImageRepository.GetImageByDateTimeBetweenStartEndAndPageSize(request.Start,request.End, request.Page,request.Size);
+
+                ICollection<ImageLoadResponse> images = [.. loads.Select(
+                    image => new ImageLoadResponse(
+                        Path.Combine(image.Path, image.Filename), image.Filename, image.CreateDate))];
+
                 return BaseResponseExtensions.Success(BaseRole.Success, images);
             }
             catch (Exception ex)
             {
-                return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageEntity>>(BaseRole.Fail, ex);
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageLoadResponse>>(BaseRole.Fail, ex);
             }
         }
 

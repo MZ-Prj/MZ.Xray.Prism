@@ -14,7 +14,7 @@ namespace MZ.Infrastructure.Services
 {
     public class UserService : IUserService
     {
-        private IInformationEncoder _informationEncoder;
+        protected readonly IInformationEncoder _informationEncoder;
 
         protected readonly IUserRepository userRepository;
         protected readonly IUserSettingRepository userSettingRepository;

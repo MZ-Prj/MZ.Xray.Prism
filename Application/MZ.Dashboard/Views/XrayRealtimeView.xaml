@@ -44,7 +44,7 @@
                 RenderTransformOrigin="0.5, 0.5">
             <Canvas.Effect>
                 <managers:XrayShaderManager Input="{Binding Path=ImageSource}"
-                                            TextureSize="{Binding Path=Information.Size, Mode=TwoWay}"
+                                            TextureSize="{Binding Path=Filter.Size, Mode=TwoWay}"
                                             SharpnessLevel="{Binding Path=Filter.Sharpness, Mode=TwoWay}"
                                             BrightnessLevel="{Binding Path=Filter.Brightness, Mode=TwoWay}" 
                                             ContrastLevel="{Binding Path=Filter.Contrast, Mode=TwoWay}"
@@ -136,8 +136,8 @@
                 IsManipulationEnabled="true" 
                 Visibility="Collapsed"
                 DataContext="{Binding Path=Media}"
-                Width="{Binding Path=Information.Size.Width}" 
-                Height="{Binding Path=Information.Size.Height}"
+                Width="{Binding Path=Filter.Size.Width}" 
+                Height="{Binding Path=Filter.Size.Height}"
                 SnapsToDevicePixels="True"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderOptions.EdgeMode="Aliased"

@@ -17,6 +17,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.8" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
@@ -36,5 +37,8 @@
     </Resource>
     <Resource Include="Shaders\xray.ps" />
     <Resource Include="Shaders\zeff.ps" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UserControls\" />
   </ItemGroup>
 </Project>

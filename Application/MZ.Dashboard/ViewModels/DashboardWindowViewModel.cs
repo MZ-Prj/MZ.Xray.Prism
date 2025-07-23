@@ -28,7 +28,7 @@ namespace MZ.Dashboard.ViewModels
         private readonly IWindowDialogService _windowDialogService;
         #endregion
 
-        #region Models
+        #region Params
         private LoadingModel _loadingModel;
         public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.DashboardRegion]; set => SetProperty(ref _loadingModel, value); }
 
@@ -148,18 +148,26 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple:false);
         }
 
-        private void RecordButton()
-        {
-        }
-
         private void MaterialButton()
         {
+            _dialogService.ShowDialog(
+                "DialogView",
+                new DialogParameters
+                {
+                    {"Title",  MZRegionNames.MaterialControl},
+                    {"RegionName", MZRegionNames.MaterialControl}
+                },
+                (IDialogResult result) => {
+                });
         }
 
         private void AIButton()
         {
         }
 
+        private void RecordButton()
+        {
+        }
 
         private void UpdateWindowCommandButton(bool check)
         {

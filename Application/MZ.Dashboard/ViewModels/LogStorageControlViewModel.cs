@@ -67,11 +67,11 @@ namespace MZ.Dashboard.ViewModels
         }
 
 
-        private ObservableCollection<LogComboboxModel> _logLevelItems = [];
-        public ObservableCollection<LogComboboxModel> LogLevelItems { get => _logLevelItems; set => SetProperty(ref _logLevelItems, value); }
+        private ObservableCollection<LogComboboxModel> _logLevels = [];
+        public ObservableCollection<LogComboboxModel> LogLevels { get => _logLevels; set => SetProperty(ref _logLevels, value); }
 
-        private ObservableCollection<LogControlModel> _logItems = [];
-        public ObservableCollection<LogControlModel> LogItems { get => _logItems; set => SetProperty(ref _logItems, value); }
+        private ObservableCollection<LogControlModel> _logs = [];
+        public ObservableCollection<LogControlModel> Logs { get => _logs; set => SetProperty(ref _logs, value); }
 
         private LogComboboxModel _selectedLogLevel;
         public LogComboboxModel SelectedLogLevel { get => _selectedLogLevel; set => SetProperty(ref _selectedLogLevel, value); }
@@ -93,21 +93,21 @@ namespace MZ.Dashboard.ViewModels
 
         public override void InitializeModel()
         {
-            LogLevelItems =
+            LogLevels =
             [
                 new () { Text = "info", ColorBrush = Brushes.SkyBlue },
                 new () { Text = "warning", ColorBrush = Brushes.Orange },
                 new () { Text = "error", ColorBrush = Brushes.Red }
             ];
 
-            SelectedLogLevel = LogLevelItems.FirstOrDefault();
+            SelectedLogLevel = LogLevels.FirstOrDefault();
             SearchButton();
             InitializeFilter();
         }
 
         private void InitializeFilter()
         {
-            FilteredLogs = CollectionViewSource.GetDefaultView(LogItems);
+            FilteredLogs = CollectionViewSource.GetDefaultView(Logs);
             FilteredLogs.Filter = FilterLogs;
         }
 
@@ -124,17 +124,15 @@ namespace MZ.Dashboard.ViewModels
             return false;
         }
 
-
         private void SearchButton()
         {
-            LogItems.Clear();
+            Logs.Clear();
             
             using (_loadingService[MZRegionNames.LogStorageControl].Show())
             {
                 UpdateLogs("./logs");
             }
         }
-
 
         private void UpdateLogs(string path)
         {
@@ -197,14 +195,14 @@ namespace MZ.Dashboard.ViewModels
 
                         _dispatcher.Invoke(() =>
                         {
-                            LogItems.Add(logItem);
+                            Logs.Add(logItem);
                         });
                     }
                 }
             }
         }
 
-        private string ReadFileContent(string filePath)
+        private static string ReadFileContent(string filePath)
         {
             var tempPath = Path.GetTempFileName();
             try
@@ -230,9 +228,9 @@ namespace MZ.Dashboard.ViewModels
             {
                 return DateTime.MinValue;
             }
-            if (DateTime.TryParseExact(parts[1], "yyyyMMddHH", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+            if (DateTime.TryParseExact(parts[1], "yyyyMMddHH", CultureInfo.InvariantCulture, DateTimeStyles.None, out var datetime))
             {
-                return dt;
+                return datetime;
             }
             return DateTime.MinValue;
         }

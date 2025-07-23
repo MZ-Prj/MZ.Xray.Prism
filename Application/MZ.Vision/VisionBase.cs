@@ -553,6 +553,15 @@ namespace MZ.Vision
             return result;
         }
 
+        public static Mat SplitRow(Mat input, int start, int end)
+        {
+            int rows = end - start;
+            int cols = input.Cols;
+            Mat result = new(rows, cols, input.Type());
+            input.RowRange(start, end).CopyTo(result.RowRange(0, rows));
+            return result;
+        }
+
         public static double Mean(Mat input)
         {
             return (double)Cv2.Mean(input);
