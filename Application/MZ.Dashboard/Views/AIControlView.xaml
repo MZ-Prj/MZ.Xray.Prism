@@ -2,8 +2,57 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:AIControlViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-            
+        <Border CornerRadius="8"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                BorderThickness="1"
+                Padding="2"
+                Margin="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <iconPacks:PackIconMaterial Margin="4" Grid.Column="0" Kind="Magnify"/>
+                <TextBox Grid.Column="1"
+                         BorderThickness="0"
+                         Text="{Binding Path=SearchLabelText, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         Background="Transparent"/>
+            </Grid>
+        </Border>
+        <DataGrid ItemsSource="{Binding Path=VisionService.ObjectDetector.SelectedDetector.Labels}" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HorizontalScrollBarVisibility="Hidden"
+                  HorizontalContentAlignment="Center"
+                  Margin="4"
+                  MaxHeight="320">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTemplateColumn Header="Color" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridCheckBoxColumn Header="Is Using" Binding="{Binding Path=IsUsing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Confidence" Binding="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NumericDecimalConverter}}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using MZ.AI.Engine;
 using MZ.Auth;
 using MZ.Blank;
 using MZ.Core;
@@ -45,7 +46,6 @@ namespace MZ.App
 
             // Service
             RegisterApplicationServices(containerRegistry);
-
             RegisterUIService(containerRegistry);
         }
 
@@ -126,6 +126,7 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<ILoadingService, LoadingService>();
             containerRegistry.RegisterSingleton<IWindowDialogService, WindowDialogService>();
             containerRegistry.RegisterSingleton<IXrayService, XrayService>();
+            containerRegistry.RegisterSingleton<IAIService, AIService>();
         }
 
         private void RegisterUIService(IContainerRegistry containerRegistry)
@@ -133,6 +134,7 @@ namespace MZ.App
             //mahapp : custom dialog
             containerRegistry.RegisterDialogWindow<MZDialogMetroWindowChrome>();
         }
+
 
         /// <summary>
         /// 

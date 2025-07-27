@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MZ.Domain.Entities;
@@ -14,22 +13,22 @@ namespace MZ.Infrastructure.Repositories
         {
         }
 
-        public UserEntity GetUserByUsername(string username)
+        public UserEntity GetByUsername(string username)
         {
             var user = _context.Set<UserEntity>().FirstOrDefault(u => u.Username == username);
             return user;
         }
 
-        public async Task<UserEntity> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)
+        public async Task<UserEntity> GetByUsernameAsync(string username)
         {
-            return await _context.Set<UserEntity>().FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+            return await _context.Set<UserEntity>().FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public async Task<UserEntity> GetUserByUsernameAllRelationsAsync(string username, CancellationToken cancellationToken = default)
+        public async Task<UserEntity> GetByUsernameAllRelationsAsync(string username)
         {
             return await _context.Set<UserEntity>()
-                .Include(u => u.UserSetting)
-                .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+                                 .Include(u => u.UserSetting)
+                                 .FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public void UpdateLastLoginDate(int id)
@@ -42,13 +41,13 @@ namespace MZ.Infrastructure.Repositories
             }
         }
 
-        public async Task UpdateLastLoginDateAsync(int id, CancellationToken cancellationToken = default)
+        public async Task UpdateLastLoginDateAsync(int id)
         {
-            var user = await _context.Set<UserEntity>().FindAsync([id], cancellationToken);
+            var user = await _context.Set<UserEntity>().FindAsync([id]);
             if (user != null)
             {
                 user.LastLoginDate = DateTime.Now;
-                await _context.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync();
             }
         }
     }

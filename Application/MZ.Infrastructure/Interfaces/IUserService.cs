@@ -13,10 +13,10 @@ namespace MZ.Infrastructure.Interfaces
         BaseResponse<BaseRole, string> Logout();
         BaseResponse<BaseRole, string> CurrentUser();
 
-        Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request, CancellationToken cancellationToken = default);
+        Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request);
 
-        Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest language, CancellationToken cancellationToken = default);
+        Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest language);
 
-        Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest theme, CancellationToken cancellationToken = default);
+        Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest theme);
     }
 }

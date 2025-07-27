@@ -16,7 +16,7 @@ using Formatting = Newtonsoft.Json.Formatting;
 
 namespace MZ.AI.Engine
 {
-    public class ObjectDetector : BindableBase
+    public class YoloProcessor : BindableBase
     {
         public Yolo Yolo { get; set; }
         public YoloOptions YoloOption { get; set; }
@@ -25,9 +25,9 @@ namespace MZ.AI.Engine
         public List<ObservableCollection<ObjectDetectionModel>> ObjectDetectionsList { get; set; } = [];
         public ObjectDetectionOptionModel ObjectDetectionOption { get; set; } = new();
 
-        public ObjectDetector() { }
+        public YoloProcessor() { }
 
-        public ObjectDetector(YoloOptions yoloOptions, ObjectDetectionOptionModel objectDetectionOption, ObservableCollection<CategoryModel> categories = null)
+        public YoloProcessor(YoloOptions yoloOptions, ObjectDetectionOptionModel objectDetectionOption, ObservableCollection<CategoryModel> categories = null)
         {
             Yolo = new Yolo(yoloOptions);
             ObjectDetectionOption = objectDetectionOption;

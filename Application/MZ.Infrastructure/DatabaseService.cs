@@ -15,6 +15,9 @@ namespace MZ.Infrastructure
         public IXrayVisionMaterialService Material { get; }
         public IXrayVisionCalibrationService Calibration { get; }
 
+        /// <summary>
+        /// cancel 시 token 제어 필요시
+        /// </summary>
         private readonly CancellationTokenSource _cts;
 
         public DatabaseService(
@@ -38,28 +41,26 @@ namespace MZ.Infrastructure
         public async Task MakeAdmin()
         {
             string admin = "0000";
-            bool isMake = await MakeUserAsync(admin, admin, _cts.Token);
+            bool isMake = await MakeUserAsync(admin, admin);
             if (isMake)
             {
-                await MakeAppSettingAsync(admin, _cts.Token);
+                await MakeAppSettingAsync(admin);
             }
         }
+        public async Task MakeAppSettingAsync(string username)
+        {
+            await AppSetting.Register(
+                new AppSettingRegisterRequest(username, false)
+            );
+        }
 
-        public async Task<bool> MakeUserAsync(string username, string password, CancellationToken cancellationToken = default)
+        public async Task<bool> MakeUserAsync(string username, string password)
         {
             var response = await User.Register(
-                new UserRegisterRequest(username, password, password, $"{username}@test.com", UserRole.Admin),
-                cancellationToken
+                new UserRegisterRequest(username, password, password, $"{username}@test.com", UserRole.Admin)
             );
             return response.Success;
         }
 
-        public async Task MakeAppSettingAsync(string username, CancellationToken cancellationToken = default)
-        {
-            await AppSetting.Register(
-                new AppSettingRegisterRequest(username, false),
-                cancellationToken
-            );
-        }
     }
 }

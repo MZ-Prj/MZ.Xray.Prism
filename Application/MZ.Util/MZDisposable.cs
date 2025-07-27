@@ -39,7 +39,7 @@ namespace MZ.Util
             });
         }
 
-        public static IDisposable LoadingWrapper(Action<bool> action)
+        public static IDisposable Wrapper(Action<bool> action)
         {
             string className = GetClassName(action.Method.DeclaringType);
 
