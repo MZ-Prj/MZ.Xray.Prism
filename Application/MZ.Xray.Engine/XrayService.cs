@@ -13,13 +13,17 @@ using MZ.AI.Engine;
 using MZ.DTO;
 using OpenCvSharp;
 using static MZ.Event.MZEvent;
+using MZ.Util;
 
 namespace MZ.Xray.Engine
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
-        
+
         private readonly IEventAggregator _eventAggregator;
         private readonly IDatabaseService _databaseService;
         private readonly IAIService _aiService;
@@ -40,7 +44,7 @@ namespace MZ.Xray.Engine
 
         public void InitializeEvent()
         {
-            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe( (FileModel file) =>
+            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe((FileModel file) =>
             {
                 if (IsRunning)
                 {
@@ -55,7 +59,6 @@ namespace MZ.Xray.Engine
             Task.Run(ProcessImagesFromChannel);
         }
 
-
         private async Task ProcessImagesFromChannel()
         {
             await foreach (var image in _imageProcessingChannel.Reader.ReadAllAsync())
@@ -65,6 +68,9 @@ namespace MZ.Xray.Engine
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
         #region Fields & Properties
@@ -84,7 +90,7 @@ namespace MZ.Xray.Engine
                 return;
             }
 
-            _videoCts = new ();
+            _videoCts = new();
 
             _videoTask = Task.Run(async () =>
             {
@@ -92,7 +98,7 @@ namespace MZ.Xray.Engine
                 {
                     while (!_videoCts.Token.IsCancellationRequested)
                     {
-                        await Task.Delay(1000 * Media.Information.VideoDelay , _videoCts.Token);
+                        await Task.Delay(1000 * Media.Information.VideoDelay, _videoCts.Token);
                         Media.UpdateVideo();
                     }
                 }
@@ -113,7 +119,7 @@ namespace MZ.Xray.Engine
                 return;
             }
 
-            _screenCts = new ();
+            _screenCts = new();
 
             _screenTask = Task.Run(async () =>
             {
@@ -187,6 +193,9 @@ namespace MZ.Xray.Engine
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
         #region Processer (네트워크)
@@ -211,6 +220,9 @@ namespace MZ.Xray.Engine
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
 
@@ -220,7 +232,7 @@ namespace MZ.Xray.Engine
 
         private CalibrationProcesser _calibration = new();
         public CalibrationProcesser Calibration { get => _calibration; set => SetProperty(ref _calibration, value); }
-        
+
         private MaterialProcesser _material = new();
         public MaterialProcesser Material { get => _material; set => SetProperty(ref _material, value); }
 
@@ -266,7 +278,9 @@ namespace MZ.Xray.Engine
             }
             else
             {
+                Predict();
                 Save();
+
                 Media.ClearCount();
                 Calibration.UpdateGain(line);
             }
@@ -393,11 +407,18 @@ namespace MZ.Xray.Engine
                 await Task.WhenAll(
                     XrayDataSaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
                     XrayDataSaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"),
-                    XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"));
+                    XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"),
+                    _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height)));
 
-                await _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height));
             });
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public partial class XrayService : BindableBase, IXrayService
+    {
 
         public void SaveDatabase()
         {
@@ -433,9 +454,51 @@ namespace MZ.Xray.Engine
             {
                 Material.ConvertEntityToModel(material.Data);
             }
+        }
+    }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public partial class XrayService : BindableBase, IXrayService
+    {
 
+        public void InitializeAI()
+        {
+            //db 있으면
+            MZWebDownload download = new();
 
+            //파일 유무 검증
+            //성공
+            //실패
+
+            //db 없으면
+            //파일 다운로드 
+            //추가
+            //성공
+        }
+
+        private void Predict()
+        {
+            int frameCount = Media.Information.Count;
+
+            if (frameCount <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+
+                var size = Media.Image.Size();
+                var mat = VisionBase.BlendWithBackground(Media.Image);
+
+                _aiService.Predict(mat.ToMemoryStream(), new(size.Width, size.Height));
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+            }
         }
     }
 }

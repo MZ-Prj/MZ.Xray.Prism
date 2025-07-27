@@ -7,11 +7,11 @@ namespace MZ.Infrastructure.Interfaces
 #nullable enable
     public interface IUserRepository : IRepositoryBase<UserEntity>
     {
-        UserEntity GetUserByUsername(string username);
+        UserEntity GetByUsername(string username);
         void UpdateLastLoginDate(int id);
-        Task<UserEntity?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default);
-        Task<UserEntity> GetUserByUsernameAllRelationsAsync(string username, CancellationToken cancellationToken = default);
-        Task UpdateLastLoginDateAsync(int id, CancellationToken cancellationToken = default);
+        Task<UserEntity?> GetByUsernameAsync(string username);
+        Task<UserEntity> GetByUsernameAllRelationsAsync(string username);
+        Task UpdateLastLoginDateAsync(int id);
     }
 
     public interface IUserSettingRepository : IRepositoryBase<UserSettingEntity>

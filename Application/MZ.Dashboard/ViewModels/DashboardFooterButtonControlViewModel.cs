@@ -1,16 +1,19 @@
 ﻿using MZ.Core;
 using MZ.Domain.Models;
+using MZ.Util;
+using Prism.Commands;
 using Prism.Ioc;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace MZ.Dashboard.ViewModels
 {
     public class DashboardFooterButtonControlViewModel : MZBindableBase, IDialogAware
     {
 
-        #region Models
+        #region Param
         private ObservableCollection<IconButtonModel> _actionButtons;
         public ObservableCollection<IconButtonModel> ActionButtons { get => _actionButtons; set => SetProperty(ref _actionButtons, value); }
 
@@ -47,5 +50,11 @@ namespace MZ.Dashboard.ViewModels
             }
 
         }
+
+        private void ClosingButton()
+        {
+            RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
+        }
+
     }
 }

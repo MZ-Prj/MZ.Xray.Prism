@@ -7,7 +7,6 @@ using MZ.DTO.Enums;
 using MZ.Infrastructure.Interfaces;
 using MZ.Logger;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
@@ -35,7 +34,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                UserEntity user = await userRepository.GetUserByUsernameAsync(requeset.Username);
+                UserEntity user = await userRepository.GetByUsernameAsync(requeset.Username);
 
                 if (user == null)
                 {
@@ -85,7 +84,7 @@ namespace MZ.Infrastructure.Services
             }
         }
 
-        public async Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request, CancellationToken cancellationToken = default)
+        public async Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request)
         {
             try
             {
@@ -94,7 +93,7 @@ namespace MZ.Infrastructure.Services
                     return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.NotMatchPassword);
                 }
 
-                UserEntity existUser = await userRepository.GetUserByUsernameAsync(request.Username, cancellationToken);
+                UserEntity existUser = await userRepository.GetByUsernameAsync(request.Username);
 
                 if (existUser != null)
                 {
@@ -117,7 +116,7 @@ namespace MZ.Infrastructure.Services
                 };
 
                 user.HashPassword(request.Password, _informationEncoder);
-                await userRepository.AddAsync(user, cancellationToken);
+                await userRepository.AddAsync(user);
 
                 return BaseResponseExtensions.Success<UserRegisterRole, UserEntity>(UserRegisterRole.Success);
             }
@@ -128,7 +127,7 @@ namespace MZ.Infrastructure.Services
             }
         }
 
-        public async Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest request, CancellationToken cancellationToken = default)
+        public async Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest request)
         {
             try
             {
@@ -139,10 +138,10 @@ namespace MZ.Infrastructure.Services
                 }
                 if (!string.IsNullOrEmpty(userSession.CurrentUser))
                 {
-                    UserEntity user = await userRepository.GetUserByUsernameAllRelationsAsync(userSession.CurrentUser, cancellationToken);
+                    UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
                     
                     user.UserSetting.Language = language.Value;
-                    await userRepository.UpdateAsync(user, cancellationToken);
+                    await userRepository.UpdateAsync(user);
                 }
                 return BaseResponseExtensions.Success(BaseRole.Success, language.Value);
             }
@@ -153,7 +152,7 @@ namespace MZ.Infrastructure.Services
             }
         }
 
-        public async Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest request, CancellationToken cancellationToken = default)
+        public async Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest request)
         {
             try
             {
@@ -164,10 +163,10 @@ namespace MZ.Infrastructure.Services
                 }
                 if (!string.IsNullOrEmpty(userSession.CurrentUser))
                 {
-                    UserEntity user = await userRepository.GetUserByUsernameAllRelationsAsync(userSession.CurrentUser, cancellationToken);
+                    UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
 
                     user.UserSetting.Theme = theme.Value;
-                    await userRepository.UpdateAsync(user, cancellationToken);
+                    await userRepository.UpdateAsync(user);
                 }
                 return BaseResponseExtensions.Success(BaseRole.Success, theme.Value);
             }

@@ -27,7 +27,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var loads = await xrayVisionImageRepository.GetImageByDateTimeBetweenStartEndAndPageSize(request.Start,request.End, request.Page,request.Size);
+                var loads = await xrayVisionImageRepository.GetByDateTimeBetweenStartEndAndPageSize(request.Start,request.End, request.Page,request.Size);
 
                 ICollection<ImageLoadResponse> images = [.. loads.Select(
                     image => new ImageLoadResponse(
@@ -88,7 +88,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(request.Username);
+                var user = userRepository.GetByUsername(request.Username);
                 var filter = await xrayVisionCalibrationRepository.GetByUserIdAsync(user.Id);
 
                 if (filter == null)
@@ -109,7 +109,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(userSession.CurrentUser);
+                var user = userRepository.GetByUsername(userSession.CurrentUser);
                 if (user == null)
                 {
                     return BaseResponseExtensions.Failure<BaseRole, CalibrationEntity>(BaseRole.Fail);
@@ -175,7 +175,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(request.Username);
+                var user = userRepository.GetByUsername(request.Username);
                 var filter = await xrayVisionFilterRepository.GetByUserIdAsync(user.Id);
 
                 if (filter == null)
@@ -196,7 +196,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(userSession.CurrentUser);
+                var user = userRepository.GetByUsername(userSession.CurrentUser);
                 if (user == null)
                 {
                     return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail);
@@ -258,7 +258,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(request.Username);
+                var user = userRepository.GetByUsername(request.Username);
                 var material = await xrayVisionMaterialRepository.GetByUserIdAsync(user.Id);
 
                 if (material == null)
@@ -280,7 +280,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var user = userRepository.GetUserByUsername(userSession.CurrentUser);
+                var user = userRepository.GetByUsername(userSession.CurrentUser);
                 if (user == null)
                 {
                     return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail);

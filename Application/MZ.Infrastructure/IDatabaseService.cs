@@ -14,7 +14,7 @@ namespace MZ.Infrastructure
         public IXrayVisionMaterialService Material { get; }
 
         public Task MakeAdmin();
-        public Task<bool> MakeUserAsync(string username, string password, CancellationToken cancellationToken = default);
-        public Task MakeAppSettingAsync(string username, CancellationToken cancellationToken = default);
+        public Task<bool> MakeUserAsync(string username, string password);
+        public Task MakeAppSettingAsync(string username);
     }
 }

@@ -12,6 +12,7 @@ namespace MZ.AI.Engine
         YoloProcessor Yolo { get; set; }
 
         void Create(YoloOptions yoloOption, ObservableCollection<CategoryModel> categories, ObjectDetectionOptionModel objectDetectionOption);
+        void Predict(MemoryStream stream, Size imageSize);
         void Predict(MemoryStream stream, Size imageSize, Size canvasSize);
         void Shift(int width);
         void Add();

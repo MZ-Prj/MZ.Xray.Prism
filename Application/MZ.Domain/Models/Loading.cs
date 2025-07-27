@@ -25,7 +25,7 @@ namespace MZ.Domain.Models
                 Message = _defaultMessage;
             }
 
-            return MZDisposable.LoadingWrapper((isLoading) =>
+            return MZDisposable.Wrapper((isLoading) =>
             {
                 IsLoading = isLoading;
             });

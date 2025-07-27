@@ -8,9 +8,9 @@ namespace MZ.Infrastructure.Interfaces
 {
     public interface IXrayVisionImageRepository : IRepositoryBase<ImageEntity>
     {
-        public Task<ICollection<ImageEntity>> GetImageByPageSize(int page, int size);
-        public Task<ICollection<ImageEntity>> GetImageByDateTimeBetweenStartEnd(DateTime start, DateTime end);
-        public Task<ICollection<ImageEntity>> GetImageByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size);
+        public Task<ICollection<ImageEntity>> GetByPageSize(int page, int size);
+        public Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEnd(DateTime start, DateTime end);
+        public Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size);
     }
     public interface IXrayVisionCalibrationRepository : IRepositoryBase<CalibrationEntity>
     {

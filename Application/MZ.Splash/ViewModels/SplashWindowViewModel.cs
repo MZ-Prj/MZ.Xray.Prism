@@ -11,6 +11,7 @@ using MZ.Xray.Engine;
 using MZ.Infrastructure;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using MZ.AI.Engine;
 
 namespace MZ.Splash.ViewModels
 {
@@ -56,9 +57,14 @@ namespace MZ.Splash.ViewModels
                         await _databaseService.MakeAdmin();
                         await Task.CompletedTask;
                     }),
-                    ("Initialize Network",  async () =>
+                    ("Initialize Network", async () =>
                     {
                         _xrayService.InitializeSocket();
+                        await Task.CompletedTask;
+                    }),
+                    ("Initialize AI", async () =>
+                    {
+                        _xrayService.InitializeAI();
                         await Task.CompletedTask;
                     }),
                     ("Success!", async () =>

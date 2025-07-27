@@ -9,6 +9,7 @@ namespace MZ.Xray.Engine
         ZeffectProcesser Zeffect { get; set; }
         SocketReceiveProcesser SocketReceive { get; set; }
         void InitializeSocket();
+        void InitializeAI();
         void Play();
         void Stop();
         bool IsPlaying();

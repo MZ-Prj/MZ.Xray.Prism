@@ -7,6 +7,7 @@ using MZ.Auth.Views;
 using MZ.Domain.Models;
 using MZ.WindowDialog;
 using MZ.Dashboard.Views;
+using MZ.Xray.Engine;
 using MahApps.Metro.IconPacks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,7 +18,6 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using MZ.Xray.Engine;
 
 namespace MZ.Dashboard.ViewModels
 {

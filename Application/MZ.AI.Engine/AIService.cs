@@ -30,6 +30,11 @@ namespace MZ.AI.Engine
             Yolo = yolo;
         }
 
+        public void Predict(MemoryStream stream, Size size)
+        {
+            Yolo.Predict(stream, size, size);
+        }
+
         public void Predict(MemoryStream stream, Size imageSize, Size canvasSize)
         {
             Yolo.Predict(stream, imageSize, canvasSize);

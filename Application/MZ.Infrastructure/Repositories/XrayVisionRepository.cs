@@ -15,7 +15,7 @@ namespace MZ.Infrastructure.Repositories
         {
         }
 
-        public async Task<ICollection<ImageEntity>> GetImageByPageSize(int page, int size)
+        public async Task<ICollection<ImageEntity>> GetByPageSize(int page, int size)
         {
             return await _context.Set<ImageEntity>()
                                  .Include(f => f.ObjectDetections)
@@ -25,7 +25,7 @@ namespace MZ.Infrastructure.Repositories
                                  .ToListAsync();
         }
 
-        public async Task<ICollection<ImageEntity>> GetImageByDateTimeBetweenStartEnd(DateTime start, DateTime end)
+        public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEnd(DateTime start, DateTime end)
         {
             return await _context.Set<ImageEntity>()
                                  .Include(f => f.ObjectDetections)
@@ -34,7 +34,7 @@ namespace MZ.Infrastructure.Repositories
                                  .ToListAsync();
         }
 
-        public async Task<ICollection<ImageEntity>> GetImageByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size)
+        public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size)
         {
             return await _context.Set<ImageEntity>()
                                  .Include(f => f.ObjectDetections)
@@ -56,7 +56,7 @@ namespace MZ.Infrastructure.Repositories
         public async Task<CalibrationEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<CalibrationEntity>()
-                       .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
 
@@ -69,7 +69,7 @@ namespace MZ.Infrastructure.Repositories
         public async Task<FilterEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<FilterEntity>()
-                       .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
 
@@ -82,8 +82,8 @@ namespace MZ.Infrastructure.Repositories
         public async Task<MaterialEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<MaterialEntity>()
-                        .Include(m => m.MaterialControls) 
-                        .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .Include(m => m.MaterialControls) 
+                                 .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
 }

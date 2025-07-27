@@ -2,16 +2,11 @@
 using MZ.Util;
 using MZ.Vision;
 using OpenCvSharp;
-using OpenCvSharp.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace MZ.Xray.Engine
 {
@@ -130,16 +125,6 @@ namespace MZ.Xray.Engine
             {
                 Video(list, path, filename);
             });
-        }
-
-        public static void AI()
-        {
-
-        }
-
-        public static void Database()
-        {
-
         }
 
         public static string GetPath()

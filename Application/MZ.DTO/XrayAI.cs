@@ -1,12 +1,22 @@
-﻿using System;
+﻿using MZ.Domain.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MZ.DTO
 {
-    internal class XrayAI
-    {
-    }
+    public record AIOptionCreateRequest(
+        string OnnxModel,
+        int ModelType,
+        bool Cuda,
+        bool PrimeGpu,
+        int GpuId,
+        bool IsChecked,
+        double Confidence,
+        double IoU,
+        ICollection<CategoryEntity> Categories
+    );
+
+    public record AIOptionSaveRequest(
+        int AIOptionId,
+        ICollection<CategoryEntity> Categories
+    );
 }
