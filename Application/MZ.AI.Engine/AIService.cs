@@ -5,13 +5,66 @@ using System.Windows;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using YoloDotNet.Models;
+using MZ.Util;
+using MZ.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using System;
+using YoloDotNet;
 
 namespace MZ.AI.Engine
 {
     public class AIService : BindableBase, IAIService
     {
+        #region Services
+        private readonly IDatabaseService _databaseService;
+        private readonly IConfiguration _configuration;
+        #endregion
+
+        #region Params
         private YoloProcessor _yolo;
         public YoloProcessor Yolo { get => _yolo; set => SetProperty(ref _yolo, value); }
+        #endregion
+
+        public AIService(IConfiguration configuration, IDatabaseService databaseService)
+        {
+            _configuration = configuration;
+            _databaseService = databaseService;
+        }
+
+        public void Create(string path)
+        {
+            YoloOptions yoloOption;
+
+            try
+            {
+                yoloOption = new YoloOptions
+                {
+                    OnnxModel = path,
+                    Cuda = true,
+                    PrimeGpu = true
+                };
+
+                _ = new Yolo(yoloOption);
+            }
+            catch 
+            {
+                yoloOption = new YoloOptions
+                {
+                    OnnxModel = path,
+                    Cuda = false
+                };
+            }
+
+            ObservableCollection<CategoryModel> categories = [];
+            ObjectDetectionOptionModel objectDetectionOption = new();
+
+            Yolo = new YoloProcessor
+            {
+                YoloOption = yoloOption,
+                ObjectDetectionOption = objectDetectionOption,
+                Categories = categories,
+            };
+        }
 
         public void Create(YoloOptions yoloOption, ObservableCollection<CategoryModel> categories, ObjectDetectionOptionModel objectDetectionOption)
         {
@@ -86,6 +139,11 @@ namespace MZ.AI.Engine
         public void ChangeCategoryColor(int index, string color)
         {
             Yolo.Categories[index].Color = color;
+        }
+
+        public bool IsSavedModel(string root)
+        {
+            return MZIO.IsFileExist(root);
         }
 
     }

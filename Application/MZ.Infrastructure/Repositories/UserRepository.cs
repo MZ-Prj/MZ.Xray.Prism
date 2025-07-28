@@ -7,6 +7,7 @@ using MZ.Infrastructure.Interfaces;
 
 namespace MZ.Infrastructure.Repositories
 {
+    [Repository]
     public class UserRepository : RepositoryBase<UserEntity>, IUserRepository
     {
         public UserRepository(AppDbContext context) : base(context)
@@ -52,6 +53,7 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    [Repository]
     public class UserSettingRepository : RepositoryBase<UserSettingEntity>, IUserSettingRepository
     {
         public UserSettingRepository(AppDbContext context) : base(context)

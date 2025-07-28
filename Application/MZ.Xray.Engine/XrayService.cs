@@ -11,9 +11,14 @@ using MZ.Domain.Models;
 using MZ.Infrastructure;
 using MZ.AI.Engine;
 using MZ.DTO;
+using MZ.Util;
 using OpenCvSharp;
 using static MZ.Event.MZEvent;
-using MZ.Util;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.Windows.Controls;
+using YoloDotNet.Enums;
+using YoloDotNet.Models;
 
 namespace MZ.Xray.Engine
 {
@@ -24,14 +29,16 @@ namespace MZ.Xray.Engine
     {
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
+        private readonly IConfiguration _configuration;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDatabaseService _databaseService;
         private readonly IAIService _aiService;
 
         private readonly Channel<Mat> _imageProcessingChannel = Channel.CreateBounded<Mat>(100);
 
-        public XrayService(IEventAggregator eventAggregator, IDatabaseService databaseService, IAIService aIService)
+        public XrayService(IConfiguration configuration, IEventAggregator eventAggregator, IDatabaseService databaseService, IAIService aIService)
         {
+            _configuration = configuration;
             _eventAggregator = eventAggregator;
             _databaseService = databaseService;
             _aiService = aIService;
@@ -422,9 +429,9 @@ namespace MZ.Xray.Engine
 
         public void SaveDatabase()
         {
-            _databaseService.Calibration.Save(Calibration.ModelToRequest());
-            _databaseService.Filter.Save(Media.ModelToRequest());
-            _databaseService.Material.Save(Material.ModelToRequest());
+            _databaseService.Calibration.Save(XrayVisionCalibrationMapper.ModelToRequest(Calibration.Model));
+            _databaseService.Filter.Save(XrayVisionFilterMapper.ModelToRequest(Media.Model.Filter));
+            _databaseService.Material.Save(XrayVisionMaterialMapper.ModelToRequest(Material.Model));
             _databaseService.User.Logout();
         }
 
@@ -438,21 +445,21 @@ namespace MZ.Xray.Engine
             var calibration = await _databaseService.Calibration.Load(new(username));
             if (calibration.Success)
             {
-                Calibration.ConvertEntityToModel(calibration.Data);
+                Calibration.Model = XrayVisionCalibrationMapper.EntityToModel(calibration.Data);
             }
 
             //filter
             var filter = await _databaseService.Filter.Load(new(username));
             if (filter.Success)
             {
-                Media.ConvertEntityToModel(filter.Data);
+                Media.Filter = XrayVisionFilterMapper.EntityToModel(filter.Data);
             }
 
             //material
             var material = await _databaseService.Material.Load(new(username));
             if (material.Success)
             {
-                Material.ConvertEntityToModel(material.Data);
+                Material.Model = XrayVisionMaterialMapper.EntityToModel(material.Data, Material.UpdateAllMaterialGraph);
             }
         }
     }
@@ -462,20 +469,33 @@ namespace MZ.Xray.Engine
     /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
-
-        public void InitializeAI()
+        public async Task InitializeAI()
         {
-            //db 있으면
+            string aiPath = _configuration["AI:Path"];
+            string aiDownloadLink = _configuration["AI:DownloadLink"];
+
             MZWebDownload download = new();
 
-            //파일 유무 검증
-            //성공
-            //실패
+            bool checkModel = _aiService.IsSavedModel(aiPath);
 
-            //db 없으면
-            //파일 다운로드 
-            //추가
-            //성공
+            var existOneRecord = await _databaseService.AIOption.ExistOneRecord();
+            bool checkDatabase = existOneRecord.Success;
+
+            if (!(checkModel && checkDatabase))
+            {
+                MZIO.TryDeleteFile(aiPath);
+                MZIO.TryMakeDirectoryRemoveFile(aiPath);
+
+                bool checkDownload = await download.DownloadAsync(aiDownloadLink, aiPath);
+
+                if (checkDownload)
+                {
+                    _aiService.Create(aiPath);
+                    Console.WriteLine(_aiService.Yolo.YoloOption.Cuda);
+
+                }
+            }
+
         }
 
         private void Predict()

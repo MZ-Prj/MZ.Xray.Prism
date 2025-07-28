@@ -10,7 +10,7 @@ namespace MZ.AI.Engine
     public interface IAIService
     {
         YoloProcessor Yolo { get; set; }
-
+        void Create(string path);
         void Create(YoloOptions yoloOption, ObservableCollection<CategoryModel> categories, ObjectDetectionOptionModel objectDetectionOption);
         void Predict(MemoryStream stream, Size imageSize);
         void Predict(MemoryStream stream, Size imageSize, Size canvasSize);
@@ -23,5 +23,6 @@ namespace MZ.AI.Engine
         ObservableCollection<CategoryModel> GetCategories();
         void ChangeObjectDetections(int index);
         void ChangeCategoryColor(int index, string color);
+        bool IsSavedModel(string root);
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace MZ.Xray.Engine
 {
     public interface IXrayService
@@ -9,7 +11,7 @@ namespace MZ.Xray.Engine
         ZeffectProcesser Zeffect { get; set; }
         SocketReceiveProcesser SocketReceive { get; set; }
         void InitializeSocket();
-        void InitializeAI();
+        Task InitializeAI();
         void Play();
         void Stop();
         bool IsPlaying();

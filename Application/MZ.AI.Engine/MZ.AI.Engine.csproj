@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
+    <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

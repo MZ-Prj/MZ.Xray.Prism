@@ -180,21 +180,21 @@ namespace MZ.Domain.Models
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
-        public readonly Action _updateGraphAction;
+        public readonly WeakReference<Action> _action;
 
-        public MaterialControlModel(Action updateGraphAction)
+        public MaterialControlModel(Action action)
         {
-            _updateGraphAction = updateGraphAction;
+            _action = new WeakReference<Action>(action);
         }
 
         private double _y = 0.0;
-        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { InvokeUpdateGraph(); } } }
+        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { Invoke(); } } }
 
         private double _xMin = byte.MinValue;
-        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { InvokeUpdateGraph(); } } }
+        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { Invoke(); } } }
 
         private double _xMax = byte.MaxValue;
-        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { InvokeUpdateGraph(); } } }
+        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { Invoke(); } } }
 
         private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
@@ -208,7 +208,7 @@ namespace MZ.Domain.Models
                     RaisePropertyChanged(nameof(Color));
                     RaisePropertyChanged(nameof(ColorBrush));
 
-                    InvokeUpdateGraph();
+                    Invoke();
                 }
             }
         }
@@ -225,7 +225,7 @@ namespace MZ.Domain.Models
                     RaisePropertyChanged(nameof(Scalar));
                     RaisePropertyChanged(nameof(ColorBrush));
 
-                    InvokeUpdateGraph();
+                    Invoke();
                 }
             }
         }
@@ -233,9 +233,12 @@ namespace MZ.Domain.Models
         public Brush ColorBrush => new SolidColorBrush(Color);
 
 
-        private void InvokeUpdateGraph()
+        private void Invoke()
         {
-            _updateGraphAction?.Invoke();
+            if (_action.TryGetTarget(out var action))
+            {
+                action();
+            }
         }
     }
 

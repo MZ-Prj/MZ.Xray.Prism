@@ -2,14 +2,17 @@
 using MZ.DTO.Enums;
 using MZ.DTO;
 using MZ.Infrastructure.Interfaces;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
 {
-    public class XrayAIOptionService : IXrayAIOptionService
+    [Service]
+    public class XrayAIOptionService : ServiceBase, IXrayAIOptionService
     {
+        #region Repositorise
         protected readonly IXrayAIOptionRepository xrayAIOptionRepository;
+        #endregion
 
         public XrayAIOptionService(IXrayAIOptionRepository xrayAIOptionRepository)
         {
@@ -51,6 +54,7 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+
         public async Task<BaseResponse<BaseRole, AIOptionEntity>> Save(AIOptionSaveRequest request)
         {
             try
@@ -70,6 +74,25 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, AIOptionEntity>(BaseRole.Fail, ex);
             }
         }
+
+        public async Task<BaseResponse<BaseRole, bool>> ExistOneRecord()
+        {
+            try
+            {
+                bool isOne = await xrayAIOptionRepository.IsOneAsync();
+                if (!isOne)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Valid);
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, isOne);
+            }
+            catch (Exception ex)
+            {
+                return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Fail, ex);
+            }
+        }
+
     }
 
 }

@@ -8,19 +8,14 @@ using System.Threading.Tasks;
 #nullable enable
 namespace MZ.Infrastructure.Repositories
 {
+    [Repository]
     public class XrayAIOptionRepository : RepositoryBase<AIOptionEntity>, IXrayAIOptionRepository
     {
         public XrayAIOptionRepository(AppDbContext context) : base(context)
         {
         }
 
-        public async Task<AIOptionEntity?> GetByIdAsync(int id)
-        {
-            return await _context.Set<AIOptionEntity>()
-                                 .FirstOrDefaultAsync(m => m.Id == id);
-        }
-
-        public async Task<AIOptionEntity?> GetByIdAsync()
+        public async Task<AIOptionEntity?> GetByIdSingleAsync()
         {
             return await _context.Set<AIOptionEntity>()
                                  .Include(a => a.Categories)

@@ -11,13 +11,16 @@ using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
 {
-    public class UserService : IUserService
+    [Service]
+    public class UserService : ServiceBase, IUserService
     {
         protected readonly IInformationEncoder _informationEncoder;
 
+        #region Repositorise
         protected readonly IUserRepository userRepository;
         protected readonly IUserSettingRepository userSettingRepository;
         protected readonly IUserSession userSession;
+        #endregion
 
         public UserService(IUserRepository userRepository,
                            IUserSettingRepository userSettingRepository,

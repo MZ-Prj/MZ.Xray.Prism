@@ -19,4 +19,6 @@ namespace MZ.DTO
         int AIOptionId,
         ICollection<CategoryEntity> Categories
     );
+
+
 }

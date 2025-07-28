@@ -1,6 +1,11 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
+using DryIoc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MZ.AI.Engine;
 using MZ.Auth;
 using MZ.Blank;
@@ -41,12 +46,15 @@ namespace MZ.App
         /// <param name="containerRegistry"></param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            // Initialize Database
+            // Config
+            RegisterConfigurations(containerRegistry);
+
+            // Database
             RegisterDatabaseServices(containerRegistry);
 
             // Service
             RegisterApplicationServices(containerRegistry);
-            RegisterUIService(containerRegistry);
+            RegisterUIServices(containerRegistry);
         }
 
         /// <summary>
@@ -84,13 +92,24 @@ namespace MZ.App
             BuildVersionService.Load(Assembly.GetExecutingAssembly());
         }
 
+        private void RegisterConfigurations(IContainerRegistry containerRegistry)
+        {
+            var configuration = new ConfigurationBuilder()
+                                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                .Build();
+
+            containerRegistry.RegisterInstance<IConfiguration>(configuration);
+        }
+
         private void RegisterDatabaseServices(IContainerRegistry containerRegistry)
         {
-            var appConfig = MZAppSettings.Configuration;
+            // 
+            var configuration = containerRegistry.GetContainer().Resolve<IConfiguration>();
 
             // DbContext
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                    .UseSqlite(appConfig["Database:Path"])
+                    .UseSqlite(configuration["Database:Path"])
                     .EnableSensitiveDataLogging()
                     .Options;
 
@@ -104,21 +123,11 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<IUserSession, UserSession>();
 
             // Repository
-            containerRegistry.Register<IUserRepository, UserRepository>();
-            containerRegistry.Register<IUserSettingRepository, UserSettingRepository>();
-            containerRegistry.Register<IAppSettingRepository, AppSettingRepository>();
-            containerRegistry.Register<IXrayVisionImageRepository, XrayVisionImageRepository>();
-            containerRegistry.Register<IXrayVisionCalibrationRepository, XrayVisionCalibrationRepository>();
-            containerRegistry.Register<IXrayVisionFilterRepository, XrayVisionFilterRepository>();
-            containerRegistry.Register<IXrayVisionMaterialRepository, XrayVisionMaterialRepository>();
+            RegisterByAttribute(containerRegistry, typeof(RepositoryBase<>).Assembly);
 
             // Business
-            containerRegistry.Register<IUserService, UserService>();
-            containerRegistry.Register<IAppSettingService, AppSettingService>();
-            containerRegistry.Register<IXrayVisionImageService, XrayVisionImageService>();
-            containerRegistry.Register<IXrayVisionFilterService, XrayVisionFilterService>();
-            containerRegistry.Register<IXrayVisionCalibrationService, XrayVisionCalibrationService>();
-            containerRegistry.Register<IXrayVisionMaterialService, XrayVisionMaterialService>();
+            RegisterByAttribute(containerRegistry, typeof(ServiceBase).Assembly);
+
         }
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)
@@ -129,7 +138,7 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<IAIService, AIService>();
         }
 
-        private void RegisterUIService(IContainerRegistry containerRegistry)
+        private void RegisterUIServices(IContainerRegistry containerRegistry)
         {
             //mahapp : custom dialog
             containerRegistry.RegisterDialogWindow<MZDialogMetroWindowChrome>();
@@ -142,6 +151,26 @@ namespace MZ.App
         public void Exit()
         {
 
+        }
+
+        public static void RegisterByAttribute(IContainerRegistry containerRegistry, Assembly assembly)
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsClass && !type.IsAbstract)
+                {
+                    if (type.GetCustomAttribute<RepositoryAttribute>() != null || type.GetCustomAttribute<ServiceAttribute>() != null)
+                    {
+                        var interfaceName = "I" + type.Name;
+                        var iface = type.GetInterface(interfaceName);
+
+                        if (iface != null)
+                        {
+                            containerRegistry.Register(iface, type);
+                        }
+                    }
+                }
+            }
         }
     }
 }

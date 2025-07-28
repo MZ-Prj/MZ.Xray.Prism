@@ -11,10 +11,13 @@ using System.Collections.Generic;
 
 namespace MZ.Infrastructure.Services
 {
-    public class XrayVisionImageService : IXrayVisionImageService
+    [Service]
+    public class XrayVisionImageService : ServiceBase, IXrayVisionImageService
     {
+        #region Repositorise
         protected readonly IUserRepository userRepository;
         protected readonly IXrayVisionImageRepository xrayVisionImageRepository;
+        #endregion
 
         public XrayVisionImageService(IUserRepository userRepository, 
                                       IXrayVisionImageRepository xrayVisionImageRepository)
@@ -69,6 +72,7 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    [Service]
     public class XrayVisionCalibrationService : IXrayVisionCalibrationService
     {
         protected readonly IUserSession userSession;
@@ -156,6 +160,7 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    [Service]
     public class XrayVisionFilterService : IXrayVisionFilterService
     {
         protected readonly IUserSession userSession;
@@ -239,6 +244,7 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    [Service]
     public class XrayVisionMaterialService : IXrayVisionMaterialService
     {
         protected readonly IUserSession userSession;
@@ -274,7 +280,6 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
-
 
         public async Task<BaseResponse<BaseRole, MaterialEntity>> Save(MaterialSaveRequest request)
         {
