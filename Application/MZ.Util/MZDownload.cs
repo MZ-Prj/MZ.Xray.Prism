@@ -9,7 +9,7 @@ namespace MZ.Util
 {
     public interface IFileDownloader
     {
-        Task<bool> DownloadAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default);
+        Task<bool> RunAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default);
     }
 
     public class MZWebDownload : IFileDownloader, IDisposable
@@ -24,7 +24,7 @@ namespace MZ.Util
             };
         }
 
-        public async Task<bool> DownloadAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default)
+        public async Task<bool> RunAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default)
         {
             try
             {

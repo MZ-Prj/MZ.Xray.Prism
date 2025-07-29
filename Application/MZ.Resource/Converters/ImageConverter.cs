@@ -32,4 +32,5 @@ namespace MZ.Resource.Converters
             return Binding.DoNothing;
         }
     }
+
 }

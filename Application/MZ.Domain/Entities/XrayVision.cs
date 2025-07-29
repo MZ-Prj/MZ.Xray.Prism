@@ -71,7 +71,7 @@ namespace MZ.Domain.Entities
         public string Filename { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreateDate { get; set; } = DateTime.Now;
         public ICollection<ObjectDetectionEntity> ObjectDetections { get; set; }
     }
 

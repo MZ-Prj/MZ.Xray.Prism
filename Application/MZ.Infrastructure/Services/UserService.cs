@@ -108,8 +108,8 @@ namespace MZ.Infrastructure.Services
                     Username = request.Username,
                     Email = request.Email,
                     Password = request.Password,
-                    CreateDate = DateTime.UtcNow,
-                    LastLoginDate = DateTime.UtcNow,
+                    CreateDate = DateTime.Now,
+                    LastLoginDate = DateTime.Now,
                     Role = request.UserRole,
                     UserSetting = new()
                     {

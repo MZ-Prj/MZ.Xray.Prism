@@ -15,7 +15,8 @@ namespace MZ.DTO
         string Path,
         string Filename,
         int Width,
-        int Height
+        int Height,
+        ICollection<ObjectDetectionEntity> ObjectDetections
     );
 
     public record ImageLoadRequest(

@@ -1,86 +1,93 @@
-﻿using MZ.Domain.Models;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using YoloDotNet.Models;
+using MZ.DTO;
 using MZ.Util;
-using MZ.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using System;
+using MZ.Domain.Models;
+using MZ.Domain.Entities;
 using YoloDotNet;
+using YoloDotNet.Enums;
+using YoloDotNet.Models;
+using System.Threading.Tasks;
 
 namespace MZ.AI.Engine
 {
     public class AIService : BindableBase, IAIService
     {
-        #region Services
-        private readonly IDatabaseService _databaseService;
-        private readonly IConfiguration _configuration;
-        #endregion
-
         #region Params
-        private YoloProcessor _yolo;
+        private YoloProcessor _yolo = new();
         public YoloProcessor Yolo { get => _yolo; set => SetProperty(ref _yolo, value); }
         #endregion
 
-        public AIService(IConfiguration configuration, IDatabaseService databaseService)
+        public AIService()
         {
-            _configuration = configuration;
-            _databaseService = databaseService;
         }
 
         public void Create(string path)
         {
-            YoloOptions yoloOption;
+
+            YoloOptions yoloOption = new()
+            {
+                OnnxModel = path,
+                Cuda = true,
+                PrimeGpu = true,
+                ModelType = ModelType.ObjectDetection
+            };
 
             try
             {
-                yoloOption = new YoloOptions
-                {
-                    OnnxModel = path,
-                    Cuda = true,
-                    PrimeGpu = true
-                };
-
                 _ = new Yolo(yoloOption);
             }
             catch 
             {
-                yoloOption = new YoloOptions
+                yoloOption = new()
                 {
                     OnnxModel = path,
-                    Cuda = false
+                    Cuda = false,
+                    ModelType = ModelType.ObjectDetection
                 };
             }
 
-            ObservableCollection<CategoryModel> categories = [];
             ObjectDetectionOptionModel objectDetectionOption = new();
 
-            Yolo = new YoloProcessor
-            {
-                YoloOption = yoloOption,
-                ObjectDetectionOption = objectDetectionOption,
-                Categories = categories,
-            };
+            Yolo.Create(yoloOption, objectDetectionOption);
         }
 
         public void Create(YoloOptions yoloOption, ObservableCollection<CategoryModel> categories, ObjectDetectionOptionModel objectDetectionOption)
         {
-            if (Yolo == null)
-            {
-                return;
-            }
+            Yolo.Create(yoloOption, objectDetectionOption, categories);
+        }
 
-            var yolo = new YoloProcessor
+        public void Load(AIOptionEntity entity)
+        {
+            YoloOptions yoloOption = new()
             {
-                YoloOption = yoloOption,
-                ObjectDetectionOption = objectDetectionOption,
-                Categories = categories,
+                OnnxModel = entity.OnnxModel,
+                Cuda = entity.Cuda,
+                ModelType = (ModelType)entity.ModelType,
+                PrimeGpu = entity.PrimeGpu,
+                GpuId = entity.GpuId,
             };
 
-            Yolo = yolo;
+            ObjectDetectionOptionModel objectDetectionOption = new()
+            {
+                Confidence = entity.Confidence,
+                IoU = entity.IoU
+            };
+
+            ObservableCollection<CategoryModel> categories = [.. entity.Categories?.Select(e => new CategoryModel
+            {
+                Index = e.Index,
+                Name = e.Name,
+                Color = e.Color,
+                IsUsing = e.IsUsing,
+                Confidence = e.Confidence,
+            }) ?? []];
+
+            Yolo.Create(yoloOption, objectDetectionOption, categories);
         }
 
         public void Predict(MemoryStream stream, Size size)
@@ -88,16 +95,24 @@ namespace MZ.AI.Engine
             Yolo.Predict(stream, size, size);
         }
 
-        public void Predict(MemoryStream stream, Size imageSize, Size canvasSize)
+        public void Predict(MemoryStream stream, Size imageSize, Size canvasSize, int offsetX = 0)
         {
-            Yolo.Predict(stream, imageSize, canvasSize);
+            Yolo.Predict(stream, imageSize, canvasSize, offsetX);
+        }
+
+        public async Task ShiftAsync(int width)
+        {
+            await Task.Run(() =>
+            {
+                Shift(width);
+            });
         }
 
         public void Shift(int width)
         {
             foreach (var detection in Yolo.ObjectDetections)
             {
-                detection.X -= (width * Yolo.ObjectDetectionOption.ScaleX);
+                detection.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
             }
         }
 
@@ -116,9 +131,20 @@ namespace MZ.AI.Engine
             return Yolo.ObjectDetectionsList.Count;
         }
 
-        public void Save(string root, int start)
+        public async Task Save(string path, string time, int start)
         {
-            Yolo.Save(root, start);
+            await Task.Run(() =>
+            {
+                Yolo.Save(path, time, start);
+            });
+        }
+
+        public async Task Save(string path, string time, MemoryStream stream)
+        {
+            await Task.Run(() =>
+            {
+                Yolo.Save(path,time,stream);
+            });
         }
 
         public ICollection<ObjectDetectionModel> Mapper(int start)
@@ -144,6 +170,31 @@ namespace MZ.AI.Engine
         public bool IsSavedModel(string root)
         {
             return MZIO.IsFileExist(root);
+        }
+
+        public AIOptionCreateRequest YoloToRequest()
+        {
+            YoloOptions yoloOption = Yolo.YoloOption;
+            ObjectDetectionOptionModel objectDetectionOption = Yolo.ObjectDetectionOption;
+
+            return new(
+                OnnxModel: yoloOption.OnnxModel,
+                ModelType: (int)yoloOption.ModelType,
+                Cuda: yoloOption.Cuda,
+                PrimeGpu: yoloOption.PrimeGpu,
+                GpuId: yoloOption.GpuId,
+                IsChecked: true,
+                Confidence: objectDetectionOption.Confidence,
+                IoU: objectDetectionOption.IoU,
+                Categories: [.. Yolo.Categories?.Select(e => new CategoryEntity
+                    {
+                        Index = e.Index,
+                        Name = e.Name,
+                        Color = e.Color,
+                        IsUsing = e.IsUsing,
+                        Confidence = e.Confidence,
+                    }) ?? []]
+            );
         }
 
     }

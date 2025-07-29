@@ -34,9 +34,8 @@ namespace MZ.Xray.Engine
         {
             string subPath = "Image";
 
-            MZIO.TryMakeDirectory($"{path}\\{subPath}");
-
-            string root = $"{path}\\{subPath}\\{filename}";
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+            string root = Path.Combine(path, subPath, filename);
 
             if (!File.Exists(path))
             {
@@ -57,9 +56,8 @@ namespace MZ.Xray.Engine
         {
             string subPath = "Origin";
 
-            MZIO.TryMakeDirectory($"{path}\\{subPath}");
-
-            string root = $"{path}\\{subPath}\\{filename}";
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+            string root = Path.Combine(path, subPath, filename);
 
             if (!File.Exists(root))
             {
@@ -87,9 +85,9 @@ namespace MZ.Xray.Engine
         public static void Screen(Mat input, string path, string filename)
         {
             string subPath = "Screen";
-            string root = $"{path}\\{subPath}\\{filename}";
 
-            MZIO.TryMakeDirectory($"{path}\\{subPath}");
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+            string root = Path.Combine(path, subPath, filename);
 
             if (!File.Exists(path))
             {
@@ -109,9 +107,8 @@ namespace MZ.Xray.Engine
         {
             string subPath = "Video";
 
-            MZIO.TryMakeDirectory($"{path}\\{subPath}");
-
-            string root = $"{path}\\{subPath}\\{filename}";
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+            string root = Path.Combine(path, subPath, filename);
 
             if (!File.Exists(root))
             {
@@ -129,7 +126,7 @@ namespace MZ.Xray.Engine
 
         public static string GetPath()
         {
-            return Path.GetFullPath($"{AbsoluteRoot}\\{DateTime.Now:yyyy-MM-dd}");
+            return Path.GetFullPath(Path.Combine(AbsoluteRoot, DateTime.Now.ToString("yyyy-MM-dd")));
         }
 
         public static string GetCurrentTime()

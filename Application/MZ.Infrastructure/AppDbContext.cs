@@ -169,10 +169,10 @@ namespace MZ.Infrastructure
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            user.CreateDate = DateTime.UtcNow;
+                            user.CreateDate = DateTime.Now;
                             break;
                         case EntityState.Modified:
-                            user.LastLoginDate = DateTime.UtcNow;
+                            user.LastLoginDate = DateTime.Now;
                             break;
                     }
                 }

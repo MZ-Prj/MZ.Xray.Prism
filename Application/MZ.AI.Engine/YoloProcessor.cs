@@ -1,4 +1,5 @@
-﻿using MZ.Logger;
+﻿using MZ.Util;
+using MZ.Logger;
 using MZ.Domain.Models;
 using Prism.Mvvm;
 using SkiaSharp;
@@ -12,7 +13,6 @@ using YoloDotNet;
 using YoloDotNet.Models;
 using YoloDotNet.Extensions;
 using Newtonsoft.Json;
-using Formatting = Newtonsoft.Json.Formatting;
 
 namespace MZ.AI.Engine
 {
@@ -21,9 +21,15 @@ namespace MZ.AI.Engine
         public Yolo Yolo { get; set; }
         public YoloOptions YoloOption { get; set; }
         public ObservableCollection<CategoryModel> Categories { get; set; } = [];
-        public ObservableCollection<ObjectDetectionModel> ObjectDetections { get; set; } = [];
         public List<ObservableCollection<ObjectDetectionModel>> ObjectDetectionsList { get; set; } = [];
         public ObjectDetectionOptionModel ObjectDetectionOption { get; set; } = new();
+
+        private ObservableCollection<ObjectDetectionModel> _objectDetections = [];
+        public ObservableCollection<ObjectDetectionModel> ObjectDetections { get => _objectDetections; set => SetProperty(ref _objectDetections, value); }
+
+        private bool _isVisibility = false;
+        public bool IsVisibility { get => _isVisibility; set => SetProperty(ref _isVisibility, value); }
+
 
         public YoloProcessor() { }
 
@@ -31,12 +37,21 @@ namespace MZ.AI.Engine
         {
             Yolo = new Yolo(yoloOptions);
             ObjectDetectionOption = objectDetectionOption;
-            Categories = (ObservableCollection<CategoryModel>)(categories ?? ConvertCategories());
+            Categories = [.. categories ?? ConvertCategories()];
+        }
+
+        public void Create(YoloOptions yoloOptions, ObjectDetectionOptionModel objectDetectionOption, ObservableCollection<CategoryModel> categories = null)
+        {
+            Yolo = new Yolo(yoloOptions);
+            YoloOption = yoloOptions;
+            ObjectDetectionOption = objectDetectionOption;
+            Categories = [.. categories ?? ConvertCategories()];
+
         }
 
         public ICollection<CategoryModel> ConvertCategories()
         {
-            ICollection<CategoryModel> categories = [.. Yolo.OnnxModel.Labels.Select((category, index) => new CategoryModel
+            ICollection<CategoryModel> categories = [.. Yolo.OnnxModel.Labels.Select((category, index) => new       CategoryModel
                 {
                     Index = index,
                     Color = category.Color,
@@ -48,7 +63,7 @@ namespace MZ.AI.Engine
             return categories;
         }
 
-        public void Predict(MemoryStream stream, Size imageSize, Size canvasSize)
+        public void Predict(MemoryStream stream, Size imageSize, Size canvasSize, int offsetX = 0)
         {
             ObjectDetectionOption.ScaleX = canvasSize.Width / (double)imageSize.Width;
             ObjectDetectionOption.ScaleY = canvasSize.Height / (double)imageSize.Height;
@@ -81,7 +96,9 @@ namespace MZ.AI.Engine
                             Width = boundingBox.Width * ObjectDetectionOption.ScaleX,
                             Height = boundingBox.Height * ObjectDetectionOption.ScaleY,
                             IsVisibility = true, 
-                            IsBlink = false
+                            IsBlink = false,
+                            OffsetX = (offsetX + boundingBox.Left) * ObjectDetectionOption.ScaleX,
+                            CreateDate = DateTime.Now,
                         });
                     }
                 }
@@ -90,31 +107,50 @@ namespace MZ.AI.Engine
             ObjectDetections = [.. result.OrderBy(p => p.Name).ToList()];
         }
 
-        public void Save(string root, int start = 0)
+        public void Save(string path, string time, int start = 0)
         {
             try
             {
+                string subPath = "Predict";
+                
+                MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+
                 var settings = new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
                 };
 
-                var predict = Mapper(start);
+                //var predict = Mapper(start);
 
                 var data = new
                 {
-                    predict,
+                    ObjectDetections,
                     YoloOption,
                     Categories
                 };
                 string json = JsonConvert.SerializeObject(data, settings);
-                File.WriteAllText(root, json);
+                File.WriteAllText(Path.Combine(path, subPath, time), json);
             }
             catch (Exception ex) 
             {
                 MZLogger.Warning(ex.ToString());
             }
+        }
 
+
+        public void Save(string path, string time, MemoryStream stream)
+        {
+            string subPath = "Predict";
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+
+            using (stream)
+            using (var image = SKImage.FromEncodedData(stream))
+            {
+                var predicts = Yolo.RunObjectDetection(image, ObjectDetectionOption.Confidence, ObjectDetectionOption.IoU);
+
+                var predictImage = image.Draw(predicts);
+                predictImage.Save(Path.Combine(path, subPath, time), SKEncodedImageFormat.Png);
+            }
         }
 
         public ICollection<ObjectDetectionModel> Mapper(int start = 0)
@@ -143,16 +179,10 @@ namespace MZ.AI.Engine
             return objectDetections;
         }
 
-        public void Test(MemoryStream stream, string root)
+        public void ChangedVisibility()
         {
-            using (stream)
-            using (var image = SKImage.FromEncodedData(stream))
-            {
-                var predicts = Yolo.RunObjectDetection(image, ObjectDetectionOption.Confidence, ObjectDetectionOption.IoU);
-
-                var predictImage = image.Draw(predicts);
-                predictImage.Save(root, SKEncodedImageFormat.Png);
-            }
+            IsVisibility = !IsVisibility;
         }
+
     }
 }

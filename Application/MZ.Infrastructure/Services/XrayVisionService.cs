@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MZ.Domain.Interfaces;
 
 namespace MZ.Infrastructure.Services
 {
@@ -49,7 +50,7 @@ namespace MZ.Infrastructure.Services
             try
             {
                 string subPath = "Image";
-                string path = $"{request.Path}\\{subPath}";
+                string path = Path.Combine(request.Path, subPath);
 
                 ImageEntity image = new()
                 {
@@ -57,7 +58,16 @@ namespace MZ.Infrastructure.Services
                     Filename = request.Filename,
                     Width = request.Width,
                     Height = request.Height,
-                    ObjectDetections = [],
+                    ObjectDetections = [.. request.ObjectDetections.Select(c => new ObjectDetectionEntity() {
+                        Index = c.Index,
+                        Name = c.Name,
+                        Color = c.Color,
+                        Confidence = c.Confidence,
+                        X  = c.X,
+                        Y  = c.Y,
+                        Width = c.Width,
+                        Height = c.Height,
+                    }) ?? []],
                 };
 
                 await xrayVisionImageRepository.AddAsync(image);

@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
+using MZ.AI.Engine;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -20,11 +21,18 @@ namespace MZ.Dashboard.ViewModels
     {
         #region Service
         private readonly IXrayService _xrayService;
+        private readonly IAIService _aIService;
 
         public MediaProcesser Media
         {
             get => _xrayService.Media;
             set => _xrayService.Media = value;
+        }
+
+        public YoloProcessor Yolo
+        {
+            get => _aIService.Yolo;
+            set => _aIService.Yolo = value;
         }
 
         #endregion
@@ -98,9 +106,10 @@ namespace MZ.Dashboard.ViewModels
         public ICommand SaveImageCommand => _saveImageCommand ??= new(MZAction.Wrapper(SaveImageButton));
 
         #endregion
-        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService) : base(container)
+        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aIService) : base(container)
         {
             _xrayService = xrayService;
+            _aIService = aIService;
 
             base.Initialize();
         }
@@ -227,6 +236,7 @@ namespace MZ.Dashboard.ViewModels
             ToggleFooterButton(AIOnOffCommand, nameof(PackIconMaterialKind.HeadRemoveOutline), nameof(PackIconMaterialKind.HeadCheckOutline), ActionButtons);
 
             // logic
+            Yolo.ChangedVisibility();
         }
 
         private void SaveImageButton()

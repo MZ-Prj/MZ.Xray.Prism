@@ -54,7 +54,7 @@ namespace MZ.Domain.Models
 
         private double _x;
         public double X { get => _x; set => SetProperty(ref _x, value); }
-
+        
         private double _y;
         public double Y { get => _y; set => SetProperty(ref _y, value); }
 
@@ -76,5 +76,9 @@ namespace MZ.Domain.Models
 
         private bool _isBlink;
         public bool IsBlink { get => _isBlink; set => SetProperty(ref _isBlink, value); }
+
+        private double _offsetX = 0;
+        public double OffsetX { get => _offsetX; set => SetProperty(ref _offsetX, value); }
+
     }
 }
