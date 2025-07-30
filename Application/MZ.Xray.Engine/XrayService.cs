@@ -11,10 +11,11 @@ using MZ.Domain.Models;
 using MZ.Infrastructure;
 using MZ.AI.Engine;
 using MZ.DTO;
-using OpenCvSharp;
-using static MZ.Event.MZEvent;
 using MZ.Util;
-
+using OpenCvSharp;
+using Microsoft.Extensions.Configuration;
+using static MZ.Event.MZEvent;
+using System.Windows.Forms.Design;
 namespace MZ.Xray.Engine
 {
     /// <summary>
@@ -24,14 +25,16 @@ namespace MZ.Xray.Engine
     {
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
+        private readonly IConfiguration _configuration;
         private readonly IEventAggregator _eventAggregator;
         private readonly IDatabaseService _databaseService;
         private readonly IAIService _aiService;
 
         private readonly Channel<Mat> _imageProcessingChannel = Channel.CreateBounded<Mat>(100);
 
-        public XrayService(IEventAggregator eventAggregator, IDatabaseService databaseService, IAIService aIService)
+        public XrayService(IConfiguration configuration, IEventAggregator eventAggregator, IDatabaseService databaseService, IAIService aIService)
         {
+            _configuration = configuration;
             _eventAggregator = eventAggregator;
             _databaseService = databaseService;
             _aiService = aIService;
@@ -99,7 +102,7 @@ namespace MZ.Xray.Engine
                     while (!_videoCts.Token.IsCancellationRequested)
                     {
                         await Task.Delay(1000 * Media.Information.VideoDelay, _videoCts.Token);
-                        Media.UpdateVideo();
+                        Media.SaveVideo();
                     }
                 }
                 catch (OperationCanceledException)
@@ -129,7 +132,7 @@ namespace MZ.Xray.Engine
 
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
-                        Media.UpdateScreen();
+                        UpdateScreen();
                         await Task.Delay(1000 / Media.Information.FPS, _screenCts.Token);
                     }
                 }
@@ -191,6 +194,34 @@ namespace MZ.Xray.Engine
         {
             return IsRunning;
         }
+
+        public void UpdateScreen()
+        {
+            Media.FreezeImageSource();
+            if (Media.IsFrameUpdateRequired())
+            {
+                Media.AddFrame();
+
+                _aiService.AddObjectDetection();
+
+                if (Media.Information.Slider >= Media.Information.MaxSlider)
+                {
+                    Media.RemoveOldestFrameAndDetection();
+
+                    _aiService.RemoveObjectDetection();
+
+                    Media.ResetSlider();
+                }
+                Media.IncrementSlider();
+            }
+            Media.IncreaseInterval();
+        }
+
+        public void PrevNextSlider(int index)
+        {
+            int slider = Media.PrevNextSlider(index);
+            _aiService.ChangeObjectDetections(slider);
+        }
     }
 
     /// <summary>
@@ -248,42 +279,49 @@ namespace MZ.Xray.Engine
         /// <returns></returns>
         public async Task Process(Mat origin)
         {
-            if (VisionBase.IsEmpty(origin))
+            try
             {
-                return;
+                if (VisionBase.IsEmpty(origin))
+                {
+                    return;
+                }
+
+                // 이미지 크기 비율 조정
+                Mat line = Calibration.AdjustRatio(origin);
+
+                // 이미지 크기 변경시 초기화
+                await UpdateOnResizeAsync(line);
+
+                // Update : Gain, Offset 
+                if (!Calibration.UpdateOnEnergy(line))
+                {
+                    return;
+                }
+
+                // Calibration 알고리즘 계산
+                (Mat high, _, Mat color, Mat zeff) = Calculation(line);
+
+                // 물체 유무 판단
+                bool isObject = await Calibration.IsObjectAsync(high);
+                if (isObject)
+                {
+                    await ShiftAsync(line, color, zeff);
+                    Media.IncreaseCount();
+                }
+                else
+                {
+                    Predict();
+                    Save();
+
+                    Media.ClearCount();
+                    Calibration.UpdateGain(line);
+                }
             }
-
-            // 이미지 크기 비율 조정
-            Mat line = Calibration.AdjustRatio(origin);
-
-            // 이미지 크기 변경시 초기화
-            await UpdateOnResizeAsync(line);
-
-            // Update : Gain, Offset 
-            if (!Calibration.UpdateOnEnergy(line))
+            catch (Exception ex)
             {
-                return;
+                MZLogger.Error(ex.ToString());
             }
-
-            // Calibration 알고리즘 계산
-            (Mat high, _, Mat color, Mat zeff) = Calculation(line);
-
-            // 물체 유무 판단
-            bool isObject = await Calibration.IsObjectAsync(high);
-
-            if (isObject)
-            {
-                await ShiftAsync(line, color, zeff);
-                Media.IncreaseCount();
-            }
-            else
-            {
-                Predict();
-                Save();
-
-                Media.ClearCount();
-                Calibration.UpdateGain(line);
-            }
+            
         }
 
         /// <summary>
@@ -309,7 +347,7 @@ namespace MZ.Xray.Engine
             //
             Mat gain = Calibration.Gain;
             Mat offset = Calibration.Offset;
-
+            
             Parallel.For(0, width, x =>
             {
                 int k = 0;
@@ -378,7 +416,8 @@ namespace MZ.Xray.Engine
             await Task.WhenAll(
                 Calibration.ShiftAsync(line),
                 Media.ShiftAsync(color),
-                Zeffect.ShiftAsync(zeff));
+                Zeffect.ShiftAsync(zeff),
+                _aiService.ShiftAsync(line.Width));
         }
 
         /// <summary>
@@ -408,8 +447,8 @@ namespace MZ.Xray.Engine
                     XrayDataSaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
                     XrayDataSaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"),
                     XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"),
-                    _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height)));
-
+                    _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height, ObjectDetectionMapper.ModelsToEntities(_aiService.Yolo.ObjectDetections))),
+                    _aiService.Save(path, $"{time}.json"));
             });
         }
     }
@@ -419,12 +458,14 @@ namespace MZ.Xray.Engine
     /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
-
         public void SaveDatabase()
         {
-            _databaseService.Calibration.Save(Calibration.ModelToRequest());
-            _databaseService.Filter.Save(Media.ModelToRequest());
-            _databaseService.Material.Save(Material.ModelToRequest());
+            _databaseService.Calibration.Save(XrayVisionCalibrationMapper.ModelToRequest(Calibration.Model));
+            _databaseService.Filter.Save(XrayVisionFilterMapper.ModelToRequest(Media.Model.Filter));
+            _databaseService.Material.Save(XrayVisionMaterialMapper.ModelToRequest(Material.Model));
+
+            _databaseService.AIOption.Save(CategoryMapper.ModelToRequest(_aiService.Yolo.Categories));
+
             _databaseService.User.Logout();
         }
 
@@ -438,21 +479,22 @@ namespace MZ.Xray.Engine
             var calibration = await _databaseService.Calibration.Load(new(username));
             if (calibration.Success)
             {
-                Calibration.ConvertEntityToModel(calibration.Data);
+                Calibration.Model = XrayVisionCalibrationMapper.EntityToModel(calibration.Data);
             }
 
             //filter
             var filter = await _databaseService.Filter.Load(new(username));
             if (filter.Success)
             {
-                Media.ConvertEntityToModel(filter.Data);
+                Media.Filter = XrayVisionFilterMapper.EntityToModel(filter.Data);
             }
 
             //material
             var material = await _databaseService.Material.Load(new(username));
             if (material.Success)
             {
-                Material.ConvertEntityToModel(material.Data);
+                Material.Model = XrayVisionMaterialMapper.EntityToModel(material.Data, Material.UpdateAllMaterialGraph);
+                Material.UpdateAllMaterialGraph();
             }
         }
     }
@@ -462,25 +504,77 @@ namespace MZ.Xray.Engine
     /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
-
-        public void InitializeAI()
+        public async Task InitializeAI()
         {
-            //db 있으면
+            string aiPath = _configuration["AI:Path"];
+            string aiDownloadLink = _configuration["AI:DownloadLink"];
+
+            bool checkModel = _aiService.IsSavedModel(aiPath);
+
+            var existOneRecord = await _databaseService.AIOption.ExistOneRecord();
+            bool checkDatabase = existOneRecord.Success;
+
+            if (!(checkModel && checkDatabase))
+            {
+                await InitializeCreateAI(aiPath, aiDownloadLink);
+            }
+            else
+            {
+                await InitializeLoadAI(aiPath, aiDownloadLink);
+            }
+        }
+
+        private async Task InitializeCreateAI(string path, string link)
+        {
             MZWebDownload download = new();
 
-            //파일 유무 검증
-            //성공
-            //실패
+            MZIO.TryDeleteFile(path);
+            MZIO.TryMakeDirectoryRemoveFile(path);
 
-            //db 없으면
-            //파일 다운로드 
-            //추가
-            //성공
+            await _databaseService.AIOption.Delete();
+
+            bool checkDownload = await download.RunAsync(link, path);
+
+            if (checkDownload)
+            {
+                _aiService.Create(path);
+                _aiService.Dispose();
+
+                var aiOption = await _databaseService.AIOption.Create(_aiService.YoloToRequest());
+                if (aiOption.Success)
+                {
+                    _aiService.Load(aiOption.Data);
+                }
+            }
+        }
+
+        private async Task InitializeLoadAI(string path, string link)
+        {
+            var aiOption = await _databaseService.AIOption.Load();
+            if (aiOption.Success)
+            {
+                bool checkModel = _aiService.IsSavedModel(aiOption.Data.OnnxModel);
+                if (checkModel)
+                {
+                    _aiService.Load(aiOption.Data);
+                }
+                else
+                {
+                    await _databaseService.AIOption.Delete();
+                    await InitializeCreateAI(path, link);
+                }
+            }
+            else
+            {
+                await InitializeCreateAI(path, link);
+            }
         }
 
         private void Predict()
         {
             int frameCount = Media.Information.Count;
+            int sensorWidth = Calibration.SensorImageWidth;
+            int width = Media.Image.Width;
 
             if (frameCount <= 0)
             {
@@ -490,10 +584,12 @@ namespace MZ.Xray.Engine
             try
             {
 
-                var size = Media.Image.Size();
-                var mat = VisionBase.BlendWithBackground(Media.Image);
+                (int start, int end) = XrayDataSaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
-                _aiService.Predict(mat.ToMemoryStream(), new(size.Width, size.Height));
+                var mat = VisionBase.SplitCol(VisionBase.BlendWithBackground(Media.Image), start, end);
+
+                _aiService.Predict(mat.ToMemoryStream(), new(mat.Width, mat.Height) , new((Media.Information.Width* mat.Width/Media.Image.Width), Media.Information.Height), (Media.Image.Width- mat.Width));
+
             }
             catch (Exception ex)
             {

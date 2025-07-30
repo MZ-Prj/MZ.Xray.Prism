@@ -79,10 +79,18 @@ namespace MZ.Util
 
         public static void TryDeleteFile(string path)
         {
-            if (File.Exists(path))
+            try
             {
-                File.Delete(path);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
+            catch
+            {
+
+            }
+            
         }
 
         public static void TryMakeDirectory(string path)
@@ -92,6 +100,23 @@ namespace MZ.Util
                 if (!string.IsNullOrEmpty(path))
                 {
                     Directory.CreateDirectory(path);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public static void TryMakeDirectoryRemoveFile(string path)
+        {
+            try
+            {
+                string directory = Path.GetDirectoryName(path);
+
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
                 }
             }
             catch
@@ -114,6 +139,15 @@ namespace MZ.Util
             {
 
             }
+        }
+
+        public static bool IsFileExist(string input)
+        {
+            if (File.Exists(input))
+            {
+                return true;
+            }
+            return false;
         }
     }
 

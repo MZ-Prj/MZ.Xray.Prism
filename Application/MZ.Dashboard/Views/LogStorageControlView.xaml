@@ -52,7 +52,7 @@
                     <TextBox Grid.Column="1"
                              BorderThickness="0"
                              FontSize="12"
-                             Text="{Binding Path=SearchLogText, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                              VerticalAlignment="Center"
                              Background="Transparent"/>
                 </Grid>

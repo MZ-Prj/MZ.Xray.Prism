@@ -23,7 +23,7 @@
         public readonly static string LogStorageControl = "LogStorageControlRegion";
         public readonly static string ImageStorageControl = "ImageStorageControlRegion";
         public readonly static string MaterialControl = "MaterialControlRegion";
-
+        public readonly static string AIControl = "AIControlRegion";
 
         //producer
         public readonly static string IpNetworkRegion = "IpNetworkRegion";

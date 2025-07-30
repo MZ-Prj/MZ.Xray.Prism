@@ -6,7 +6,7 @@ namespace MZ.Domain.Models
 {
     public class ObjectDetectionOptionModel : BindableBase
     {
-        private double _confidence = 0.75;
+        private double _confidence = 0.5;
         public double Confidence { get => _confidence; set => SetProperty(ref _confidence, value); }
 
         private double _iou = 0.95;
@@ -21,6 +21,9 @@ namespace MZ.Domain.Models
 
     public class CategoryModel : BindableBase, ICategory
     {
+        private int _id;
+        public int Id { get => _id; set => SetProperty(ref _id, value); }
+
         private int _index;
         public int Index { get => _index; set => SetProperty(ref _index, value); }
 
@@ -54,7 +57,7 @@ namespace MZ.Domain.Models
 
         private double _x;
         public double X { get => _x; set => SetProperty(ref _x, value); }
-
+        
         private double _y;
         public double Y { get => _y; set => SetProperty(ref _y, value); }
 
@@ -76,5 +79,9 @@ namespace MZ.Domain.Models
 
         private bool _isBlink;
         public bool IsBlink { get => _isBlink; set => SetProperty(ref _isBlink, value); }
+
+        private double _offsetX = 0;
+        public double OffsetX { get => _offsetX; set => SetProperty(ref _offsetX, value); }
+
     }
 }

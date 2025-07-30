@@ -64,7 +64,7 @@ namespace MZ.Splash.ViewModels
                     }),
                     ("Initialize AI", async () =>
                     {
-                        _xrayService.InitializeAI();
+                        await _xrayService.InitializeAI();
                         await Task.CompletedTask;
                     }),
                     ("Success!", async () =>
@@ -81,8 +81,8 @@ namespace MZ.Splash.ViewModels
 
                 _process = [.. steps.Select((step, index) => new Func<Task>(async () =>
                 {
-                    await step.Action();
                     await CallbackMessage(index, step.Message);
+                    await step.Action();
                 }))];
 
                 MaxStep = _process.Count - 1;
@@ -108,7 +108,7 @@ namespace MZ.Splash.ViewModels
                 Message = $"{message} [{step}/{MaxStep}]";
             });
             MZLogger.Information($"{message}");
-            await Task.Delay(1000);
+            await Task.Delay(100);
         }
     }
 }

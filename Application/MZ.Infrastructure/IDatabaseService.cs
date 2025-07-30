@@ -1,5 +1,4 @@
 ﻿using MZ.Infrastructure.Interfaces;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MZ.Infrastructure
@@ -12,6 +11,7 @@ namespace MZ.Infrastructure
         public IXrayVisionFilterService Filter { get; }
         public IXrayVisionCalibrationService Calibration { get; }
         public IXrayVisionMaterialService Material { get; }
+        public IXrayAIOptionService AIOption { get; }
 
         public Task MakeAdmin();
         public Task<bool> MakeUserAsync(string username, string password);

@@ -14,6 +14,7 @@ namespace MZ.Infrastructure
         public IXrayVisionFilterService Filter { get; }
         public IXrayVisionMaterialService Material { get; }
         public IXrayVisionCalibrationService Calibration { get; }
+        public IXrayAIOptionService AIOption { get; }
 
         /// <summary>
         /// cancel 시 token 제어 필요시
@@ -26,7 +27,8 @@ namespace MZ.Infrastructure
             IXrayVisionImageService xrayVisionImageService,
             IXrayVisionFilterService xrayVisionFilterService,
             IXrayVisionMaterialService xrayVisionMaterialService,
-            IXrayVisionCalibrationService xrayVisionCalibrationService)
+            IXrayVisionCalibrationService xrayVisionCalibrationService,
+            IXrayAIOptionService xrayAIOptionService)
         {
             _cts = new ();
 
@@ -36,6 +38,7 @@ namespace MZ.Infrastructure
             Filter = xrayVisionFilterService;
             Material = xrayVisionMaterialService;
             Calibration = xrayVisionCalibrationService;
+            AIOption = xrayAIOptionService;
         }
 
         public async Task MakeAdmin()

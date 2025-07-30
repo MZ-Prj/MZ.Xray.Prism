@@ -58,21 +58,20 @@
                 <ImageBrush ImageSource="{Binding Path=ImageSource, Mode=OneWay}"/>
             </Canvas.Background>
         </Canvas>
-
+        
         <Canvas x:Name="CanvasAIPredictView"
+                Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                 CacheMode="BitmapCache"
                 ClipToBounds="True" 
                 IsManipulationEnabled="true" 
-                DataContext="{Binding Path=VisionService}"
-                Visibility="{Binding Path=DataContext.AIOnOff, Converter={StaticResource VisibilityConverter}, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                Width="{Binding Path=ViewParameters.CanvasSize.Width}" 
-                Height="{Binding Path=ViewParameters.CanvasSize.Height}"
+                Width="{Binding Path=Media.Model.Information.Width}" 
+                Height="{Binding Path=Media.Model.Information.Height}"
                 SnapsToDevicePixels="True"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderOptions.EdgeMode="Aliased"
                 RenderTransformOrigin="0.5, 0.5">
 
-            <ItemsControl ItemsSource="{Binding Path=ObjectDetector.SelectedDetector.Predict}">
+            <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas />
@@ -80,7 +79,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
+                        <Setter Property="Canvas.Left" Value="{Binding Path=OffsetX}" />
                         <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
@@ -127,10 +126,10 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Canvas.RenderTransform>
-                <ScaleTransform ScaleX="{Binding Path=ViewParameters.Zoom}" ScaleY="{Binding Path=ViewParameters.Zoom}"/>
+                <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
             </Canvas.RenderTransform>
         </Canvas>
-
+        
         <Canvas x:Name="OverlayGradient"
                 CacheMode="BitmapCache"
                 IsManipulationEnabled="true" 
@@ -170,12 +169,12 @@
                    StrokeThickness="1"/>
 
         <StackPanel x:Name="OverlayPredict"
-                    Canvas.Left="0" Canvas.Top="0"
-                    Visibility="{Binding Path=AIOnOff, Converter={StaticResource VisibilityConverter}}">
-            <ItemsControl ItemsSource="{Binding Path=VisionService.ObjectDetector.SelectedDetector.Predict}">
+                    Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Canvas.Left="0" Canvas.Top="0">
+            <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel/>
+                        <WrapPanel Margin="4"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

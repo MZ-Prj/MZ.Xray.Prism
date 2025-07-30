@@ -18,6 +18,7 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -51,11 +52,14 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _materialCommand;
         public ICommand MaterialCommand => _materialCommand ??= new DelegateCommand(MZAction.Wrapper(MaterialButton));
 
-        private DelegateCommand aiCommand;
-        public ICommand AICommand => aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
+        private DelegateCommand _aiCommand;
+        public ICommand AICommand => _aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
 
-        private DelegateCommand windowClosingCommand;
-        public ICommand WindowClosingCommand => windowClosingCommand ??= new DelegateCommand(WindowClosing);
+        private DelegateCommand _zeffectCommand;
+        public ICommand ZeffectCommand => _zeffectCommand ??= new DelegateCommand(MZAction.Wrapper(ZeffectButton));
+
+        private DelegateCommand _windowClosingCommand;
+        public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
@@ -75,6 +79,7 @@ namespace MZ.Dashboard.ViewModels
             _loadingService = loadingService;
             _windowDialogService = windowDialogService;
             _xrayService = xrayService;
+
             base.Initialize();
 
         }
@@ -82,7 +87,7 @@ namespace MZ.Dashboard.ViewModels
         public override void InitializeModel()
         {
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), aiCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), RecordCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false));
@@ -165,7 +170,18 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
-        private void AIButton()
+        private async void AIButton()
+        {
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.AIControl,
+                regionName: nameof(AIControlView),
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 480,
+                height: 640);
+        }
+
+        private void ZeffectButton()
         {
         }
 

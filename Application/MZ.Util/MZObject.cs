@@ -27,7 +27,7 @@ namespace MZ.Util
 
         public static T CopyToWithoutProperties<T>(this T source, params string[] propertiesToExclude) where T : new()
         {
-            T target = new T();
+            T target = new();
             var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var prop in props)
             {

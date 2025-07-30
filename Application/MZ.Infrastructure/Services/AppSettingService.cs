@@ -5,31 +5,33 @@ using MZ.Domain.Entities;
 using MZ.Infrastructure.Interfaces;
 using System;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace MZ.Infrastructure.Services
 {
-    public class AppSettingService : IAppSettingService
+    [Service]
+    public class AppSettingService : ServiceBase, IAppSettingService
     {
+        #region Repositorise
         protected readonly IAppSettingRepository appSettingRepository;
+        #endregion
 
         public AppSettingService(IAppSettingRepository appSettingRepository)
         {
             this.appSettingRepository = appSettingRepository;
         }
 
-        public async Task<BaseResponse<AppSettingRole, AppSettingEntity>> Register(AppSettingRegisterRequest request, CancellationToken cancellationToken = default)
+        public async Task<BaseResponse<AppSettingRole, AppSettingEntity>> Register(AppSettingRegisterRequest request)
         {
             try
             {
-                await appSettingRepository.DeleteAllAsync(cancellationToken);
+                await appSettingRepository.DeleteAllAsync();
 
                 var appSetting = new AppSettingEntity()
                 {
                     LastestUsername = request.LastestUsername,
                     IsUsernameSave = request.IsUsernameSave,
                 };
-                await appSettingRepository.AddAsync(appSetting, cancellationToken);
+                await appSettingRepository.AddAsync(appSetting);
                 
                 return BaseResponseExtensions.Success(AppSettingRole.Success, appSetting);
             }
@@ -40,11 +42,11 @@ namespace MZ.Infrastructure.Services
             }
         }
 
-        public async Task<BaseResponse<AppSettingRole, AppSettingEntity>> GetAppSetting(CancellationToken cancellationToken = default)
+        public async Task<BaseResponse<AppSettingRole, AppSettingEntity>> GetAppSetting()
         {
             try
             {
-                AppSettingEntity appSetting = await appSettingRepository.GetByIdAsync(1, cancellationToken);
+                AppSettingEntity appSetting = await appSettingRepository.GetByIdAsync(1);
                 if (appSetting == null)
                 {
                     return BaseResponseExtensions.Failure<AppSettingRole, AppSettingEntity>(AppSettingRole.Fail);

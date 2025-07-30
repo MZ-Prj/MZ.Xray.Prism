@@ -180,21 +180,21 @@ namespace MZ.Domain.Models
 
     public class MaterialControlModel : BindableBase, IMaterialControl
     {
-        public readonly Action _updateGraphAction;
+        public readonly WeakReference<Action> _action;
 
-        public MaterialControlModel(Action updateGraphAction)
+        public MaterialControlModel(Action action)
         {
-            _updateGraphAction = updateGraphAction;
+            _action = new WeakReference<Action>(action);
         }
 
         private double _y = 0.0;
-        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { InvokeUpdateGraph(); } } }
+        public double Y { get => _y; set { if (SetProperty(ref _y, value)) { Invoke(); } } }
 
         private double _xMin = byte.MinValue;
-        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { InvokeUpdateGraph(); } } }
+        public double XMin { get => _xMin; set { if (SetProperty(ref _xMin, value)) { Invoke(); } } }
 
         private double _xMax = byte.MaxValue;
-        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { InvokeUpdateGraph(); } } }
+        public double XMax { get => _xMax; set { if (SetProperty(ref _xMax, value)) { Invoke(); } } }
 
         private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
@@ -208,7 +208,7 @@ namespace MZ.Domain.Models
                     RaisePropertyChanged(nameof(Color));
                     RaisePropertyChanged(nameof(ColorBrush));
 
-                    InvokeUpdateGraph();
+                    Invoke();
                 }
             }
         }
@@ -225,7 +225,7 @@ namespace MZ.Domain.Models
                     RaisePropertyChanged(nameof(Scalar));
                     RaisePropertyChanged(nameof(ColorBrush));
 
-                    InvokeUpdateGraph();
+                    Invoke();
                 }
             }
         }
@@ -233,9 +233,12 @@ namespace MZ.Domain.Models
         public Brush ColorBrush => new SolidColorBrush(Color);
 
 
-        private void InvokeUpdateGraph()
+        private void Invoke()
         {
-            _updateGraphAction?.Invoke();
+            if (_action.TryGetTarget(out var action))
+            {
+                action();
+            }
         }
     }
 
@@ -281,5 +284,36 @@ namespace MZ.Domain.Models
         private double _max = 1.0;
         public double Max { get => _max; set => SetProperty(ref _max, value); }
 
+        private Scalar _scalar = new(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+        public Scalar Scalar
+        {
+            get => _scalar;
+            set
+            {
+                if (SetProperty(ref _scalar, value))
+                {
+                    _color = Color.FromRgb((byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
+                    RaisePropertyChanged(nameof(Color));
+                    RaisePropertyChanged(nameof(ColorBrush));
+                }
+            }
+        }
+
+        private Color _color;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                if (SetProperty(ref _color, value))
+                {
+                    _scalar = new Scalar(value.B, value.G, value.R, byte.MaxValue);
+                    RaisePropertyChanged(nameof(Scalar));
+                    RaisePropertyChanged(nameof(ColorBrush));
+                }
+            }
+        }
+
+        public Brush ColorBrush => new SolidColorBrush(Color);
     }
 }

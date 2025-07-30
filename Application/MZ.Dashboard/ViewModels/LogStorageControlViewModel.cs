@@ -2,7 +2,6 @@
 using MZ.Domain.Models;
 using MZ.Loading;
 using MZ.Util;
-using MZ.Xray.Engine;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
@@ -49,23 +48,21 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private ICollectionView _filteredLogs;
-        public ICollectionView FilteredLogs { get => _filteredLogs; set => SetProperty(ref _filteredLogs, value); }
+        private ICollectionView _filteredTexts;
+        public ICollectionView FilteredTexts { get => _filteredTexts; set => SetProperty(ref _filteredTexts, value); }
 
-
-        private string _searchLogText;
-        public string SearchLogText
+        private string _searchText;
+        public string SearchText
         {
-            get => _searchLogText;
+            get => _searchText;
             set
             {
-                if (SetProperty(ref _searchLogText, value))
+                if (SetProperty(ref _searchText, value))
                 {
-                    FilteredLogs.Refresh();
+                    FilteredTexts.Refresh();
                 }
             }
         }
-
 
         private ObservableCollection<LogComboboxModel> _logLevels = [];
         public ObservableCollection<LogComboboxModel> LogLevels { get => _logLevels; set => SetProperty(ref _logLevels, value); }
@@ -107,19 +104,19 @@ namespace MZ.Dashboard.ViewModels
 
         private void InitializeFilter()
         {
-            FilteredLogs = CollectionViewSource.GetDefaultView(Logs);
-            FilteredLogs.Filter = FilterLogs;
+            FilteredTexts = CollectionViewSource.GetDefaultView(Logs);
+            FilteredTexts.Filter = FilterTexts;
         }
 
-        private bool FilterLogs(object item)
+        private bool FilterTexts(object item)
         {
             if (item is LogControlModel images)
             {
-                if (string.IsNullOrWhiteSpace(SearchLogText))
+                if (string.IsNullOrWhiteSpace(SearchText))
                 {
                     return true;
                 }
-                return images.Message?.IndexOf(SearchLogText, StringComparison.OrdinalIgnoreCase) >= 0;
+                return images.Message?.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0;
             }
             return false;
         }
@@ -138,8 +135,7 @@ namespace MZ.Dashboard.ViewModels
         {
             if (Directory.Exists(path))
             {
-                var files = Directory.GetFiles(path, "*.txt")
-                    .OrderBy(FileNameOrderByDecress);
+                var files = Directory.GetFiles(path, "*.txt").OrderBy(FileNameOrderByDecress);
 
                 foreach (var file in files)
                 {

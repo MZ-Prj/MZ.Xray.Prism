@@ -17,51 +17,51 @@ namespace MZ.Infrastructure.Repositories
         }
 
         // Read
-        public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync([id], cancellationToken);
+            return await _context.Set<T>().FindAsync([id]);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync(cancellationToken);
+            return await _context.Set<T>().ToListAsync();
         }
 
         // Create
-        public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task AddAsync(T entity)
         {
-            await _context.Set<T>().AddAsync(entity, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
         // Update
-        public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(T entity)
         {
             _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
         }
 
         // Delete 
-        public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task DeleteAsync(T entity)
         {
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task DeleteByIdAsync(int id)
         {
-            var entity = await GetByIdAsync(id, cancellationToken);
+            var entity = await GetByIdAsync(id);
             if (entity != null)
             {
-                await DeleteAsync(entity, cancellationToken);
+                await DeleteAsync(entity);
             }
         }
 
-        public async Task DeleteAllAsync(CancellationToken cancellationToken)
+        public async Task DeleteAllAsync()
         {
-            var entities = await _context.Set<T>().ToListAsync(cancellationToken);
+            var entities = await _context.Set<T>().ToListAsync();
             _context.Set<T>().RemoveRange(entities);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync();
         }
     }
 }

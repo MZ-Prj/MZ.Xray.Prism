@@ -183,57 +183,6 @@ namespace MZ.Xray.Engine
         }
 
         #region Mapper
-        public void ConvertEntityToModel(CalibrationEntity entity)
-        {
-            Model = EntityToModel(entity);
-        }
-
-        public CalibrationModel EntityToModel(CalibrationEntity entity)
-        {
-            var model = new CalibrationModel
-            {
-                RelativeWidthRatio = entity.RelativeWidthRatio,
-                OffsetRegion = entity.OffsetRegion,
-                GainRegion = entity.GainRegion,
-                BoundaryArtifact = entity.BoundaryArtifact,
-                ActivationThresholdRatio = entity.ActivationThresholdRatio,
-                MaxImageWidth = entity.MaxImageWidth,
-                SensorImageWidth = entity.SensorImageWidth
-            };
-
-            return model;
-        }
-
-        public CalibrationEntity ModelToEntity()
-        {
-            CalibrationModel model = Model;
-
-            return new CalibrationEntity
-            {
-                RelativeWidthRatio = model.RelativeWidthRatio,
-                OffsetRegion = model.OffsetRegion,
-                GainRegion = model.GainRegion,
-                BoundaryArtifact = model.BoundaryArtifact,
-                ActivationThresholdRatio = model.ActivationThresholdRatio,
-                MaxImageWidth = model.MaxImageWidth,
-                SensorImageWidth = model.SensorImageWidth,
-            };
-        }
-        public CalibrationSaveRequest ModelToRequest()
-        {
-            CalibrationModel model = Model;
-
-            return new CalibrationSaveRequest(
-                RelativeWidthRatio : model.RelativeWidthRatio,
-                OffsetRegion : model.OffsetRegion,
-                GainRegion : model.GainRegion,
-                BoundaryArtifact : model.BoundaryArtifact,
-                ActivationThresholdRatio : model.ActivationThresholdRatio,
-                MaxImageWidth : model.MaxImageWidth,
-                SensorImageWidth : model.SensorImageWidth
-            );
-        }
-
         #endregion
     }
 }

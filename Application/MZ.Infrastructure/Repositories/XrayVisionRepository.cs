@@ -9,6 +9,7 @@ using System.Collections.Generic;
 #nullable enable
 namespace MZ.Infrastructure.Repositories
 {
+    [Repository]
     public class XrayVisionImageRepository : RepositoryBase<ImageEntity>, IXrayVisionImageRepository
     {
         public XrayVisionImageRepository(AppDbContext context) : base(context)
@@ -46,6 +47,7 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    [Repository]
     public class XrayVisionCalibrationRepository : RepositoryBase<CalibrationEntity>, IXrayVisionCalibrationRepository
     {
         public XrayVisionCalibrationRepository(AppDbContext context) : base(context)
@@ -60,6 +62,7 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    [Repository]
     public class XrayVisionFilterRepository : RepositoryBase<FilterEntity>, IXrayVisionFilterRepository
     {
         public XrayVisionFilterRepository(AppDbContext context) : base(context)
@@ -73,6 +76,7 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    [Repository]
     public class XrayVisionMaterialRepository : RepositoryBase<MaterialEntity>, IXrayVisionMaterialRepository
     {
         public XrayVisionMaterialRepository(AppDbContext context) : base(context)

@@ -70,7 +70,7 @@ namespace MZ.Domain.Entities
         public double Y { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.Now;
 
         // Foreign Key
         public int ImageId { get; set; }

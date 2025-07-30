@@ -3,8 +3,8 @@ namespace MZ.Core
 {
     public static class MZWindowNames
     {
-        public static string DashboardWindow = "DashboardWindow";
-        public static string AnalysisWindow = "AnalysisWindow";
-        public static string SplashWindow = "SplashWindow";
+        public readonly static string DashboardWindow = "DashboardWindow";
+        public readonly static string AnalysisWindow = "AnalysisWindow";
+        public readonly static string SplashWindow = "SplashWindow";
     }
 }

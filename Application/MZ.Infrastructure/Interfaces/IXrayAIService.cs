@@ -10,5 +10,9 @@ namespace MZ.Infrastructure.Interfaces
     {
         Task<BaseResponse<BaseRole, AIOptionEntity>> Create(AIOptionCreateRequest request);
         Task<BaseResponse<BaseRole, AIOptionEntity>> Save(AIOptionSaveRequest request);
+        Task<BaseResponse<BaseRole, bool>> ExistOneRecord();
+        Task<BaseResponse<BaseRole, AIOptionEntity>> Load();
+        Task<BaseResponse<BaseRole, bool>> Delete();
+
     }
 }

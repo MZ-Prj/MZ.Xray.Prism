@@ -7,8 +7,7 @@ namespace MZ.Infrastructure.Interfaces
 {
     public interface IXrayAIOptionRepository : IRepositoryBase<AIOptionEntity>
     {
-        Task<AIOptionEntity?> GetByIdAsync(int id);
-        Task<AIOptionEntity?> GetByIdAsync();
+        Task<AIOptionEntity?> GetByIdSingleAsync();
         Task<AIOptionEntity?> GetByIdWithCategoriesAsync(int id);
         Task<AIOptionEntity?> UpdateCategoriesAsync(int id, ICollection<CategoryEntity> categories);
         Task<bool> IsOneAsync();
