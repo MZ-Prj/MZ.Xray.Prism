@@ -108,7 +108,7 @@ namespace MZ.Xray.Engine
             }
         }
 
-        public void UpdateVideo()
+        public void SaveVideo()
         {
             string path = XrayDataSaveManager.GetPath();
             string time = XrayDataSaveManager.GetCurrentTime();
@@ -117,27 +117,6 @@ namespace MZ.Xray.Engine
             {
                 await XrayDataSaveManager.VideoAsync([.. Frames], path, $"{time}.avi");
             });
-        }
-
-        public void UpdateScreen()
-        {
-            ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
-
-            if (Information.Interval % Information.MaxInterval == 0)
-            {
-                Frames.Add(new() { Image = Image, DateTime = DateTime.Now });
-
-                if (Information.Slider >= Information.MaxSlider)
-                {
-                    Frames.RemoveAt(0);
-                    Information.Slider = Information.MaxSlider;
-                    Information.LastestSlider = Information.MaxSlider; 
-                }
-                Information.Slider++;
-                Information.LastestSlider++;
-                Information.Interval = 0;
-            }
-            Information.Interval++;
         }
 
         public void Shift(Mat color)
@@ -153,7 +132,7 @@ namespace MZ.Xray.Engine
             });
         }
 
-        public void PrevNextSlider(int rule)
+        public int PrevNextSlider(int rule)
         {
             int slider = Information.Slider + rule;
             if (IsShowFrame(slider))
@@ -161,7 +140,9 @@ namespace MZ.Xray.Engine
                 ImageSource = CanFreezeImageSource(Frames[slider-1].Image.ToBitmapSource());
                 Information.Slider = slider;
             }
+            return slider;
         }
+
         public void IncreaseCount()
         {
             Information.Count++;
@@ -224,12 +205,48 @@ namespace MZ.Xray.Engine
 
         }
 
-        private bool IsShowFrame(int slider)
+        public bool IsShowFrame(int slider)
         {
             return slider <= Frames.Count && slider > 0 && slider <= Information.MaxSlider;
         }
 
-        private static BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        public void FreezeImageSource()
+        {
+            ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
+        }
+
+        public bool IsFrameUpdateRequired()
+        {
+            return Information.Interval % Information.MaxInterval == 0;
+        }
+        public void AddFrame()
+        {
+            Frames.Add(new() { Image = Image, DateTime = DateTime.Now });
+        }
+
+        public void ResetSlider()
+        {
+            Information.Slider = Information.MaxSlider;
+            Information.LastestSlider = Information.MaxSlider;
+        }
+        public void IncrementSlider()
+        {
+            Information.Slider++;
+            Information.LastestSlider++;
+            Information.Interval = 0;
+        }
+
+        public void IncreaseInterval()
+        {
+            Information.Interval++;
+        }
+
+        public void RemoveOldestFrameAndDetection()
+        {
+            Frames.RemoveAt(0);
+        }
+
+        public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
         {
             if (bitmap.CanFreeze)
             {

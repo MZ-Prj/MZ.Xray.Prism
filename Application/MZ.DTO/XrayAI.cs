@@ -18,7 +18,6 @@ namespace MZ.DTO
     );
 
     public record AIOptionSaveRequest(
-        int AIOptionId,
         ICollection<CategoryEntity> Categories
     );
 
@@ -28,6 +27,7 @@ namespace MZ.DTO
         {
             return new CategoryEntity()
             {
+                Id = model.Id,
                 Index = model.Index,
                 Name = model.Name,
                 Color = model.Color,
@@ -39,6 +39,11 @@ namespace MZ.DTO
         public static ICollection<CategoryEntity> ModelsToEntities(ICollection<CategoryModel> model)
         {
             return [.. model.Select(c => ModelToEntity(c))];
+        }
+
+        public static AIOptionSaveRequest ModelToRequest(ICollection<CategoryModel> model)
+        {
+            return new(ModelsToEntities(model));
         }
     }
 
@@ -64,5 +69,7 @@ namespace MZ.DTO
         {
             return [.. model.Select(c => ModelToEntity(c))];
         }
+
     }
+
 }

@@ -17,5 +17,6 @@ namespace MZ.Xray.Engine
         bool IsPlaying();
         void LoadDatabase();
         void SaveDatabase();
+        void PrevNextSlider(int index);
     }
 }

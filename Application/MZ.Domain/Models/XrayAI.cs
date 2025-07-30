@@ -6,7 +6,7 @@ namespace MZ.Domain.Models
 {
     public class ObjectDetectionOptionModel : BindableBase
     {
-        private double _confidence = 0.75;
+        private double _confidence = 0.5;
         public double Confidence { get => _confidence; set => SetProperty(ref _confidence, value); }
 
         private double _iou = 0.95;
@@ -21,6 +21,9 @@ namespace MZ.Domain.Models
 
     public class CategoryModel : BindableBase, ICategory
     {
+        private int _id;
+        public int Id { get => _id; set => SetProperty(ref _id, value); }
+
         private int _index;
         public int Index { get => _index; set => SetProperty(ref _index, value); }
 

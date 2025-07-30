@@ -31,28 +31,35 @@ namespace MZ.Infrastructure.Repositories
 
         public async Task<AIOptionEntity?> UpdateCategoriesAsync(int id, ICollection<CategoryEntity> categories)
         {
-            var option = await _context.Set<AIOptionEntity>()
+            var aiOption = await _context.Set<AIOptionEntity>()
                                        .Include(a => a.Categories)
                                        .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (option == null)
+            if (aiOption == null)
             {
                 return null;
             }
 
-            var existCategories = option.Categories.ToDictionary(c => c.Id);
+            var existCategories = aiOption.Categories.ToDictionary(c => c.Id);
 
             foreach (var category in categories)
             {
                 if (existCategories.TryGetValue(category.Id, out var exist))
                 {
-                    _context.Entry(exist).CurrentValues.SetValues(category);
+                    exist.Name = category.Name;
+                    exist.Color = category.Color;
+                    exist.Index = category.Index;
+                    exist.IsUsing = category.IsUsing;
+                    exist.Confidence = category.Confidence;
+
+                    _context.Entry(exist).State = EntityState.Modified;
                 }
             }
 
             await _context.SaveChangesAsync();
             return await GetByIdWithCategoriesAsync(id);
         }
+
         public async Task<bool> IsOneAsync()
         {
             var count = await _context.Set<AIOptionEntity>().CountAsync();

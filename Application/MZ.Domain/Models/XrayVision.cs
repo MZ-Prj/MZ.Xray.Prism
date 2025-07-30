@@ -284,5 +284,36 @@ namespace MZ.Domain.Models
         private double _max = 1.0;
         public double Max { get => _max; set => SetProperty(ref _max, value); }
 
+        private Scalar _scalar = new(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+        public Scalar Scalar
+        {
+            get => _scalar;
+            set
+            {
+                if (SetProperty(ref _scalar, value))
+                {
+                    _color = Color.FromRgb((byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
+                    RaisePropertyChanged(nameof(Color));
+                    RaisePropertyChanged(nameof(ColorBrush));
+                }
+            }
+        }
+
+        private Color _color;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                if (SetProperty(ref _color, value))
+                {
+                    _scalar = new Scalar(value.B, value.G, value.R, byte.MaxValue);
+                    RaisePropertyChanged(nameof(Scalar));
+                    RaisePropertyChanged(nameof(ColorBrush));
+                }
+            }
+        }
+
+        public Brush ColorBrush => new SolidColorBrush(Color);
     }
 }

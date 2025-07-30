@@ -15,13 +15,14 @@ namespace MZ.AI.Engine
         YoloProcessor Yolo { get; set; }
         void Create(string path);
         void Create(YoloOptions yoloOption, ObservableCollection<CategoryModel> categories, ObjectDetectionOptionModel objectDetectionOption);
+        void Dispose();
         void Load(AIOptionEntity entity);
         void Predict(MemoryStream stream, Size imageSize);
         void Predict(MemoryStream stream, Size imageSize, Size canvasSize, int offsetX = 0);
         void Shift(int width);
         Task ShiftAsync(int width);
-        void Add();
-        void Remove(int index = 0);
+        void AddObjectDetection();
+        void RemoveObjectDetection(int index = 0);
         int Count();
         Task Save(string path, string time, int start = 0);
         Task Save(string path, string time, MemoryStream stream);

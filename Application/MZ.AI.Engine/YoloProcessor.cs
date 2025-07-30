@@ -20,9 +20,11 @@ namespace MZ.AI.Engine
     {
         public Yolo Yolo { get; set; }
         public YoloOptions YoloOption { get; set; }
-        public ObservableCollection<CategoryModel> Categories { get; set; } = [];
         public List<ObservableCollection<ObjectDetectionModel>> ObjectDetectionsList { get; set; } = [];
         public ObjectDetectionOptionModel ObjectDetectionOption { get; set; } = new();
+
+        private ObservableCollection<CategoryModel> _categories = [];
+        public ObservableCollection<CategoryModel> Categories { get => _categories; set => SetProperty(ref _categories, value); }
 
         private ObservableCollection<ObjectDetectionModel> _objectDetections = [];
         public ObservableCollection<ObjectDetectionModel> ObjectDetections { get => _objectDetections; set => SetProperty(ref _objectDetections, value); }
@@ -107,7 +109,7 @@ namespace MZ.AI.Engine
             ObjectDetections = [.. result.OrderBy(p => p.Name).ToList()];
         }
 
-        public void Save(string path, string time, int start = 0)
+        public void Save(string path, string time)
         {
             try
             {
@@ -119,8 +121,6 @@ namespace MZ.AI.Engine
                 {
                     Formatting = Formatting.Indented
                 };
-
-                //var predict = Mapper(start);
 
                 var data = new
                 {
@@ -184,5 +184,10 @@ namespace MZ.AI.Engine
             IsVisibility = !IsVisibility;
         }
 
+        public void Clear()
+        {
+            Yolo?.Dispose();
+            Yolo = null;
+        }
     }
 }

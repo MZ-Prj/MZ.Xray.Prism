@@ -1,7 +1,9 @@
 ﻿using Prism.Mvvm;
 using System.IO;
 using System.Linq;
+using System.Data;
 using System.Windows;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using MZ.DTO;
@@ -11,7 +13,7 @@ using MZ.Domain.Entities;
 using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
-using System.Threading.Tasks;
+using System;
 
 namespace MZ.AI.Engine
 {
@@ -80,6 +82,7 @@ namespace MZ.AI.Engine
 
             ObservableCollection<CategoryModel> categories = [.. entity.Categories?.Select(e => new CategoryModel
             {
+                Id = e.Id,
                 Index = e.Index,
                 Name = e.Name,
                 Color = e.Color,
@@ -116,12 +119,21 @@ namespace MZ.AI.Engine
             }
         }
 
-        public void Add()
+        public void AddObjectDetection()
         {
-            Yolo.ObjectDetectionsList.Add(Yolo.ObjectDetections);
+            var objectDetections = new ObservableCollection<ObjectDetectionModel>(
+                Yolo.ObjectDetections.Select(c =>
+                {
+                    var copy = new ObjectDetectionModel();
+                    c.CopyTo(copy);
+                    return copy;
+                })
+            );
+
+            Yolo.ObjectDetectionsList.Add(objectDetections);
         }
 
-        public void Remove(int index = 0)
+        public void RemoveObjectDetection(int index = 0)
         {
             Yolo.ObjectDetectionsList.RemoveAt(index);
         }
@@ -135,7 +147,7 @@ namespace MZ.AI.Engine
         {
             await Task.Run(() =>
             {
-                Yolo.Save(path, time, start);
+                Yolo.Save(path, time);
             });
         }
 
@@ -159,7 +171,7 @@ namespace MZ.AI.Engine
 
         public void ChangeObjectDetections(int index)
         {
-            Yolo.ObjectDetections = Yolo.ObjectDetectionsList[index];
+            Yolo.ObjectDetections = Yolo.ObjectDetectionsList[index-1];
         }
 
         public void ChangeCategoryColor(int index, string color)
@@ -188,6 +200,7 @@ namespace MZ.AI.Engine
                 IoU: objectDetectionOption.IoU,
                 Categories: [.. Yolo.Categories?.Select(e => new CategoryEntity
                     {
+                        Id = e.Id,
                         Index = e.Index,
                         Name = e.Name,
                         Color = e.Color,
@@ -197,5 +210,9 @@ namespace MZ.AI.Engine
             );
         }
 
+        public void Dispose()
+        {
+            Yolo.Clear();
+        }
     }
 }

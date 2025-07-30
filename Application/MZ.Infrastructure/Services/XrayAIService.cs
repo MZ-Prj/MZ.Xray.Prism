@@ -67,13 +67,13 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var exist = await xrayAIOptionRepository.GetByIdAsync(request.AIOptionId);
+                var exist = await xrayAIOptionRepository.GetByIdSingleAsync();
                 if (exist == null)
                 {
                     return BaseResponseExtensions.Failure<BaseRole, AIOptionEntity>(BaseRole.Valid);
                 }
 
-                var option = await xrayAIOptionRepository.UpdateCategoriesAsync(request.AIOptionId, request.Categories);
+                var option = await xrayAIOptionRepository.UpdateCategoriesAsync(exist.Id, request.Categories);
 
                 return BaseResponseExtensions.Success(BaseRole.Success, option);
             }

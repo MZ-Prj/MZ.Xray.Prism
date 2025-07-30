@@ -11,7 +11,13 @@
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Border CornerRadius="8"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0"
+                CornerRadius="8"
                 BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
                 BorderThickness="1"
                 Padding="2"
@@ -24,12 +30,14 @@
                 <iconPacks:PackIconMaterial Margin="4" Grid.Column="0" Kind="Magnify"/>
                 <TextBox Grid.Column="1"
                          BorderThickness="0"
-                         Text="{Binding Path=SearchLabelText, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                          VerticalAlignment="Center"
                          Background="Transparent"/>
             </Grid>
         </Border>
-        <DataGrid ItemsSource="{Binding Path=VisionService.ObjectDetector.SelectedDetector.Labels}" 
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Path=Yolo.Categories}" 
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False" 
@@ -37,8 +45,7 @@
                   IsReadOnly="False"
                   HorizontalScrollBarVisibility="Hidden"
                   HorizontalContentAlignment="Center"
-                  Margin="4"
-                  MaxHeight="320">
+                  Margin="4">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

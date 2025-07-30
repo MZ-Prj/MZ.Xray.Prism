@@ -2,18 +2,18 @@
 using MZ.Xray.Engine;
 using MZ.Util;
 using MZ.Domain.Enums;
-using MZ.Resource;
 using MZ.Domain.Models;
+using MZ.Resource;
+using MZ.AI.Engine;
 using MahApps.Metro.IconPacks;
 using Prism.Commands;
 using Prism.Ioc;
 using Prism.Services.Dialogs;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Controls;
+using System.Collections.ObjectModel;
 using Microsoft.Win32;
-using MZ.AI.Engine;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -21,7 +21,7 @@ namespace MZ.Dashboard.ViewModels
     {
         #region Service
         private readonly IXrayService _xrayService;
-        private readonly IAIService _aIService;
+        private readonly IAIService _aiService;
 
         public MediaProcesser Media
         {
@@ -31,8 +31,8 @@ namespace MZ.Dashboard.ViewModels
 
         public YoloProcessor Yolo
         {
-            get => _aIService.Yolo;
-            set => _aIService.Yolo = value;
+            get => _aiService.Yolo;
+            set => _aiService.Yolo = value;
         }
 
         #endregion
@@ -106,10 +106,10 @@ namespace MZ.Dashboard.ViewModels
         public ICommand SaveImageCommand => _saveImageCommand ??= new(MZAction.Wrapper(SaveImageButton));
 
         #endregion
-        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aIService) : base(container)
+        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService) : base(container)
         {
             _xrayService = xrayService;
-            _aIService = aIService;
+            _aiService = aiService;
 
             base.Initialize();
         }
@@ -187,12 +187,12 @@ namespace MZ.Dashboard.ViewModels
 
         private void PreviousButton()
         {
-            Media.PrevNextSlider(-1);
+            _xrayService.PrevNextSlider(-1);
         }
 
         private void NextButton()
         {
-            Media.PrevNextSlider(+1);
+            _xrayService.PrevNextSlider(+1);
         }
 
         private void ZoomOutButton()
@@ -254,7 +254,6 @@ namespace MZ.Dashboard.ViewModels
                 XrayDataSaveManager.Base(Media.ChangedScreenToMat(), saveFileDialog.FileName);
             }
         }
-
 
         private void ToggleFooterButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {

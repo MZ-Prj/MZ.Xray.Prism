@@ -15,7 +15,7 @@ using MZ.Util;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-
+using System.Windows.Forms.Design;
 namespace MZ.Xray.Engine
 {
     /// <summary>
@@ -102,7 +102,7 @@ namespace MZ.Xray.Engine
                     while (!_videoCts.Token.IsCancellationRequested)
                     {
                         await Task.Delay(1000 * Media.Information.VideoDelay, _videoCts.Token);
-                        Media.UpdateVideo();
+                        Media.SaveVideo();
                     }
                 }
                 catch (OperationCanceledException)
@@ -132,7 +132,7 @@ namespace MZ.Xray.Engine
 
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
-                        Media.UpdateScreen();
+                        UpdateScreen();
                         await Task.Delay(1000 / Media.Information.FPS, _screenCts.Token);
                     }
                 }
@@ -193,6 +193,34 @@ namespace MZ.Xray.Engine
         public bool IsPlaying()
         {
             return IsRunning;
+        }
+
+        public void UpdateScreen()
+        {
+            Media.FreezeImageSource();
+            if (Media.IsFrameUpdateRequired())
+            {
+                Media.AddFrame();
+
+                _aiService.AddObjectDetection();
+
+                if (Media.Information.Slider >= Media.Information.MaxSlider)
+                {
+                    Media.RemoveOldestFrameAndDetection();
+
+                    _aiService.RemoveObjectDetection();
+
+                    Media.ResetSlider();
+                }
+                Media.IncrementSlider();
+            }
+            Media.IncreaseInterval();
+        }
+
+        public void PrevNextSlider(int index)
+        {
+            int slider = Media.PrevNextSlider(index);
+            _aiService.ChangeObjectDetections(slider);
         }
     }
 
@@ -319,7 +347,7 @@ namespace MZ.Xray.Engine
             //
             Mat gain = Calibration.Gain;
             Mat offset = Calibration.Offset;
-
+            
             Parallel.For(0, width, x =>
             {
                 int k = 0;
@@ -435,6 +463,9 @@ namespace MZ.Xray.Engine
             _databaseService.Calibration.Save(XrayVisionCalibrationMapper.ModelToRequest(Calibration.Model));
             _databaseService.Filter.Save(XrayVisionFilterMapper.ModelToRequest(Media.Model.Filter));
             _databaseService.Material.Save(XrayVisionMaterialMapper.ModelToRequest(Material.Model));
+
+            _databaseService.AIOption.Save(CategoryMapper.ModelToRequest(_aiService.Yolo.Categories));
+
             _databaseService.User.Logout();
         }
 
@@ -507,7 +538,13 @@ namespace MZ.Xray.Engine
             if (checkDownload)
             {
                 _aiService.Create(path);
-                await _databaseService.AIOption.Create(_aiService.YoloToRequest());
+                _aiService.Dispose();
+
+                var aiOption = await _databaseService.AIOption.Create(_aiService.YoloToRequest());
+                if (aiOption.Success)
+                {
+                    _aiService.Load(aiOption.Data);
+                }
             }
         }
 
