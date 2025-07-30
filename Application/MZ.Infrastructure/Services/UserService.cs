@@ -7,6 +7,7 @@ using MZ.DTO.Enums;
 using MZ.Infrastructure.Interfaces;
 using MZ.Logger;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
@@ -114,7 +115,11 @@ namespace MZ.Infrastructure.Services
                     UserSetting = new()
                     {
                         Theme = ThemeRole.LightSteel,
-                        Language = LanguageRole.KoKR
+                        Language = LanguageRole.KoKR,
+                        Buttons = [.. UserSettingButtonKeys.GetAllKeys().Select(key => new UserButtonEntity(){
+                            Name = key,
+                            IsVisibility = true
+                        })]
                     }
                 };
 
@@ -139,13 +144,16 @@ namespace MZ.Infrastructure.Services
                 {
                     return BaseResponseExtensions.Success(BaseRole.Warning, LanguageRole.EnUS);
                 }
-                if (!string.IsNullOrEmpty(userSession.CurrentUser))
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
                 {
-                    UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
-                    
-                    user.UserSetting.Language = language.Value;
-                    await userRepository.UpdateAsync(user);
+                    return BaseResponseExtensions.Success(BaseRole.Warning, LanguageRole.EnUS);
                 }
+
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                user.UserSetting.Language = language.Value;
+                await userRepository.UpdateAsync(user);
+
                 return BaseResponseExtensions.Success(BaseRole.Success, language.Value);
             }
             catch (Exception ex)
@@ -164,13 +172,15 @@ namespace MZ.Infrastructure.Services
                 {
                     return BaseResponseExtensions.Success(BaseRole.Warning, ThemeRole.LightSteel);
                 }
-                if (!string.IsNullOrEmpty(userSession.CurrentUser))
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
                 {
-                    UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
-
-                    user.UserSetting.Theme = theme.Value;
-                    await userRepository.UpdateAsync(user);
+                    return BaseResponseExtensions.Success(BaseRole.Warning, ThemeRole.LightSteel);
                 }
+
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                user.UserSetting.Theme = theme.Value;
+                await userRepository.UpdateAsync(user);
                 return BaseResponseExtensions.Success(BaseRole.Success, theme.Value);
             }
             catch (Exception ex)
@@ -180,5 +190,66 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        public async Task<BaseResponse<BaseRole, UserSettingEntity>> GetUserSetting()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Valid);
+                }
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                return BaseResponseExtensions.Success(BaseRole.Success, user.UserSetting);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
+            }
+        }
+
+        public async Task<BaseResponse<BaseRole, UserEntity>> GetUserWithUserSetting()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, UserEntity>(BaseRole.Valid);
+                }
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                return BaseResponseExtensions.Success(BaseRole.Success, user);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, UserEntity>(BaseRole.Fail, ex);
+            }
+        }
+
+        public async Task<BaseResponse<BaseRole, UserSettingEntity>> SaveUserSetting(UserSettingSaveRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Valid);
+                }
+
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+                user.UserSetting.Theme = request.Theme;
+                user.UserSetting.Language = request.Language;
+                user.UserSetting.Buttons = request.Buttons;
+
+                await userRepository.UpdateAsync(user);
+                return BaseResponseExtensions.Success(BaseRole.Success, user.UserSetting);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
+            }
+        }
     }
 }

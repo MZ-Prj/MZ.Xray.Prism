@@ -223,11 +223,6 @@
                             <WrapPanel HorizontalAlignment="Stretch"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <RepeatButton Command="{Binding Path=Command}" 
@@ -235,7 +230,8 @@
                                           Background="{Binding Path=ColorBrush}"
                                           ToolTip="{Binding Path=ToolTip}"
                                           IsEnabled="{Binding Path=IsVisibility}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
+                                          Margin="4">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
                                                             Width="24" Height="24"/>
                             </RepeatButton>
@@ -249,11 +245,6 @@
                             <WrapPanel HorizontalAlignment="Stretch"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <RepeatButton Command="{Binding Path=Command}" 
@@ -261,7 +252,8 @@
                                           Background="{Binding Path=ColorBrush}"
                                           ToolTip="{Binding Path=ToolTip}"
                                           Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
+                                          Margin="4">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
                                                             Width="24" Height="24"/>
                             </RepeatButton>
@@ -275,18 +267,14 @@
                             <WrapPanel HorizontalAlignment="Stretch"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="4"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <RepeatButton Command="{Binding Path=Command}" 
                                           CommandParameter="{Binding Path=UId}"
                                           Background="{Binding Path=ColorBrush}"
                                           ToolTip="{Binding Path=ToolTip}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand">
+                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
+                                          Margin="4">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
                                                             Width="24" Height="24"/>
                             </RepeatButton>

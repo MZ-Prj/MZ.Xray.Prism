@@ -46,7 +46,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                AppSettingEntity appSetting = await appSettingRepository.GetByIdAsync(1);
+                AppSettingEntity appSetting = await appSettingRepository.GetByIdSingleAsync();
                 if (appSetting == null)
                 {
                     return BaseResponseExtensions.Failure<AppSettingRole, AppSettingEntity>(AppSettingRole.Fail);
@@ -58,6 +58,11 @@ namespace MZ.Infrastructure.Services
                 MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<AppSettingRole, AppSettingEntity>(AppSettingRole.Fail, ex);
             }
+        }
+
+        public Task<BaseResponse<AppSettingRole, AppSettingEntity>> SaveAppSetting()
+        {
+            return null;
         }
     }
 }

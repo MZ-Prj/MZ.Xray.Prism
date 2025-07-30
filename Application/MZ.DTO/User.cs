@@ -1,5 +1,10 @@
-﻿using MZ.Domain.Enums;
+﻿using MZ.Domain.Entities;
+using MZ.Domain.Enums;
+using MZ.Domain.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace MZ.DTO
 {
@@ -19,23 +24,60 @@ namespace MZ.DTO
         UserRole UserRole
     );
 
+    public record UserSettingSaveRequest
+    (
+        ThemeRole Theme,
+        LanguageRole Language,
+        ICollection<UserButtonEntity> Buttons
+    );
+
     #endregion
 
     #region Response
-    //public record UserResponse(
-    //    bool Success,
-    //    string? Message,
-    //    UserDto? User
-    //) : BaseResponse(Success, Message);
     #endregion
 
-    #region DTO
-    public record UserDto(
-        int Id,
-        string Username,
-        string Email,
-        string Role,
-        DateTime CreateDate
-    );
-    #endregion
+    public static class UserSettingMapper
+    {
+        public static UserSettingSaveRequest ModelToRequest(ThemeRole theme, LanguageRole language, ICollection<IconButtonModel> buttons)
+        {
+            var userButtons = buttons.Select(b => new UserButtonEntity{
+                Id = b.Id,
+                Name = b.Name,
+                IsVisibility = b.IsVisibility
+            }).ToList();
+
+            return new UserSettingSaveRequest(
+                Theme:theme,
+                Language:language,
+                Buttons: userButtons
+            );
+        }
+    }
+
+    public static class UserSettingButtonKeys
+    {
+        public const string ZoomOutButton = "ZoomOutButton";
+        public const string ZoomInButton = "ZoomInButton";
+        public const string GrayButton = "GrayButton";
+        public const string ColorButton = "ColorButton";
+        public const string OrganicButton = "OrganicButton";
+        public const string InorganicButton = "InorganicButton";
+        public const string MetalButton = "MetalButton";
+        public const string BrightDownButton = "BrightDownButton";
+        public const string BrightUpButton = "BrightUpButton";
+        public const string ContrastDownButton = "ContrastDownButton";
+        public const string ContrastUpButton = "ContrastUpButton";
+        public const string FilterClearButton = "FilterClearButton";
+        public const string ZeffectButton = "ZeffectButton";
+        public const string AIOnOffButton = "AIOnOffButton";
+        public const string SaveImageButton = "SaveImageButton";
+
+        public static string[] GetAllKeys()
+        {
+            return [.. typeof(UserSettingButtonKeys)
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+                .Select(fi => (string)fi.GetRawConstantValue()!)];
+        }
+    }
 }

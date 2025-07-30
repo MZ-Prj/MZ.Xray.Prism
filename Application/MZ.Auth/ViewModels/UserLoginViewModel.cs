@@ -11,6 +11,8 @@ using MZ.Util;
 using MZ.Logger;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using MZ.DTO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MZ.Auth.ViewModels
 {
@@ -19,7 +21,6 @@ namespace MZ.Auth.ViewModels
 
         #region Services
         private readonly IDatabaseService _databaseService;
-
         #endregion
 
 
@@ -49,11 +50,12 @@ namespace MZ.Auth.ViewModels
             try
             {
                 var response = await _databaseService.AppSetting.GetAppSetting();
-                var data = response.Data;
-
-                User.Username = data.IsUsernameSave ? data.LastestUsername : string.Empty;
-                User.Password = string.Empty;
-                User.IsUsernameSave = data.IsUsernameSave;
+                if (response.Success)
+                {
+                    User.Username = response.Data.IsUsernameSave ? response.Data.LastestUsername : string.Empty;
+                    User.Password = string.Empty;
+                    User.IsUsernameSave = response.Data.IsUsernameSave;
+                }
             }
             catch (Exception ex)
             {
@@ -70,11 +72,13 @@ namespace MZ.Auth.ViewModels
 
             if (response.Success)
             {
+                await _databaseService.AppSetting.Register(
+                    new AppSettingRegisterRequest(User.Username, User.IsUsernameSave)
+                );
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                             new NavigationModel(
                                 MZRegionNames.DashboardRegion,
                                 MZViewNames.DashboardControlView));
-
             }
         }
 

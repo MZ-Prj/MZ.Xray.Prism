@@ -7,7 +7,6 @@ namespace MZ.Infrastructure.Interfaces
 {
     public interface IAppSettingService 
     {
-
         Task<BaseResponse<AppSettingRole, AppSettingEntity>> Register(
             AppSettingRegisterRequest request);
 

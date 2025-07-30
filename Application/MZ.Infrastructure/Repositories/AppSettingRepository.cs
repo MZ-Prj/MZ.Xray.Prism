@@ -1,6 +1,9 @@
-﻿using MZ.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MZ.Domain.Entities;
 using MZ.Infrastructure.Interfaces;
+using System.Threading.Tasks;
 
+#nullable enable
 namespace MZ.Infrastructure.Repositories
 {
     [Repository]
@@ -8,6 +11,12 @@ namespace MZ.Infrastructure.Repositories
     {
         public AppSettingRepository(AppDbContext config) : base(config)
         {
+        }
+
+        public async Task<AppSettingEntity?> GetByIdSingleAsync()
+        {
+            return await _context.Set<AppSettingEntity>()
+                                 .SingleOrDefaultAsync();
         }
     }
 }

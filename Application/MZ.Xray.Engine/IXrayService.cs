@@ -5,6 +5,7 @@ namespace MZ.Xray.Engine
 {
     public interface IXrayService
     {
+        UIProcesser UI { get; set; }
         MediaProcesser Media { get; set; }
         CalibrationProcesser Calibration { get; set; }
         MaterialProcesser Material { get; set; }
@@ -15,6 +16,7 @@ namespace MZ.Xray.Engine
         void Play();
         void Stop();
         bool IsPlaying();
+        void PlayStop();
         void LoadDatabase();
         void SaveDatabase();
         void PrevNextSlider(int index);

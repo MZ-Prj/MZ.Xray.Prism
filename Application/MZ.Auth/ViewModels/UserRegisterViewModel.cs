@@ -33,9 +33,9 @@ namespace MZ.Auth.ViewModels
         public ICommand BackCommand => _backCommand ??= new(MZAction.Wrapper(BackButton));
         #endregion
 
-        public UserRegisterViewModel(IContainerExtension container) : base(container)
+        public UserRegisterViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
         {
-            _databaseService = container.Resolve<DatabaseService>();
+            _databaseService = databaseService;
 
             base.Initialize();
         }
@@ -49,6 +49,7 @@ namespace MZ.Auth.ViewModels
 
             if (response.Success)
             {
+
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                             new NavigationModel(
                                 MZRegionNames.DashboardRegion,

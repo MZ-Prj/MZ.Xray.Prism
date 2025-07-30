@@ -29,6 +29,10 @@ namespace MZ.Infrastructure.Repositories
         {
             return await _context.Set<UserEntity>()
                                  .Include(u => u.UserSetting)
+                                    .ThenInclude(us => us.Buttons)
+                                 .Include(u => u.Calibration)
+                                 .Include(u => u.Filter)
+                                 .Include(u => u.Material)
                                  .FirstOrDefaultAsync(u => u.Username == username);
         }
 

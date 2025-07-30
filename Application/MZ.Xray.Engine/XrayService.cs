@@ -15,7 +15,9 @@ using MZ.Util;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using System.Windows.Forms.Design;
+using System.Linq;
+using MZ.Resource;
+
 namespace MZ.Xray.Engine
 {
     /// <summary>
@@ -87,7 +89,6 @@ namespace MZ.Xray.Engine
 
         private void StartVideoTask()
         {
-
             if (IsRunning)
             {
                 return;
@@ -193,6 +194,18 @@ namespace MZ.Xray.Engine
         public bool IsPlaying()
         {
             return IsRunning;
+        }
+
+        public void PlayStop()
+        {
+            if (IsPlaying())
+            {
+                Stop();
+            }
+            else
+            {
+                Play();
+            }
         }
 
         public void UpdateScreen()
@@ -466,6 +479,8 @@ namespace MZ.Xray.Engine
 
             _databaseService.AIOption.Save(CategoryMapper.ModelToRequest(_aiService.Yolo.Categories));
 
+            _databaseService.User.SaveUserSetting(UserSettingMapper.ModelToRequest(ThemeService.CurrentTheme,LanguageService.CurrentLanguage, UI.ActionButtons));
+
             _databaseService.User.Logout();
         }
 
@@ -583,7 +598,6 @@ namespace MZ.Xray.Engine
 
             try
             {
-
                 (int start, int end) = XrayDataSaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
                 var mat = VisionBase.SplitCol(VisionBase.BlendWithBackground(Media.Image), start, end);
@@ -596,5 +610,15 @@ namespace MZ.Xray.Engine
                 MZLogger.Error(ex.ToString());
             }
         }
+    }
+
+    /// <summary>
+    /// UI
+    /// </summary>
+    public partial class XrayService : BindableBase, IXrayService
+    {
+        private UIProcesser _ui = new();
+        public UIProcesser UI { get => _ui; set => SetProperty(ref _ui, value); }
+
     }
 }

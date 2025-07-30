@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MZ.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DbConfigModelSnapshot : ModelSnapshot
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -318,6 +318,29 @@ namespace MZ.Infrastructure.Migrations
                     b.ToTable("ObjectDetection");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.UserButtonEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsVisibility")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserSettingId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserSettingId");
+
+                    b.ToTable("UserButton");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -360,7 +383,8 @@ namespace MZ.Infrastructure.Migrations
 
             modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Language")
@@ -369,7 +393,13 @@ namespace MZ.Infrastructure.Migrations
                     b.Property<int>("Theme")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserSetting");
                 });
@@ -384,6 +414,9 @@ namespace MZ.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
                         .HasColumnType("TEXT");
@@ -465,6 +498,17 @@ namespace MZ.Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.UserButtonEntity", b =>
+                {
+                    b.HasOne("MZ.Domain.Entities.UserSettingEntity", "UserSetting")
+                        .WithMany("Buttons")
+                        .HasForeignKey("UserSettingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserSetting");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
                 {
                     b.HasOne("MZ.Domain.Entities.UserEntity", "User")
@@ -500,6 +544,11 @@ namespace MZ.Infrastructure.Migrations
                     b.Navigation("Material");
 
                     b.Navigation("UserSetting");
+                });
+
+            modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
+                {
+                    b.Navigation("Buttons");
                 });
 #pragma warning restore 612, 618
         }

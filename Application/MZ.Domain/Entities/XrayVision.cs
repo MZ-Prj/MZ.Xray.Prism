@@ -150,9 +150,9 @@ namespace MZ.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public bool Check { get; set; }
-        public string Color { get; set; }
         public string Content { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
+        public string Color { get; set; }
     }
 }

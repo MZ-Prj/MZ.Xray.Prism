@@ -7,5 +7,6 @@
         string LastestUsername,
         bool IsUsernameSave
     );
+
     #endregion
 }

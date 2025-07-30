@@ -8,7 +8,7 @@
         <Border CornerRadius="8"
                 BorderBrush="{DynamicResource MahApps.Brushes.Gray9}"
                 Padding="8">
-            <views:XrayRealtimeView  />
+            <ContentControl prism:RegionManager.RegionName="XrayRealtimeRegion" />
         </Border>
     </Grid>
 </UserControl>

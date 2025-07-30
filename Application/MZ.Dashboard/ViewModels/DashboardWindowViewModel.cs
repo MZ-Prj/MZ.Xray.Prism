@@ -18,7 +18,6 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -109,7 +108,7 @@ namespace MZ.Dashboard.ViewModels
 
         private void WindowClosing()
         {
-            _xrayService.SaveDatabase();
+            SaveDatabase();
 
             Application.Current.Shutdown();
         }
@@ -135,7 +134,7 @@ namespace MZ.Dashboard.ViewModels
 
         private void LogoutButton()
         {
-            _xrayService.SaveDatabase();
+            SaveDatabase();
 
             _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                         new NavigationModel(
@@ -199,11 +198,25 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private void LoadDatabase(bool check)
+        private void SaveDatabase()
+        {
+            _xrayService.SaveDatabase();
+        }
+
+        private async void LoadDatabase(bool check)
         {
             if (check)
             {
                 _xrayService.LoadDatabase();
+
+                var userSetting = await _databaseService.User.GetUserSetting();
+                if (userSetting.Success)
+                {
+                    ThemeService.Load(userSetting.Data.Theme);
+                    LanguageService.Load(MZEnum.GetName(userSetting.Data.Language));
+
+                    _xrayService.UI.LoadActionButton(userSetting.Data.Buttons);
+                }
             }
         }
     }

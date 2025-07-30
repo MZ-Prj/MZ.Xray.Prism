@@ -11,11 +11,11 @@ namespace MZ.Infrastructure.Interfaces
         Task<BaseResponse<UserLoginRole, UserEntity>> Login(UserLoginRequest request);
         BaseResponse<BaseRole, string> Logout();
         BaseResponse<BaseRole, string> CurrentUser();
-
+        Task<BaseResponse<BaseRole, UserEntity>> GetUserWithUserSetting();
+        Task<BaseResponse<BaseRole, UserSettingEntity>> GetUserSetting();
         Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request);
-
         Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest language);
-
         Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest theme);
+        Task<BaseResponse<BaseRole, UserSettingEntity>> SaveUserSetting(UserSettingSaveRequest request);
     }
 }

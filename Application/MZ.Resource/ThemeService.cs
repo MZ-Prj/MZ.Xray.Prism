@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using ControlzEx.Theming;
 using Microsoft.Win32;
@@ -10,10 +9,12 @@ namespace MZ.Resource
 {
     public static class ThemeService
     {
+        public static ThemeRole CurrentTheme = ThemeRole.LightSteel;
 
         public static void Load(ThemeRole theme)
         {
             ThemeManager.Current.ChangeTheme(Application.Current, MZEnum.GetName(theme));
+            CurrentTheme = theme;
         }
 
         public static ThemeRole ChangeMode()
@@ -21,6 +22,7 @@ namespace MZ.Resource
             bool isDark = ThemeManager.Current.DetectTheme(Application.Current).DisplayName.Contains("Dark");
             ThemeRole theme = isDark ? ThemeRole.LightSteel : ThemeRole.DarkSteel;
             ThemeManager.Current.ChangeTheme(Application.Current, MZEnum.GetName(theme));
+            CurrentTheme = theme;
 
             return theme;
         }

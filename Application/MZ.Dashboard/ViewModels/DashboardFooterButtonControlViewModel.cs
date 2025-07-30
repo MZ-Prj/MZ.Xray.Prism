@@ -1,12 +1,9 @@
 ﻿using MZ.Core;
 using MZ.Domain.Models;
-using MZ.Util;
-using Prism.Commands;
 using Prism.Ioc;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace MZ.Dashboard.ViewModels
 {
