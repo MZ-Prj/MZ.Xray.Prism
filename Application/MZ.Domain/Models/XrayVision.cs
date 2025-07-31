@@ -263,11 +263,13 @@ namespace MZ.Domain.Models
         private Brush _imageBrush;
         public Brush ImageBrush { get => _imageBrush; set => SetProperty(ref _imageBrush, value); }
 
-        private ZeffectControlModel _control;
+        private ZeffectControlModel _control = new();
         public ZeffectControlModel Control { get => _control; set => SetProperty(ref _control, value); }
 
         private ObservableCollection<ZeffectControlModel> _controls = [];
         public ObservableCollection<ZeffectControlModel> Controls { get => _controls; set => SetProperty(ref _controls, value); }
+
+
     }
 
     public class ZeffectControlModel : BindableBase, IZeffectControl
@@ -292,7 +294,7 @@ namespace MZ.Domain.Models
             {
                 if (SetProperty(ref _scalar, value))
                 {
-                    _color = Color.FromRgb((byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
+                    _color = Color.FromArgb((byte)value.Val3, (byte)value.Val2, (byte)value.Val1, (byte)value.Val0);
                     RaisePropertyChanged(nameof(Color));
                     RaisePropertyChanged(nameof(ColorBrush));
                 }
@@ -307,7 +309,7 @@ namespace MZ.Domain.Models
             {
                 if (SetProperty(ref _color, value))
                 {
-                    _scalar = new Scalar(value.B, value.G, value.R, byte.MaxValue);
+                    _scalar = new Scalar(value.B, value.G, value.R, value.A);
                     RaisePropertyChanged(nameof(Scalar));
                     RaisePropertyChanged(nameof(ColorBrush));
                 }

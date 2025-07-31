@@ -19,15 +19,23 @@ namespace MZ.Xray.Engine
             VisionBase.Save(input, root);
         }
 
-        public static void Base(Mat input, string path, string filename)
+        public static void Base(Mat input, string path, string subPath, string filename)
         {
-            MZIO.TryMakeDirectory(path);
+            MZIO.TryMakeDirectory(Path.Combine(path, subPath));
+            string root = Path.Combine(path, subPath, filename);
 
-            string root = $"{path}/{filename}";
             if (!File.Exists(path))
             {
                 VisionBase.Save(input, root);
             }
+        }
+
+        public static async Task BaseAsync(Mat input, string path, string subPath, string filename)
+        {
+            await Task.Run(() =>
+            {
+                Base(input, path, subPath, filename);
+            });
         }
 
         public static void Image(Mat input, int start, int end, string path, string filename)

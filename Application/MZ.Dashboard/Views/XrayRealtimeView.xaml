@@ -30,7 +30,6 @@
         <i:Interaction.Behaviors>
             <behaviors:XrayRealtimeBehavior />
         </i:Interaction.Behaviors>
-
         <Canvas x:Name="CanvasImageView" 
                 DataContext="{Binding Path=Media.Model}"
                 CacheMode="BitmapCache"
@@ -50,6 +49,7 @@
                                             ContrastLevel="{Binding Path=Filter.Contrast, Mode=TwoWay}"
                                             ColorMode="{Binding Path=Filter.ColorMode, Mode=TwoWay, Converter={StaticResource NumericFloatConverter}}"/>
             </Canvas.Effect>
+            
             <Canvas.RenderTransform>
                 <ScaleTransform ScaleX="{Binding Path=Filter.Zoom}" ScaleY="{Binding Path=Filter.Zoom}"/>
             </Canvas.RenderTransform>
@@ -58,7 +58,31 @@
                 <ImageBrush ImageSource="{Binding Path=ImageSource, Mode=OneWay}"/>
             </Canvas.Background>
         </Canvas>
-        
+        <Canvas x:Name="CanvasZeffectView" 
+                CacheMode="BitmapCache"
+                ClipToBounds="True" 
+                IsManipulationEnabled="true" 
+                Width="{Binding Path=Media.Information.Width}" 
+                Height="{Binding Path=Media.Information.Height}"
+                SnapsToDevicePixels="True"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                RenderOptions.EdgeMode="Aliased"
+                RenderTransformOrigin="0.5, 0.5">
+            <Canvas.Effect>
+                <managers:ZeffShaderManager Input="{Binding Path=Zeffect.Model.ImageSource}"
+                                            Min="{Binding Path=Zeffect.Model.Control.Min}"
+                                            Max="{Binding Path=Zeffect.Model.Control.Max}"
+                                            Color="{Binding Path=Zeffect.Model.Control.Color}"/>
+            </Canvas.Effect>
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="{Binding Path=Media.Filter.Zoom}" ScaleY="{Binding Path=Media.Filter.Zoom}"/>
+            </Canvas.RenderTransform>
+
+            <Canvas.Background>
+                <ImageBrush ImageSource="{Binding Path=Zeffect.Model.ImageSource, Mode=OneWay}"/>
+            </Canvas.Background>
+        </Canvas>
+
         <Canvas x:Name="CanvasAIPredictView"
                 Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                 CacheMode="BitmapCache"
@@ -184,7 +208,8 @@
                                       Foreground="{Binding Path=Color, Converter={StaticResource ContrastColorConverter}}"
                                       IsChecked="{Binding Path=IsBlink, Mode=TwoWay}"
                                       Margin="4"
-                                      BorderThickness="0"/>
+                                      BorderThickness="0"
+                                      Cursor="Hand"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

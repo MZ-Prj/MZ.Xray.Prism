@@ -54,9 +54,6 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _aiCommand;
         public ICommand AICommand => _aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
 
-        private DelegateCommand _zeffectCommand;
-        public ICommand ZeffectCommand => _zeffectCommand ??= new DelegateCommand(MZAction.Wrapper(ZeffectButton));
-
         private DelegateCommand _windowClosingCommand;
         public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
@@ -180,10 +177,6 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
-        private void ZeffectButton()
-        {
-        }
-
         private void RecordButton()
         {
         }
@@ -219,5 +212,7 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
         }
+
+
     }
 }

@@ -7,6 +7,8 @@ using MZ.Domain.Enums;
 using MZ.Domain.Models;
 using MZ.Resource;
 using MZ.AI.Engine;
+using MZ.WindowDialog;
+using MZ.Dashboard.Views;
 using MahApps.Metro.IconPacks;
 using Prism.Commands;
 using Prism.Ioc;
@@ -15,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -23,11 +26,18 @@ namespace MZ.Dashboard.ViewModels
         #region Service
         private readonly IXrayService _xrayService;
         private readonly IAIService _aiService;
+        private readonly IWindowDialogService _windowDialogService;
 
         public MediaProcesser Media
         {
             get => _xrayService.Media;
             set => _xrayService.Media = value;
+        }
+
+        public ZeffectProcesser Zeffect
+        {
+            get => _xrayService.Zeffect;
+            set => _xrayService.Zeffect = value;
         }
 
         public YoloProcessor Yolo
@@ -51,6 +61,9 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
         }
+
+        private Canvas _canvasZeffectView;
+        public Canvas CanvasZeffectView { get => _canvasZeffectView; set => SetProperty(ref _canvasZeffectView, value); }
 
         private Canvas _canvasPredictView;
         public Canvas CanvasPredictView { get => _canvasPredictView; set => SetProperty(ref _canvasPredictView, value); }
@@ -110,10 +123,11 @@ namespace MZ.Dashboard.ViewModels
         public ICommand SaveImageCommand => _saveImageCommand ??= new(MZAction.Wrapper(SaveImageButton));
 
         #endregion
-        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService) : base(container)
+        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService, IWindowDialogService windowDialogService) : base(container)
         {
             _xrayService = xrayService;
             _aiService = aiService;
+            _windowDialogService = windowDialogService;
 
             base.Initialize();
         }
@@ -199,6 +213,14 @@ namespace MZ.Dashboard.ViewModels
             Media.ChangedFilterZoom(+0.1f);
         }
 
+        private void ColorButton(object color)
+        {
+            if (color is ColorRole colorRole)
+            {
+                Media.ChangedFilterColor(colorRole);
+            }
+        }
+
         private void BrightDownButton()
         {
             Media.ChangedFilterBrightness(-0.01f);
@@ -231,6 +253,17 @@ namespace MZ.Dashboard.ViewModels
 
             // logic
             Yolo.ChangedVisibility();
+        }
+
+        private async void ZeffectButton()
+        {
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.ZeffectControl,
+                regionName: nameof(ZeffectControlView),
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 480,
+                height: 640);
         }
 
         private void SaveImageButton()
@@ -277,21 +310,10 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private void ColorButton(object color)
-        {
-            if (color is ColorRole colorRole)
-            {
-                Media.ChangedFilterColor(colorRole);
-            }
-        }
-
-        private void ZeffectButton()
-        {
-        }
 
         #endregion
 
-        #region Service
+        #region Behavior
         public void CreateMedia(int width, int height)
         {
             Media.Create(width, height);

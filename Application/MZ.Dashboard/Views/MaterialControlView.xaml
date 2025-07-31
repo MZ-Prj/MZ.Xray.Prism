@@ -102,7 +102,7 @@
                 <DataGridTemplateColumn Header="Color" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Label Content="{Binding Path=Color}" Background="{Binding ColorBrush}" />
+                            <Label Content="{Binding Path=Color}" Background="{Binding Path=ColorBrush}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

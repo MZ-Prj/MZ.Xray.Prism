@@ -3,6 +3,7 @@ using Prism.Commands;
 using Prism.Regions;
 using System;
 using System.Windows.Input;
+using MZ.DTO;
 using MZ.Core;
 using MZ.Auth.Views;
 using MZ.Auth.Models;
@@ -11,8 +12,6 @@ using MZ.Util;
 using MZ.Logger;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using MZ.DTO;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MZ.Auth.ViewModels
 {

@@ -211,6 +211,8 @@ namespace MZ.Xray.Engine
         public void UpdateScreen()
         {
             Media.FreezeImageSource();
+            Zeffect.FreezeImageSource();
+
             if (Media.IsFrameUpdateRequired())
             {
                 Media.AddFrame();

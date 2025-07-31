@@ -6,6 +6,10 @@ using Prism.Mvvm;
 using static MZ.Vision.VisionEnums;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using OpenCvSharp.WpfExtensions;
 
 namespace MZ.Xray.Engine
 {
@@ -17,6 +21,30 @@ namespace MZ.Xray.Engine
         #region Params
         private ZeffectModel _model = new();
         public ZeffectModel Model { get => _model; set => SetProperty(ref _model, value); }
+
+        public ObservableCollection<ZeffectControlModel> Controls
+        {
+            get => Model.Controls;
+            set => Model.Controls = value;
+        }
+
+        public Brush ImageBrush
+        {
+            get => Model.ImageBrush;
+            set => Model.ImageBrush = value;
+        }
+
+        public ImageSource ImageSource
+        {
+            get => Model.ImageSource;
+            set => Model.ImageSource = value;
+        }
+
+        public Mat Image
+        {
+            get => Model.Image;
+            set => Model.Image = value;
+        }
         #endregion
 
         public byte Calculation(double high, double low)
@@ -62,7 +90,7 @@ namespace MZ.Xray.Engine
         {
             if (width != maxImageWidth)
             {
-                Model.Image = VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC4, new Scalar(0));
+                Image = VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC1, new Scalar(0));
             }
         }
 
@@ -76,7 +104,7 @@ namespace MZ.Xray.Engine
 
         public void Shift(Mat zeff)
         {
-            Model.Image = VisionBase.ShiftCol(Model.Image, zeff);
+            Image = VisionBase.ShiftCol(Model.Image, zeff);
         }
 
         public async Task ShiftAsync(Mat zeff)
@@ -87,5 +115,18 @@ namespace MZ.Xray.Engine
             });
         }
 
+        public void FreezeImageSource()
+        {
+            ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
+        }
+
+        public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
+        {
+            if (bitmap.CanFreeze)
+            {
+                bitmap.Freeze();
+            }
+            return bitmap;
+        }
     }
 }
