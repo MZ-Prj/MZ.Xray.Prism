@@ -11,7 +11,9 @@ namespace MZ.Infrastructure
         IXrayVisionFilterService Filter { get; }
         IXrayVisionCalibrationService Calibration { get; }
         IXrayVisionMaterialService Material { get; }
+        IXrayVisionZeffectControlService ZeffectControl { get; }
         IXrayAIOptionService AIOption { get; }
+
         Task MakeAdmin();
         Task<bool> MakeUserAsync(string username, string password);
         Task MakeAppSettingAsync(string username);

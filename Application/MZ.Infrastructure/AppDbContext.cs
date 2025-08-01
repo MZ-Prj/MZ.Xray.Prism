@@ -39,7 +39,7 @@ namespace MZ.Infrastructure
                 entity.Property(a => a.IsUsernameSave).HasDefaultValue(false);
             });
 
-            // 1:1 User 
+            // User 
             modelBuilder.Entity<UserEntity>(entity =>
             {
                 entity.HasKey(u => u.Id);
@@ -77,6 +77,12 @@ namespace MZ.Infrastructure
                     .WithOne(m => m.User)
                     .HasForeignKey<MaterialEntity>(m => m.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                // 1:N Zeffect
+                entity.HasMany(u => u.Zeffect)
+                    .WithOne(m => m.User)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // UserSetting
@@ -100,6 +106,7 @@ namespace MZ.Infrastructure
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            //UserSetting - Button
             modelBuilder.Entity<UserButtonEntity>(entity =>
             {
                 entity.HasKey(b => b.Id);
@@ -116,6 +123,7 @@ namespace MZ.Infrastructure
                     .WithOne(u => u.Calibration)
                     .HasForeignKey<CalibrationEntity>(c => c.UserId);
             });
+
 
             // Image
             modelBuilder.Entity<ImageEntity>(entity =>
@@ -154,7 +162,7 @@ namespace MZ.Infrastructure
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // MaterialCurve
+            // MaterialControl
             modelBuilder.Entity<MaterialControlEntity>(entity =>
             {
                 entity.HasKey(m => m.Id);

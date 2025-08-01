@@ -21,9 +21,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <ItemsControl Grid.Column="0" Margin="4" ItemsSource="{Binding Path=WindowCommandButtons}" >
+        
+        <ItemsControl Grid.Column="1" Margin="4" ItemsSource="{Binding Path=WindowCommandButtons}" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel HorizontalAlignment="Stretch"/>
@@ -44,7 +45,7 @@
         </ItemsControl>
 
         <DataGrid ItemsSource="{Binding Path=SetControls}"
-                  Grid.Row="1"
+                  Grid.Row="2"
                   AutoGenerateColumns="False"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Hidden"
@@ -83,7 +84,8 @@
         </DataGrid>
 
         <DataGrid ItemsSource="{Binding Path=Controls}"
-                  Grid.Row="2"
+                  SelectedItem="{Binding Path=Zeffect.Model.Control, Mode=TwoWay}"
+                  Grid.Row="3"
                   AutoGenerateColumns="False"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Hidden"
@@ -93,15 +95,13 @@
                   HorizontalContentAlignment="Center"
                   Margin="4"
                   Width="Auto"
-                  HorizontalAlignment="Stretch"
-                  MaxHeight="250">
+                  HorizontalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Content" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
-
                 <DataGridTemplateColumn Header="Color" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label Content="{Binding Path=Color}" Background="{Binding Path=ColorBrush}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

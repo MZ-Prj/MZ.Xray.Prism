@@ -13,6 +13,11 @@ namespace MZ.Domain.Interfaces
         public int MaxImageWidth { get; set; }
         public int SensorImageWidth { get; set; }
     }
+    public interface ICalibrationLine
+    {
+        public double Offset { get; set; }
+        public double Gain { get; set; }
+    }
 
     public interface IImage
     {

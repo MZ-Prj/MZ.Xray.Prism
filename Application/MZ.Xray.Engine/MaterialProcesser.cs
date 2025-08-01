@@ -1,14 +1,11 @@
 ﻿using MZ.Domain.Models;
-using MZ.Domain.Entities;
 using MZ.Vision;
-using MZ.DTO;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Prism.Mvvm;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Windows.Media;
 using System.Collections.ObjectModel;
 using static MZ.Vision.VisionEnums;
 
@@ -49,14 +46,14 @@ namespace MZ.Xray.Engine
             Model.Image = VisionBase.Create(byte.MaxValue, byte.MaxValue, MatType.CV_8UC4);
             Model.Image.SetTo(Scalar.All(0));
 
-            UpdateMaterialControls();
+            InitializeMaterialControls();
             UpdateAllMaterialGraph();
         }
 
         /// <summary>
         /// 데이터 베이스에서 불러오지 못할 경우 기존 값
         /// </summary>
-        public void UpdateMaterialControls()
+        public void InitializeMaterialControls()
         {
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 36, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 255, 255) });
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 57, XMin = 0, XMax = 255, Scalar = new Scalar(0, 128, 0, 255) });
@@ -187,8 +184,5 @@ namespace MZ.Xray.Engine
 
             return new Vec4b(b, g, r, a);
         }
-
-
-
     }
 }

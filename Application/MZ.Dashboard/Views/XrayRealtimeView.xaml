@@ -75,7 +75,7 @@
                                             Color="{Binding Path=Zeffect.Model.Control.Color}"/>
             </Canvas.Effect>
             <Canvas.RenderTransform>
-                <ScaleTransform ScaleX="{Binding Path=Media.Filter.Zoom}" ScaleY="{Binding Path=Media.Filter.Zoom}"/>
+                <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
             </Canvas.RenderTransform>
 
             <Canvas.Background>

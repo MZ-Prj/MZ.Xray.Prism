@@ -51,6 +51,7 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand<ZeffectControlModel> _deleteCommand;
         public ICommand DeleteCommand => _deleteCommand ??= new DelegateCommand<ZeffectControlModel>(MZAction.Wrapper<ZeffectControlModel>(DeleteButton));
 
+
         private DelegateCommand _undoCommand;
         public ICommand UndoCommand => _undoCommand ??= new DelegateCommand(MZAction.Wrapper(UndoButton), () => _undoRedoManager.CanUndo);
 
@@ -92,11 +93,28 @@ namespace MZ.Dashboard.ViewModels
         private void AddButton(ZeffectControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
+
+            Controls.Add(new ZeffectControlModel()
+            {
+                Content = model.Content,
+                Check = model.Check,
+                Min = model.Min,
+                Max = model.Max,
+                Scalar = model.Scalar,
+            });
+
+            CopyControlsToZeffect();
+            UpdateCanUndoRedo();
         }
 
         private void DeleteButton(ZeffectControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
+            
+            Controls.Remove(model);
+
+            CopyControlsToZeffect();
+            UpdateCanUndoRedo();
         }
 
         private void UndoButton()

@@ -14,6 +14,7 @@ namespace MZ.Infrastructure
         public IXrayVisionFilterService Filter { get; }
         public IXrayVisionMaterialService Material { get; }
         public IXrayVisionCalibrationService Calibration { get; }
+        public IXrayVisionZeffectControlService ZeffectControl { get; }
         public IXrayAIOptionService AIOption { get; }
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace MZ.Infrastructure
             IXrayVisionFilterService xrayVisionFilterService,
             IXrayVisionMaterialService xrayVisionMaterialService,
             IXrayVisionCalibrationService xrayVisionCalibrationService,
+            IXrayVisionZeffectControlService xrayVisionZeffectControlService,
             IXrayAIOptionService xrayAIOptionService)
         {
             _cts = new ();
@@ -38,6 +40,7 @@ namespace MZ.Infrastructure
             Filter = xrayVisionFilterService;
             Material = xrayVisionMaterialService;
             Calibration = xrayVisionCalibrationService;
+            ZeffectControl = xrayVisionZeffectControlService;
             AIOption = xrayAIOptionService;
         }
 

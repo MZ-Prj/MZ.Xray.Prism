@@ -17,5 +17,7 @@ namespace MZ.Infrastructure.Interfaces
         Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest language);
         Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest theme);
         Task<BaseResponse<BaseRole, UserSettingEntity>> SaveUserSetting(UserSettingSaveRequest request);
+        bool IsLoggedIn();
+
     }
 }

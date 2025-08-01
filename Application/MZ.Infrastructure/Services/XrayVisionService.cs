@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using MZ.Domain.Interfaces;
 
 namespace MZ.Infrastructure.Services
 {
@@ -326,10 +325,36 @@ namespace MZ.Infrastructure.Services
                     material.EdgeBinary = request.EdgeBinary;
                     material.Transparency = request.Transparency;
 
-                    material.MaterialControls.Clear();
-                    foreach (var control in request.MaterialControls)
+                    var materialControls = material.MaterialControls.ToList();
+
+                    foreach (var materialControl in materialControls)
                     {
-                        material.MaterialControls.Add(control);
+                        if (!request.MaterialControls.Any(m => m.Id == materialControl.Id))
+                        {
+                            material.MaterialControls.Remove(materialControl);
+                        }
+                    }
+
+                    foreach (var materialControl in request.MaterialControls)
+                    {
+                        var exist = material.MaterialControls.FirstOrDefault(m => m.Id == materialControl.Id);
+                        if (exist == null)
+                        {
+                            material.MaterialControls.Add(new MaterialControlEntity
+                            {
+                                Y = materialControl.Y,
+                                XMin = materialControl.XMin,
+                                XMax = materialControl.XMax,
+                                Color = materialControl.Color
+                            });
+                        }
+                        else
+                        {
+                            exist.Y = materialControl.Y;
+                            exist.XMin = materialControl.XMin;
+                            exist.XMax = materialControl.XMax;
+                            exist.Color = materialControl.Color;
+                        }
                     }
 
                     await xrayVisionMaterialRepository.UpdateAsync(material);
@@ -341,6 +366,101 @@ namespace MZ.Infrastructure.Services
             {
                 MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
+            }
+        }
+    }
+
+
+    [Service]
+    public class XrayVisionZeffectControlService : IXrayVisionZeffectControlService
+    {
+        protected readonly IUserSession userSession;
+        protected readonly IUserRepository userRepository;
+        protected readonly IXrayVisionZeffectControlRepository xrayVisionZeffectControlRepository;
+
+        public XrayVisionZeffectControlService(IUserRepository userRepository,
+                                         IUserSession userSession,
+                                         IXrayVisionZeffectControlRepository xrayVisionZeffectControlRepository)
+        {
+            this.userSession = userSession;
+            this.userRepository = userRepository;
+            this.xrayVisionZeffectControlRepository = xrayVisionZeffectControlRepository;
+        }
+
+        public async Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Load(ZeffectControlLoadRequest request)
+        {
+            try
+            {
+                var user = userRepository.GetByUsername(request.Username);
+                if (user == null)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail);
+                }
+
+                var zeffects = await xrayVisionZeffectControlRepository.GetByUserIdAsync(user.Id);
+
+                if (zeffects == null || zeffects.Count == 0)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Valid);
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, zeffects);
+
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail, ex);
+            }
+        }
+
+        public async Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Save(ZeffectControlSaveRequest request)
+        {
+            try
+            {
+                var user = userRepository.GetByUsername(userSession.CurrentUser);
+                if (user == null)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail);
+                }
+
+                var exists = await xrayVisionZeffectControlRepository.GetByUserIdAsync(user.Id);
+
+                foreach (var control in request.ZeffectControls)
+                {
+                    control.UserId = user.Id;
+
+                    if (control.Id == 0)
+                    {
+                        await xrayVisionZeffectControlRepository.AddAsync(control);
+                    }
+                    else
+                    {
+                        var exist = exists?.FirstOrDefault(e => e.Id == control.Id);
+                        if (exist != null)
+                        {
+                            exist.Check = control.Check;
+                            exist.Content = control.Content;
+                            exist.Min = control.Min;
+                            exist.Max = control.Max;
+                            exist.Color = control.Color;
+
+                            await xrayVisionZeffectControlRepository.UpdateAsync(exist);
+                        }
+                        else
+                        {
+                            await xrayVisionZeffectControlRepository.AddAsync(control);
+                        }
+                    }
+                }
+
+                var results = await xrayVisionZeffectControlRepository.GetByUserIdAsync(user.Id);
+                return BaseResponseExtensions.Success(BaseRole.Success, results);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail, ex);
             }
         }
     }

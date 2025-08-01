@@ -10,14 +10,17 @@ using MZ.AI.Engine;
 using MZ.WindowDialog;
 using MZ.Dashboard.Views;
 using MahApps.Metro.IconPacks;
-using Prism.Commands;
 using Prism.Ioc;
+using Prism.Events;
+using Prism.Commands;
 using Prism.Services.Dialogs;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
+using static MZ.Core.MZModel;
+using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -135,7 +138,7 @@ namespace MZ.Dashboard.ViewModels
         public override void InitializeModel()
         {
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayStopCommand));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false));
 
@@ -156,6 +159,15 @@ namespace MZ.Dashboard.ViewModels
             ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton));
 
             EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4")));
+        }
+
+
+        public override void InitializeEvent()
+        {
+            _eventAggregator.GetEvent<DashboardNavigationEvent>().Subscribe((NavigationModel model) =>
+            {
+                Load(model.View == MZViewNames.DashboardControlView);
+            }, ThreadOption.UIThread, true);
         }
 
         #region Button
@@ -282,6 +294,38 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        #endregion
+
+        private void Load(bool check)
+        {
+            if (check)
+            {
+                // logic
+                _xrayService.Stop();
+                _xrayService.Play();
+
+                // ui
+                ChangeFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Stop), VideoButtons);
+
+                VisibilityFooterButton(PreviousCommand, false, VideoButtons);
+                VisibilityFooterButton(NextCommand, false, VideoButtons);
+            }
+        }
+
+        private void ChangeFooterButton(ICommand targetCommand, string icon, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IconKind = icon;
+                    }
+                }
+            }
+        }
+
         private void ToggleFooterButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
@@ -311,7 +355,6 @@ namespace MZ.Dashboard.ViewModels
         }
 
 
-        #endregion
 
         #region Behavior
         public void CreateMedia(int width, int height)

@@ -251,5 +251,10 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
             }
         }
+
+        public bool IsLoggedIn()
+        {
+            return !string.IsNullOrWhiteSpace(CurrentUser().Data);
+        }
     }
 }

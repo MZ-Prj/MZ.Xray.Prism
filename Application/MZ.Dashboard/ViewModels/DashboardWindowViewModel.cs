@@ -68,7 +68,6 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
-
         public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService, IWindowDialogService windowDialogService, IXrayService xrayService) : base(container)
         {
             _databaseService = databaseService;
@@ -77,7 +76,6 @@ namespace MZ.Dashboard.ViewModels
             _xrayService = xrayService;
 
             base.Initialize();
-
         }
 
         public override void InitializeModel()
@@ -212,7 +210,5 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
         }
-
-
     }
 }

@@ -90,4 +90,20 @@ namespace MZ.Infrastructure.Repositories
                                  .FirstOrDefaultAsync(m => m.UserId == userId);
         }
     }
+
+
+    [Repository]
+    public class XrayVisionZeffectControlRepository : RepositoryBase<ZeffectControlEntity>, IXrayVisionZeffectControlRepository
+    {
+        public XrayVisionZeffectControlRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task<ICollection<ZeffectControlEntity>> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<ZeffectControlEntity>()
+                                 .Where(e => e.UserId == userId)
+                                 .ToListAsync();
+        }
+    }
 }

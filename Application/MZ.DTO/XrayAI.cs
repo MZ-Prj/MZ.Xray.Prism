@@ -38,7 +38,7 @@ namespace MZ.DTO
 
         public static ICollection<CategoryEntity> ModelsToEntities(ICollection<CategoryModel> model)
         {
-            return [.. model.Select(c => ModelToEntity(c))];
+            return [.. model.Select(ModelToEntity)];
         }
 
         public static AIOptionSaveRequest ModelToRequest(ICollection<CategoryModel> model)
@@ -67,7 +67,7 @@ namespace MZ.DTO
 
         public static ICollection<ObjectDetectionEntity> ModelsToEntities(ICollection<ObjectDetectionModel> model)
         {
-            return [.. model.Select(c => ModelToEntity(c))];
+            return [.. model.Select(ModelToEntity)];
         }
 
     }

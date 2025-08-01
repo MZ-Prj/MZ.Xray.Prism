@@ -48,6 +48,7 @@ namespace MZ.Domain.Entities
         public CalibrationEntity Calibration { get; set; }
         public FilterEntity Filter { get; set; }
         public MaterialEntity Material { get; set; }
+        public ICollection<ZeffectControlEntity> Zeffect { get; set; }
     }
 
     /// <summary>

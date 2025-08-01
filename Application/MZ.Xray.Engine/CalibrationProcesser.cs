@@ -2,10 +2,8 @@
 using System.Threading.Tasks;
 using MZ.Vision;
 using MZ.Domain.Models;
-using MZ.Domain.Entities;
 using OpenCvSharp;
 using Prism.Mvvm;
-using MZ.DTO;
 
 namespace MZ.Xray.Engine
 {
@@ -64,9 +62,6 @@ namespace MZ.Xray.Engine
 
         public void UpdateOnResize(Mat line, int width)
         {
-            Model.Gain ??= line;
-            Model.Offset ??= line;
-
             if (width != Model.MaxImageWidth)
             {
                 Model.Origin = VisionBase.Create(line.Height, (int)Model.MaxImageWidth, MatType.CV_16UC1, new Scalar(0));
@@ -83,6 +78,7 @@ namespace MZ.Xray.Engine
         public bool UpdateOnEnergy(Mat line)
         {
             (_, double max) = VisionBase.MinMax(line);
+
             bool check = true;
             if (max < Model.OffsetRegion)
             {

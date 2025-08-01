@@ -187,6 +187,9 @@ namespace MZ.Domain.Models
             _action = new WeakReference<Action>(action);
         }
 
+        private int _id;
+        public int Id { get => _id; set => SetProperty(ref _id, value); }
+
         private double _y = 0.0;
         public double Y { get => _y; set { if (SetProperty(ref _y, value)) { Invoke(); } } }
 
@@ -263,8 +266,24 @@ namespace MZ.Domain.Models
         private Brush _imageBrush;
         public Brush ImageBrush { get => _imageBrush; set => SetProperty(ref _imageBrush, value); }
 
+        private ObservableCollection<FrameModel> _frames = [];
+        public ObservableCollection<FrameModel> Frames { get => _frames; set => SetProperty(ref _frames, value); }
+
         private ZeffectControlModel _control = new();
-        public ZeffectControlModel Control { get => _control; set => SetProperty(ref _control, value); }
+        public ZeffectControlModel Control 
+        { 
+            get => _control;
+            set
+            {
+                if(SetProperty(ref _control, value))
+                {
+                    foreach (var c in Controls)
+                    {
+                        c.Check = (c == value);
+                    }
+                }
+            }
+        }
 
         private ObservableCollection<ZeffectControlModel> _controls = [];
         public ObservableCollection<ZeffectControlModel> Controls { get => _controls; set => SetProperty(ref _controls, value); }
@@ -274,6 +293,9 @@ namespace MZ.Domain.Models
 
     public class ZeffectControlModel : BindableBase, IZeffectControl
     {
+        private int _id ;
+        public int Id { get => _id; set => SetProperty(ref _id, value); }
+
         private bool _check = false;
         public bool Check { get => _check; set => SetProperty(ref _check, value); }
 
@@ -281,10 +303,10 @@ namespace MZ.Domain.Models
         public string Content { get => _content; set => SetProperty(ref _content, value); }
 
         private double _min = 0.0;
-        public double Min { get => _min; set => SetProperty(ref _min, value); }
+        public double Min { get => _min; set => SetProperty(ref _min, Math.Clamp(value, 0.0f, Max)); }
 
         private double _max = 1.0;
-        public double Max { get => _max; set => SetProperty(ref _max, value); }
+        public double Max { get => _max; set => SetProperty(ref _max, Math.Clamp(value, Min, 1.0f)); }
 
         private Scalar _scalar = new(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar

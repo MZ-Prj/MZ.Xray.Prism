@@ -3,13 +3,13 @@ using MZ.Vision;
 using MZ.Domain.Models;
 using OpenCvSharp;
 using Prism.Mvvm;
-using static MZ.Vision.VisionEnums;
 using System.Threading.Tasks;
-using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using OpenCvSharp.WpfExtensions;
+using static MZ.Vision.VisionEnums;
+using System.Linq;
 
 namespace MZ.Xray.Engine
 {
@@ -45,7 +45,32 @@ namespace MZ.Xray.Engine
             get => Model.Image;
             set => Model.Image = value;
         }
+
+        public ObservableCollection<FrameModel> Frames
+        {
+            get => Model.Frames;
+            set => Model.Frames = value;
+        }
+
         #endregion
+
+        public ZeffectProcesser()
+        {
+            InitializeZeffectControls();
+        }
+
+        public void InitializeZeffectControls()
+        {
+            Model.Controls.Add(new () { Content = "None", Color= Color.FromArgb(0, 0, 0, 0), Min = 0.0, Max = 0.0, Check = true});
+            Model.Controls.Add(new () { Content = "Organic", Color = Color.FromArgb(128, 255, 128, 128), Min = 0.0, Max = 0.3 });
+            Model.Controls.Add(new () { Content = "Inorganic", Color = Color.FromArgb(128, 0, 128, 0), Min = 0.3, Max = 0.75 });
+            Model.Controls.Add(new () { Content = "Metal", Color = Color.FromArgb(128, 0, 128, 255), Min = 0.75, Max = 1.0 });
+        }
+
+        public void UpdateZeffectControl()
+        {
+            Model.Control = Controls.FirstOrDefault(c => c.Check);
+        }
 
         public byte Calculation(double high, double low)
         {
@@ -93,6 +118,20 @@ namespace MZ.Xray.Engine
                 Image = VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC1, new Scalar(0));
             }
         }
+        public void AddFrame()
+        {
+            Frames.Add(new() { Image = Image, DateTime = DateTime.Now });
+        }
+
+        public void RemoveFrame()
+        {
+            Frames.RemoveAt(0);
+        }
+
+        public void ChangeFrame(int index)
+        {
+            ImageSource = CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
+        }
 
         public async Task UpdateOnResizeAsync(Mat line, int width, int maxImageWidth)
         {
@@ -118,6 +157,11 @@ namespace MZ.Xray.Engine
         public void FreezeImageSource()
         {
             ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
+        }
+
+        public async Task FreezeImageSourceAsync()
+        {
+            await Task.Run(FreezeImageSource);
         }
 
         public BitmapSource CanFreezeImageSource(BitmapSource bitmap)

@@ -28,4 +28,9 @@ namespace MZ.Infrastructure.Interfaces
         Task<BaseResponse<BaseRole, MaterialEntity>> Save(MaterialSaveRequest request);
         Task<BaseResponse<BaseRole, MaterialEntity>> Load(MaterialLoadRequest request);
     }
+    public interface IXrayVisionZeffectControlService
+    {
+        Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Save(ZeffectControlSaveRequest request);
+        Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Load(ZeffectControlLoadRequest request);
+    }
 }
