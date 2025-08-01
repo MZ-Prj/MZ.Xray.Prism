@@ -12,10 +12,11 @@ using MZ.Infrastructure;
 using MZ.AI.Engine;
 using MZ.DTO;
 using MZ.Util;
+using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using System.Windows.Forms.Design;
+
 namespace MZ.Xray.Engine
 {
     /// <summary>
@@ -49,7 +50,7 @@ namespace MZ.Xray.Engine
         {
             _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe((FileModel file) =>
             {
-                if (IsRunning)
+                if (IsRunning && _databaseService.User.IsLoggedIn())
                 {
                     _imageProcessingChannel.Writer.TryWrite(file.Image);
                 }
@@ -87,7 +88,6 @@ namespace MZ.Xray.Engine
 
         private void StartVideoTask()
         {
-
             if (IsRunning)
             {
                 return;
@@ -132,7 +132,7 @@ namespace MZ.Xray.Engine
 
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
-                        UpdateScreen();
+                        await UpdateScreen();
                         await Task.Delay(1000 / Media.Information.FPS, _screenCts.Token);
                     }
                 }
@@ -195,18 +195,35 @@ namespace MZ.Xray.Engine
             return IsRunning;
         }
 
-        public void UpdateScreen()
+        public void PlayStop()
         {
-            Media.FreezeImageSource();
+            if (IsPlaying())
+            {
+                Stop();
+            }
+            else
+            {
+                Play();
+            }
+        }
+
+        public async Task UpdateScreen()
+        {
+            await Task.WhenAll(
+                 Media.FreezeImageSourceAsync(),
+                 Zeffect.FreezeImageSourceAsync());
+           
             if (Media.IsFrameUpdateRequired())
             {
                 Media.AddFrame();
+                Zeffect.AddFrame();
 
                 _aiService.AddObjectDetection();
 
                 if (Media.Information.Slider >= Media.Information.MaxSlider)
                 {
-                    Media.RemoveOldestFrameAndDetection();
+                    Media.RemoveFrame();
+                    Zeffect.RemoveFrame();
 
                     _aiService.RemoveObjectDetection();
 
@@ -220,7 +237,15 @@ namespace MZ.Xray.Engine
         public void PrevNextSlider(int index)
         {
             int slider = Media.PrevNextSlider(index);
+
+            Media.ChangeFrame(slider);
+            Zeffect.ChangeFrame(slider);
             _aiService.ChangeObjectDetections(slider);
+        }
+
+        public void ClearScreen()
+        {
+
         }
     }
 
@@ -463,8 +488,11 @@ namespace MZ.Xray.Engine
             _databaseService.Calibration.Save(XrayVisionCalibrationMapper.ModelToRequest(Calibration.Model));
             _databaseService.Filter.Save(XrayVisionFilterMapper.ModelToRequest(Media.Model.Filter));
             _databaseService.Material.Save(XrayVisionMaterialMapper.ModelToRequest(Material.Model));
+            _databaseService.ZeffectControl.Save(XrayVisionZeffectControlMapper.ModelToRequest(Zeffect.Model.Controls));
 
             _databaseService.AIOption.Save(CategoryMapper.ModelToRequest(_aiService.Yolo.Categories));
+
+            _databaseService.User.SaveUserSetting(UserSettingMapper.ModelToRequest(ThemeService.CurrentTheme,LanguageService.CurrentLanguage, UI.ActionButtons));
 
             _databaseService.User.Logout();
         }
@@ -495,6 +523,14 @@ namespace MZ.Xray.Engine
             {
                 Material.Model = XrayVisionMaterialMapper.EntityToModel(material.Data, Material.UpdateAllMaterialGraph);
                 Material.UpdateAllMaterialGraph();
+            }
+
+            //zeffect control
+            var zeffectControl = await _databaseService.ZeffectControl.Load(new(username));
+            if (zeffectControl.Success)
+            {
+                Zeffect.Model.Controls = [.. XrayVisionZeffectControlMapper.EntitiesToModels(zeffectControl.Data)];
+                Zeffect.UpdateZeffectControl();
             }
         }
     }
@@ -583,7 +619,6 @@ namespace MZ.Xray.Engine
 
             try
             {
-
                 (int start, int end) = XrayDataSaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
                 var mat = VisionBase.SplitCol(VisionBase.BlendWithBackground(Media.Image), start, end);
@@ -596,5 +631,15 @@ namespace MZ.Xray.Engine
                 MZLogger.Error(ex.ToString());
             }
         }
+    }
+
+    /// <summary>
+    /// UI
+    /// </summary>
+    public partial class XrayService : BindableBase, IXrayService
+    {
+        private UIProcesser _ui = new();
+        public UIProcesser UI { get => _ui; set => SetProperty(ref _ui, value); }
+
     }
 }

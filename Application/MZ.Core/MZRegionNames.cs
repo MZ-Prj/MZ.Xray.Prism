@@ -24,6 +24,7 @@
         public readonly static string ImageStorageControl = "ImageStorageControlRegion";
         public readonly static string MaterialControl = "MaterialControlRegion";
         public readonly static string AIControl = "AIControlRegion";
+        public readonly static string ZeffectControl = "ZeffectControlRegion";
 
         //producer
         public readonly static string IpNetworkRegion = "IpNetworkRegion";

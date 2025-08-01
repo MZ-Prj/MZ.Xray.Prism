@@ -11,6 +11,8 @@ namespace MZ.Resource
 {
     public static class LanguageService
     {
+        public static LanguageRole CurrentLanguage = LanguageRole.EnUS; 
+
         private static readonly ResourceManager resourceManager;
         public static event EventHandler LanguageChanged;
         static LanguageService()
@@ -27,6 +29,8 @@ namespace MZ.Resource
         {
             Thread.CurrentThread.CurrentUICulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
+            
+            CurrentLanguage = MZEnum.Get<LanguageRole>(culture.Name) ?? LanguageRole.KoKR;
 
             var resourceSet = resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
 

@@ -5,16 +5,17 @@ namespace MZ.Infrastructure
 {
     public interface IDatabaseService
     {
-        public IUserService User { get; }
-        public IAppSettingService AppSetting { get; }
-        public IXrayVisionImageService Image { get; }
-        public IXrayVisionFilterService Filter { get; }
-        public IXrayVisionCalibrationService Calibration { get; }
-        public IXrayVisionMaterialService Material { get; }
-        public IXrayAIOptionService AIOption { get; }
+        IUserService User { get; }
+        IAppSettingService AppSetting { get; }
+        IXrayVisionImageService Image { get; }
+        IXrayVisionFilterService Filter { get; }
+        IXrayVisionCalibrationService Calibration { get; }
+        IXrayVisionMaterialService Material { get; }
+        IXrayVisionZeffectControlService ZeffectControl { get; }
+        IXrayAIOptionService AIOption { get; }
 
-        public Task MakeAdmin();
-        public Task<bool> MakeUserAsync(string username, string password);
-        public Task MakeAppSettingAsync(string username);
+        Task MakeAdmin();
+        Task<bool> MakeUserAsync(string username, string password);
+        Task MakeAppSettingAsync(string username);
     }
 }

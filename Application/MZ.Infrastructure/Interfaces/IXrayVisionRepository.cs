@@ -26,4 +26,10 @@ namespace MZ.Infrastructure.Interfaces
     {
         public Task<MaterialEntity?> GetByUserIdAsync(int userId);
     }
+
+    public interface IXrayVisionZeffectControlRepository : IRepositoryBase<ZeffectControlEntity>
+    {
+        public Task<ICollection<ZeffectControlEntity>> GetByUserIdAsync(int userId);
+    }
+    
 }

@@ -137,10 +137,14 @@ namespace MZ.Xray.Engine
             int slider = Information.Slider + rule;
             if (IsShowFrame(slider))
             {
-                ImageSource = CanFreezeImageSource(Frames[slider-1].Image.ToBitmapSource());
                 Information.Slider = slider;
             }
             return slider;
+        }
+
+        public void ChangeFrame(int index)
+        {
+            ImageSource = CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
         }
 
         public void IncreaseCount()
@@ -215,6 +219,11 @@ namespace MZ.Xray.Engine
             ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
         }
 
+        public async Task FreezeImageSourceAsync()
+        {
+            await Task.Run(FreezeImageSource);
+        }
+
         public bool IsFrameUpdateRequired()
         {
             return Information.Interval % Information.MaxInterval == 0;
@@ -241,7 +250,7 @@ namespace MZ.Xray.Engine
             Information.Interval++;
         }
 
-        public void RemoveOldestFrameAndDetection()
+        public void RemoveFrame()
         {
             Frames.RemoveAt(0);
         }

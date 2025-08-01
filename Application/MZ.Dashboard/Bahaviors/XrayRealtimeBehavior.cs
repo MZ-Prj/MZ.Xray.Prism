@@ -129,11 +129,13 @@ namespace MZ.Dashboard.Bahaviors
 
                 var canvas = MZFramework.FindChildByName(this.AssociatedObject, "CanvasImageView") as Canvas;
                 var predict = MZFramework.FindChildByName(this.AssociatedObject, "CanvasAIPredictView") as Canvas;
+                var zeffect = MZFramework.FindChildByName(this.AssociatedObject, "CanvasZeffectView") as Canvas;
 
                 if (canvas != null)
                 {
                     viewModel.CanvasImageView = canvas;
                     viewModel.CanvasPredictView = predict;
+                    viewModel.CanvasZeffectView = zeffect;
                 }
             }
         }

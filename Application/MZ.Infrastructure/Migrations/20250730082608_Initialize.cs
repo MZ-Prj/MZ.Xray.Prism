@@ -6,47 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MZ.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initialize : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "Role",
-                table: "User",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "INTEGER");
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "LastLoginDate",
-                table: "User",
-                type: "TEXT",
-                nullable: false,
-                defaultValueSql: "GETDATE()",
-                oldClrType: typeof(DateTime),
-                oldType: "TEXT");
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "CreateDate",
-                table: "User",
-                type: "TEXT",
-                nullable: false,
-                defaultValueSql: "GETDATE()",
-                oldClrType: typeof(DateTime),
-                oldType: "TEXT");
-
-            migrationBuilder.AlterColumn<bool>(
-                name: "IsUsernameSave",
-                table: "AppSetting",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: false,
-                oldClrType: typeof(bool),
-                oldType: "INTEGER");
-
             migrationBuilder.CreateTable(
                 name: "AIOption",
                 columns: table => new
@@ -69,53 +33,17 @@ namespace MZ.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Calibration",
+                name: "AppSetting",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    RelativeWidthRatio = table.Column<double>(type: "REAL", nullable: false),
-                    OffsetRegion = table.Column<double>(type: "REAL", nullable: false),
-                    GainRegion = table.Column<double>(type: "REAL", nullable: false),
-                    BoundaryArtifact = table.Column<double>(type: "REAL", nullable: false),
-                    ActivationThresholdRatio = table.Column<double>(type: "REAL", nullable: false),
-                    MaxImageWidth = table.Column<int>(type: "INTEGER", nullable: false),
-                    SensorImageWidth = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    IsUsernameSave = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
+                    LastestUsername = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Calibration", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Calibration_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Filter",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Zoom = table.Column<float>(type: "REAL", nullable: false),
-                    Sharpness = table.Column<float>(type: "REAL", nullable: false),
-                    Brightness = table.Column<float>(type: "REAL", nullable: false),
-                    Contrast = table.Column<float>(type: "REAL", nullable: false),
-                    ColorMode = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Filter", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Filter_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_AppSetting", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -136,27 +64,21 @@ namespace MZ.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Material",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Blur = table.Column<double>(type: "REAL", nullable: false),
-                    HighLowRate = table.Column<double>(type: "REAL", nullable: false),
-                    Density = table.Column<double>(type: "REAL", nullable: false),
-                    EdgeBinary = table.Column<double>(type: "REAL", nullable: false),
-                    Transparency = table.Column<double>(type: "REAL", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Username = table.Column<string>(type: "TEXT", maxLength: 4, nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    Role = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
+                    CreateDate = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()"),
+                    LastLoginDate = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Material", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Material_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -228,6 +150,99 @@ namespace MZ.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Calibration",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RelativeWidthRatio = table.Column<double>(type: "REAL", nullable: false),
+                    OffsetRegion = table.Column<double>(type: "REAL", nullable: false),
+                    GainRegion = table.Column<double>(type: "REAL", nullable: false),
+                    BoundaryArtifact = table.Column<double>(type: "REAL", nullable: false),
+                    ActivationThresholdRatio = table.Column<double>(type: "REAL", nullable: false),
+                    MaxImageWidth = table.Column<int>(type: "INTEGER", nullable: false),
+                    SensorImageWidth = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calibration", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Calibration_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Filter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Zoom = table.Column<float>(type: "REAL", nullable: false),
+                    Sharpness = table.Column<float>(type: "REAL", nullable: false),
+                    Brightness = table.Column<float>(type: "REAL", nullable: false),
+                    Contrast = table.Column<float>(type: "REAL", nullable: false),
+                    ColorMode = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Filter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Filter_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Material",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Blur = table.Column<double>(type: "REAL", nullable: false),
+                    HighLowRate = table.Column<double>(type: "REAL", nullable: false),
+                    Density = table.Column<double>(type: "REAL", nullable: false),
+                    EdgeBinary = table.Column<double>(type: "REAL", nullable: false),
+                    Transparency = table.Column<double>(type: "REAL", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Material", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Material_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSetting",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Theme = table.Column<int>(type: "INTEGER", nullable: false),
+                    Language = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSetting", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_UserSetting_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MaterialControl",
                 columns: table => new
                 {
@@ -288,6 +303,9 @@ namespace MZ.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AppSetting");
+
+            migrationBuilder.DropTable(
                 name: "Calibration");
 
             migrationBuilder.DropTable(
@@ -303,6 +321,9 @@ namespace MZ.Infrastructure.Migrations
                 name: "ObjectDetection");
 
             migrationBuilder.DropTable(
+                name: "UserSetting");
+
+            migrationBuilder.DropTable(
                 name: "ZeffectControl");
 
             migrationBuilder.DropTable(
@@ -314,41 +335,8 @@ namespace MZ.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "Image");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "Role",
-                table: "User",
-                type: "INTEGER",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "INTEGER",
-                oldDefaultValue: 0);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "LastLoginDate",
-                table: "User",
-                type: "TEXT",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "TEXT",
-                oldDefaultValueSql: "GETDATE()");
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "CreateDate",
-                table: "User",
-                type: "TEXT",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "TEXT",
-                oldDefaultValueSql: "GETDATE()");
-
-            migrationBuilder.AlterColumn<bool>(
-                name: "IsUsernameSave",
-                table: "AppSetting",
-                type: "INTEGER",
-                nullable: false,
-                oldClrType: typeof(bool),
-                oldType: "INTEGER",
-                oldDefaultValue: false);
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

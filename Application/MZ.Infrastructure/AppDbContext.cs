@@ -1,10 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using MZ.Domain.Entities;
 using MZ.Domain.Enums;
 using System;
+using System.IO;
 
 namespace MZ.Infrastructure
 {
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            var dbPath = configuration.GetSection("Database:Path").Value;
+
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlite(dbPath);
+
+            return new AppDbContext(optionsBuilder.Options);
+        }
+    }
     public class AppDbContext : DbContext
     {
         public AppDbContext() { }
@@ -19,7 +39,7 @@ namespace MZ.Infrastructure
                 entity.Property(a => a.IsUsernameSave).HasDefaultValue(false);
             });
 
-            // 1:1 User 
+            // User 
             modelBuilder.Entity<UserEntity>(entity =>
             {
                 entity.HasKey(u => u.Id);
@@ -57,12 +77,42 @@ namespace MZ.Infrastructure
                     .WithOne(m => m.User)
                     .HasForeignKey<MaterialEntity>(m => m.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                // 1:N Zeffect
+                entity.HasMany(u => u.Zeffect)
+                    .WithOne(m => m.User)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // UserSetting
             modelBuilder.Entity<UserSettingEntity>(entity =>
             {
-                entity.HasKey(s => s.UserId);
+                entity.HasKey(s => s.Id);
+
+                entity.Property(s => s.Theme).IsRequired();
+                entity.Property(s => s.Language).IsRequired();
+
+                // 1:1 UserEntity 
+                entity.HasOne(s => s.User)
+                    .WithOne(u => u.UserSetting)
+                    .HasForeignKey<UserSettingEntity>(s => s.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // 1:N UserButtonEntity 
+                entity.HasMany(s => s.Buttons)
+                    .WithOne(b => b.UserSetting)
+                    .HasForeignKey(b => b.UserSettingId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            //UserSetting - Button
+            modelBuilder.Entity<UserButtonEntity>(entity =>
+            {
+                entity.HasKey(b => b.Id);
+
+                entity.Property(b => b.Name).IsRequired();
+                entity.Property(b => b.IsVisibility).IsRequired();
             });
 
             // Calibration
@@ -73,6 +123,7 @@ namespace MZ.Infrastructure
                     .WithOne(u => u.Calibration)
                     .HasForeignKey<CalibrationEntity>(c => c.UserId);
             });
+
 
             // Image
             modelBuilder.Entity<ImageEntity>(entity =>
@@ -111,7 +162,7 @@ namespace MZ.Infrastructure
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // MaterialCurve
+            // MaterialControl
             modelBuilder.Entity<MaterialControlEntity>(entity =>
             {
                 entity.HasKey(m => m.Id);

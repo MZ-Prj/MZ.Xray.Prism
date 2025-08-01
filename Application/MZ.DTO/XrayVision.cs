@@ -65,6 +65,13 @@ namespace MZ.DTO
         string Username
     );
 
+    public record ZeffectControlSaveRequest(
+        ICollection<ZeffectControlEntity> ZeffectControls
+    );
+
+    public record ZeffectControlLoadRequest(
+        string Username
+    );
     #endregion
 
     #region Response
@@ -169,18 +176,19 @@ namespace MZ.DTO
         public static MaterialModel EntityToModel(MaterialEntity entity, Action action)
         {
             var model = new MaterialModel
-            {
+            {   
                 Blur = entity.Blur,
                 HighLowRate = entity.HighLowRate,
                 Density = entity.Density,
                 EdgeBinary = entity.EdgeBinary,
                 Transparency = entity.Transparency,
-                Controls = [.. entity.MaterialControls?.Select(e => new MaterialControlModel(action)
+                Controls = [.. entity.MaterialControls?.Select(m => new MaterialControlModel(action)
                     {
-                        Y = e.Y,
-                        XMin = e.XMin,
-                        XMax = e.XMax,
-                        Color = (Color)ColorConverter.ConvertFromString(e.Color)
+                        Id = m.Id,
+                        Y = m.Y,
+                        XMin = m.XMin,
+                        XMax = m.XMax,
+                        Color = (Color)ColorConverter.ConvertFromString(m.Color)
                     }) ?? []]
             };
 
@@ -196,24 +204,26 @@ namespace MZ.DTO
                 Density = model.Density,
                 EdgeBinary = model.EdgeBinary,
                 Transparency = model.Transparency,
-                MaterialControls = [.. model.Controls.Select(c => new MaterialControlEntity
+                MaterialControls = [.. model.Controls.Select(m => new MaterialControlEntity
                 {
-                    Y = c.Y,
-                    XMin = c.XMin,
-                    XMax = c.XMax,
-                    Color = $"#{c.Color.A:X2}{c.Color.R:X2}{c.Color.G:X2}{c.Color.B:X2}"
+                    Id = m.Id,
+                    Y = m.Y,
+                    XMin = m.XMin,
+                    XMax = m.XMax,
+                    Color = $"#{m.Color.A:X2}{m.Color.R:X2}{m.Color.G:X2}{m.Color.B:X2}"
                 })]
             };
         }
 
         public static MaterialSaveRequest ModelToRequest(MaterialModel model)
         {
-            var materialControls = model.Controls.Select(c => new MaterialControlEntity
+            var materialControls = model.Controls.Select(m => new MaterialControlEntity
             {
-                Y = c.Y,
-                XMin = c.XMin,
-                XMax = c.XMax,
-                Color = $"#{c.Color.A:X2}{c.Color.R:X2}{c.Color.G:X2}{c.Color.B:X2}"
+                Id = m.Id,
+                Y = m.Y,
+                XMin = m.XMin,
+                XMax = m.XMax,
+                Color = $"#{m.Color.A:X2}{m.Color.R:X2}{m.Color.G:X2}{m.Color.B:X2}"
             }).ToList();
 
             return new MaterialSaveRequest(
@@ -224,6 +234,61 @@ namespace MZ.DTO
                 Transparency: model.Transparency,
                 MaterialControls: materialControls
             );
+        }
+    }
+    #endregion
+
+    #region Mapper : Zeffect Control
+    public static class XrayVisionZeffectControlMapper
+    {
+
+        public static ICollection<ZeffectControlModel> EntitiesToModels(ICollection<ZeffectControlEntity> entity)
+        {
+            return [.. entity.Select(EntityToModel).Where(model => model != null)];
+        }
+
+        public static ICollection<ZeffectControlEntity> ModelsToEntities(ICollection<ZeffectControlModel> model)
+        {
+
+            return [.. model.Select(ModelToEntity).Where(entity => entity != null)];
+        }
+
+        public static ZeffectControlModel EntityToModel(ZeffectControlEntity entity)
+        {
+
+            var model = new ZeffectControlModel
+            {
+                Id = entity.Id,
+                Check = entity.Check,
+                Content = entity.Content,
+                Min = entity.Min,
+                Max = entity.Max,
+                Color = (Color)ColorConverter.ConvertFromString(entity.Color)
+            };
+
+            return model;
+        }
+
+        public static ZeffectControlEntity ModelToEntity(ZeffectControlModel model)
+        {
+            var entity = new ZeffectControlEntity
+            {
+                Id = model.Id,
+                Check = model.Check,
+                Content = model.Content,
+                Min = model.Min,
+                Max = model.Max,
+                Color = $"#{model.Color.A:X2}{model.Color.R:X2}{model.Color.G:X2}{model.Color.B:X2}"
+            };
+
+            return entity;
+        }
+
+        public static ZeffectControlSaveRequest ModelToRequest(ICollection<ZeffectControlModel> model)
+        {
+            var entities = model.Select(ModelToEntity).ToList();
+
+            return new (entities);
         }
     }
     #endregion

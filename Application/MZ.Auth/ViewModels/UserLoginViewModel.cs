@@ -3,6 +3,7 @@ using Prism.Commands;
 using Prism.Regions;
 using System;
 using System.Windows.Input;
+using MZ.DTO;
 using MZ.Core;
 using MZ.Auth.Views;
 using MZ.Auth.Models;
@@ -19,7 +20,6 @@ namespace MZ.Auth.ViewModels
 
         #region Services
         private readonly IDatabaseService _databaseService;
-
         #endregion
 
 
@@ -49,11 +49,12 @@ namespace MZ.Auth.ViewModels
             try
             {
                 var response = await _databaseService.AppSetting.GetAppSetting();
-                var data = response.Data;
-
-                User.Username = data.IsUsernameSave ? data.LastestUsername : string.Empty;
-                User.Password = string.Empty;
-                User.IsUsernameSave = data.IsUsernameSave;
+                if (response.Success)
+                {
+                    User.Username = response.Data.IsUsernameSave ? response.Data.LastestUsername : string.Empty;
+                    User.Password = string.Empty;
+                    User.IsUsernameSave = response.Data.IsUsernameSave;
+                }
             }
             catch (Exception ex)
             {
@@ -70,11 +71,13 @@ namespace MZ.Auth.ViewModels
 
             if (response.Success)
             {
+                await _databaseService.AppSetting.Register(
+                    new AppSettingRegisterRequest(User.Username, User.IsUsernameSave)
+                );
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                             new NavigationModel(
                                 MZRegionNames.DashboardRegion,
                                 MZViewNames.DashboardControlView));
-
             }
         }
 

@@ -14,6 +14,8 @@ namespace MZ.Resource.Managers
 
         public static readonly DependencyProperty MaxProperty = DependencyProperty.Register("Max", typeof(float), typeof(ZeffShaderManager), new UIPropertyMetadata(1.0f, PixelShaderConstantCallback(1)));
 
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register("Color", typeof(Color), typeof(ZeffShaderManager), new UIPropertyMetadata(Colors.Yellow, PixelShaderConstantCallback(2)));
+
         private static readonly PixelShader _pixelShader = new()
         {
             UriSource = new Uri("/MZ.Resource;component/Shaders/zeff.ps", UriKind.Relative)
@@ -26,6 +28,7 @@ namespace MZ.Resource.Managers
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(MinProperty);
             UpdateShaderValue(MaxProperty);
+            UpdateShaderValue(ColorProperty);
         }
 
         public Brush Input
@@ -44,6 +47,12 @@ namespace MZ.Resource.Managers
         {
             get => (float)GetValue(MaxProperty);
             set => SetValue(MaxProperty, value);
+        }
+
+        public Color Color
+        {
+            get => (Color)GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
         }
     }
 

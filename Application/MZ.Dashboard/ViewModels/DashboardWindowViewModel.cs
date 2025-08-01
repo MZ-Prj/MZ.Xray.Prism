@@ -18,7 +18,6 @@ using Prism.Commands;
 using Prism.Services.Dialogs;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -55,9 +54,6 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _aiCommand;
         public ICommand AICommand => _aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
 
-        private DelegateCommand _zeffectCommand;
-        public ICommand ZeffectCommand => _zeffectCommand ??= new DelegateCommand(MZAction.Wrapper(ZeffectButton));
-
         private DelegateCommand _windowClosingCommand;
         public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
@@ -72,7 +68,6 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
-
         public DashboardWindowViewModel(IContainerExtension container, IDatabaseService databaseService, ILoadingService loadingService, IWindowDialogService windowDialogService, IXrayService xrayService) : base(container)
         {
             _databaseService = databaseService;
@@ -81,7 +76,6 @@ namespace MZ.Dashboard.ViewModels
             _xrayService = xrayService;
 
             base.Initialize();
-
         }
 
         public override void InitializeModel()
@@ -109,7 +103,7 @@ namespace MZ.Dashboard.ViewModels
 
         private void WindowClosing()
         {
-            _xrayService.SaveDatabase();
+            SaveDatabase();
 
             Application.Current.Shutdown();
         }
@@ -135,7 +129,7 @@ namespace MZ.Dashboard.ViewModels
 
         private void LogoutButton()
         {
-            _xrayService.SaveDatabase();
+            SaveDatabase();
 
             _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                         new NavigationModel(
@@ -181,10 +175,6 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
-        private void ZeffectButton()
-        {
-        }
-
         private void RecordButton()
         {
         }
@@ -199,11 +189,25 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private void LoadDatabase(bool check)
+        private void SaveDatabase()
+        {
+            _xrayService.SaveDatabase();
+        }
+
+        private async void LoadDatabase(bool check)
         {
             if (check)
             {
                 _xrayService.LoadDatabase();
+
+                var userSetting = await _databaseService.User.GetUserSetting();
+                if (userSetting.Success)
+                {
+                    ThemeService.Load(userSetting.Data.Theme);
+                    LanguageService.Load(MZEnum.GetName(userSetting.Data.Language));
+
+                    _xrayService.UI.LoadActionButton(userSetting.Data.Buttons);
+                }
             }
         }
     }

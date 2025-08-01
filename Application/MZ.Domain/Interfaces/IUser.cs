@@ -19,4 +19,10 @@ namespace MZ.Domain.Interfaces
         public ThemeRole Theme { get; set; }
         public LanguageRole Language { get; set; }
     }
+
+    public interface IUserButton
+    {
+        bool IsVisibility { get; set; }
+        string Name { get; set; }
+    }
 }

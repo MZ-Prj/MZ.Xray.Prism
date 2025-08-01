@@ -1,9 +1,125 @@
 ﻿<UserControl x:Class="MZ.Dashboard.Views.ZeffectControlView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:prism="http://prismlibrary.com/"    
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource" 
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ZeffectControlViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
+    
+    <UserControl.Resources>
+        <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
+    </UserControl.Resources>
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <ItemsControl Grid.Column="1" Margin="4" ItemsSource="{Binding Path=WindowCommandButtons}" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="FrameworkElement.Margin" Value="0,0,4,0"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Command="{Binding Path=Command}" >
+                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="16" Height="16" ToolTip="{Binding Path=ToolTip}"/>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <DataGrid ItemsSource="{Binding Path=SetControls}"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Hidden"
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  HorizontalContentAlignment="Center"
+                  Margin="4"
+                  Width="Auto"
+                  HorizontalAlignment="Stretch">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Content" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
+
+                <DataGridTemplateColumn Header="Color" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Min" Width="1*" Binding="{Binding Path=Min, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
+                <DataGridTextColumn Header="Max" Width="1*" Binding="{Binding Path=Max, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
+
+                <DataGridTemplateColumn Header="Add" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}">
+                                <iconPacks:PackIconMaterial Kind="Plus"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <DataGrid ItemsSource="{Binding Path=Controls}"
+                  SelectedItem="{Binding Path=Zeffect.Model.Control, Mode=TwoWay}"
+                  Grid.Row="3"
+                  AutoGenerateColumns="False"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Hidden"
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True"
+                  HorizontalContentAlignment="Center"
+                  Margin="4"
+                  Width="Auto"
+                  HorizontalAlignment="Stretch">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Content" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
+                <DataGridTemplateColumn Header="Color" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Path=Color}" Background="{Binding Path=ColorBrush}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Min" Width="1*" Binding="{Binding Path=Min, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
+                <DataGridTextColumn Header="Max" Width="1*" Binding="{Binding Path=Max, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
+
+                <DataGridTemplateColumn Header="Delete" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}">
+                                <iconPacks:PackIconMaterial Kind="Minus"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

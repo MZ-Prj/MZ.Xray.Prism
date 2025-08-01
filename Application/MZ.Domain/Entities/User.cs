@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MZ.Domain.Enums;
@@ -46,6 +48,7 @@ namespace MZ.Domain.Entities
         public CalibrationEntity Calibration { get; set; }
         public FilterEntity Filter { get; set; }
         public MaterialEntity Material { get; set; }
+        public ICollection<ZeffectControlEntity> Zeffect { get; set; }
     }
 
     /// <summary>
@@ -54,22 +57,37 @@ namespace MZ.Domain.Entities
     [Table("UserSetting")]
     public class UserSettingEntity : IUserSetting
     {
-        public int UserId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public ThemeRole Theme { get; set; }
         public LanguageRole Language { get; set; }
+        public ICollection<UserButtonEntity> Buttons { get; set; }
 
-        [ForeignKey("UserId")]
-        public UserEntity User { get; set; }
-    }
-
-    [Table("UserParameterSetting")]
-    public class UserParameterSettingEntity
-    {
+        // Foreign key
         public int UserId { get; set; }
-        public string Key { get; set; }
-        public string Value { get; set; }
 
         [ForeignKey("UserId")]
         public UserEntity User { get; set; }
     }
+
+    [Table("UserButton")]
+    public class UserButtonEntity : IUserButton
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public bool IsVisibility { get; set; }
+
+        // Foreign key
+        public int UserSettingId { get; set; }
+
+        [ForeignKey("UserSettingId")]
+        public UserSettingEntity UserSetting { get; set; }
+    }
+
 }

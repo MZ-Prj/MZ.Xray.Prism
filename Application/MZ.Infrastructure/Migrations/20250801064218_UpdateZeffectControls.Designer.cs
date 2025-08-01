@@ -3,6 +3,7 @@ using System;
 using MZ.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MZ.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DbConfigModelSnapshot : ModelSnapshot
+    [Migration("20250801064218_UpdateZeffectControls")]
+    partial class UpdateZeffectControls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
@@ -318,6 +321,29 @@ namespace MZ.Infrastructure.Migrations
                     b.ToTable("ObjectDetection");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.UserButtonEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsVisibility")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserSettingId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserSettingId");
+
+                    b.ToTable("UserButton");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -360,7 +386,8 @@ namespace MZ.Infrastructure.Migrations
 
             modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Language")
@@ -369,7 +396,13 @@ namespace MZ.Infrastructure.Migrations
                     b.Property<int>("Theme")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserSetting");
                 });
@@ -385,6 +418,9 @@ namespace MZ.Infrastructure.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("Color")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Content")
                         .HasColumnType("TEXT");
 
@@ -394,7 +430,12 @@ namespace MZ.Infrastructure.Migrations
                     b.Property<double>("Min")
                         .HasColumnType("REAL");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ZeffectControl");
                 });
@@ -465,11 +506,33 @@ namespace MZ.Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.UserButtonEntity", b =>
+                {
+                    b.HasOne("MZ.Domain.Entities.UserSettingEntity", "UserSetting")
+                        .WithMany("Buttons")
+                        .HasForeignKey("UserSettingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserSetting");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
                 {
                     b.HasOne("MZ.Domain.Entities.UserEntity", "User")
                         .WithOne("UserSetting")
                         .HasForeignKey("MZ.Domain.Entities.UserSettingEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MZ.Domain.Entities.ZeffectControlEntity", b =>
+                {
+                    b.HasOne("MZ.Domain.Entities.UserEntity", "User")
+                        .WithMany("Zeffect")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -500,6 +563,13 @@ namespace MZ.Infrastructure.Migrations
                     b.Navigation("Material");
 
                     b.Navigation("UserSetting");
+
+                    b.Navigation("Zeffect");
+                });
+
+            modelBuilder.Entity("MZ.Domain.Entities.UserSettingEntity", b =>
+                {
+                    b.Navigation("Buttons");
                 });
 #pragma warning restore 612, 618
         }
