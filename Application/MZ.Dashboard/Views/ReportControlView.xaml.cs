@@ -3,11 +3,11 @@
 namespace MZ.Dashboard.Views
 {
     /// <summary>
-    /// Interaction logic for RecordControlView
+    /// Interaction logic for ReportControlView
     /// </summary>
-    public partial class RecordControlView : UserControl
+    public partial class ReportControlView : UserControl
     {
-        public RecordControlView()
+        public ReportControlView()
         {
             InitializeComponent();
         }

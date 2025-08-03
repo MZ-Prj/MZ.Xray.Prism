@@ -26,6 +26,11 @@ namespace MZ.DTO
         int Size
     );
 
+    public record ReportImageLoadRequest(
+        DateTime Start,
+        DateTime End
+    );
+
     public record FilterSaveRequest(
         float Zoom,
         float Sharpness,

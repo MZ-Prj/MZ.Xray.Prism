@@ -19,8 +19,8 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByPageSize(int page, int size)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .OrderByDescending(f => f.Id)
+                                 .Include(i => i.ObjectDetections)
+                                 .OrderByDescending(i => i.Id)
                                  .Skip(page * size)
                                  .Take(size)
                                  .ToListAsync();
@@ -29,8 +29,8 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEnd(DateTime start, DateTime end)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .Where(f => f.CreateDate >= start && f.CreateDate <= end)
+                                 .Include(i => i.ObjectDetections)
+                                 .Where(i => i.CreateDate >= start && i.CreateDate <= end)
                                  .OrderByDescending(f => f.Id)
                                  .ToListAsync();
         }
@@ -38,9 +38,9 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .Where(f => f.CreateDate >= start && f.CreateDate <= end)
-                                 .OrderByDescending(f => f.Id)
+                                 .Include(i => i.ObjectDetections)
+                                 .Where(i => i.CreateDate >= start && i.CreateDate <= end)
+                                 .OrderByDescending(i => i.Id)
                                  .Skip(page * size)
                                  .Take(size)
                                  .ToListAsync();
@@ -58,7 +58,7 @@ namespace MZ.Infrastructure.Repositories
         public async Task<CalibrationEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<CalibrationEntity>()
-                                 .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
     }
 
@@ -72,7 +72,7 @@ namespace MZ.Infrastructure.Repositories
         public async Task<FilterEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<FilterEntity>()
-                                 .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(f => f.UserId == userId);
         }
     }
 
@@ -102,7 +102,7 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ZeffectControlEntity>> GetByUserIdAsync(int userId)
         {
             return await _context.Set<ZeffectControlEntity>()
-                                 .Where(e => e.UserId == userId)
+                                 .Where(z => z.UserId == userId)
                                  .ToListAsync();
         }
     }

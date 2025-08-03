@@ -45,8 +45,8 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _logStorageCommand;
         public ICommand LogStorageCommand => _logStorageCommand ??= new DelegateCommand(MZAction.Wrapper(LogStorageButton));
 
-        private DelegateCommand _recordCommand;
-        public ICommand RecordCommand => _recordCommand ??= new DelegateCommand(MZAction.Wrapper(RecordButton));
+        private DelegateCommand _reportCommand;
+        public ICommand ReportCommand => _reportCommand ??= new DelegateCommand(MZAction.Wrapper(ReportButton));
 
         private DelegateCommand _materialCommand;
         public ICommand MaterialCommand => _materialCommand ??= new DelegateCommand(MZAction.Wrapper(MaterialButton));
@@ -82,7 +82,7 @@ namespace MZ.Dashboard.ViewModels
         {
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), RecordCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), ReportCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false));
 
@@ -175,8 +175,12 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
-        private void RecordButton()
+        private async void ReportButton()
         {
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.ReportControl,
+                regionName: nameof(ReportControlView),
+                isMultiple: false);
         }
 
         private void UpdateWindowCommandButton(bool check)

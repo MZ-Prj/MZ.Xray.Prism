@@ -116,7 +116,7 @@ namespace MZ.Dashboard.ViewModels
                 Clear();
                 LoadImages();
                 UpdateSearchFilter();
-                await Task.Delay(1000);
+                await Task.Delay(100);
             }
 
         }
@@ -128,7 +128,7 @@ namespace MZ.Dashboard.ViewModels
                 Clear();
                 LoadImages();
                 UpdateSearchFilter();
-                await Task.Delay(1000);
+                await Task.Delay(100);
             }
         }
 
@@ -184,7 +184,7 @@ namespace MZ.Dashboard.ViewModels
 
             if (StartSelectedDate.HasValue && EndSelectedDate.HasValue)
             {
-                var images = await _databaseService.Image.Load(new(StartSelectedDate.Value, EndSelectedDate.Value, CurrentPage, PageSize));
+                var images = await _databaseService.Image.Load(new ImageLoadRequest(StartSelectedDate.Value, EndSelectedDate.Value, CurrentPage, PageSize));
                 if (images != null && images.Data.Count != 0)
                 {
                     foreach (var image in images.Data)

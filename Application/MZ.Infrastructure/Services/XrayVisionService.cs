@@ -44,6 +44,25 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        public async Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ReportImageLoadRequest request)
+        {
+            try
+            {
+                var loads = await xrayVisionImageRepository.GetByDateTimeBetweenStartEnd(request.Start, request.End);
+
+                if (loads.Count == 0)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageEntity>>(BaseRole.Valid);
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, loads);
+            }
+            catch (Exception ex)
+            {
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageEntity>>(BaseRole.Fail, ex);
+            }
+        }
+
         public async Task<BaseResponse<BaseRole, ImageEntity>> Save(ImageSaveRequest request)
         {
             try

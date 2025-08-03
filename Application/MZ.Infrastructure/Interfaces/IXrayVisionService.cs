@@ -10,6 +10,7 @@ namespace MZ.Infrastructure.Interfaces
     {
         Task<BaseResponse<BaseRole, ImageEntity>> Save(ImageSaveRequest request);
         Task<BaseResponse<BaseRole, ICollection<ImageLoadResponse>>> Load(ImageLoadRequest request);
+        Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ReportImageLoadRequest request);
     }
 
     public interface IXrayVisionFilterService 
