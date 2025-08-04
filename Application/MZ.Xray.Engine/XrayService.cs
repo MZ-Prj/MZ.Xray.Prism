@@ -640,6 +640,12 @@ namespace MZ.Xray.Engine
     {
         private UIProcesser _ui = new();
         public UIProcesser UI { get => _ui; set => SetProperty(ref _ui, value); }
+    }
+
+    public partial class XrayService : BindableBase, IXrayService
+    {
+        public PDFProcesser PDF { get; set; } = new();
+
 
     }
 }

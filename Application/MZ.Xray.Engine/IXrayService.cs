@@ -5,6 +5,7 @@ namespace MZ.Xray.Engine
 {
     public interface IXrayService
     {
+        PDFProcesser PDF { get; set; }
         UIProcesser UI { get; set; }
         MediaProcesser Media { get; set; }
         CalibrationProcesser Calibration { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using MZ.Dashboard.ViewModels;
+using System.Windows.Controls;
 
 namespace MZ.Dashboard.Views
 {
@@ -10,6 +11,7 @@ namespace MZ.Dashboard.Views
         public ReportControlView()
         {
             InitializeComponent();
+
         }
     }
 }

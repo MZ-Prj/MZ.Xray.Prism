@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"         
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:liveCharts="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:liveCharts="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              d:DataContext="{d:DesignInstance Type=viewmodels:ReportControlViewModel}"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
 
@@ -48,32 +48,21 @@
                                        Grid.Row="0"
                                        DataContext="{Binding Path=ObjectDetectionChart}"
                                        Series="{Binding Path=SeriesCollection}" 
-                                       LegendLocation="Bottom"
+                                       XAxes="{Binding Path=XAxes}"
+                                       YAxes="{Binding Path=YAxes}" 
                                        VerticalAlignment="Stretch" 
                                        HorizontalAlignment="Stretch">
-                <liveCharts:CartesianChart.AxisX>
-                    <liveCharts:Axis Title="Count" LabelFormatter="{Binding Path=Formatter}">
-                        <liveCharts:Axis.Separator>
-                            <liveCharts:Separator Step="{Binding Path=Separator}" />
-                        </liveCharts:Axis.Separator>
-                    </liveCharts:Axis>
-                </liveCharts:CartesianChart.AxisX>
-                <liveCharts:CartesianChart.AxisY>
-                    <liveCharts:Axis Title="Object Name" 
-                                     Labels="{Binding Path=Labels}" 
-                                     ShowLabels="False"/>
-                </liveCharts:CartesianChart.AxisY>
             </liveCharts:CartesianChart>
 
             <DataGrid Grid.Row="1" 
-                          ItemsSource="{Binding Path=ObjectDetectionData}" 
-                          AutoGenerateColumns="False"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Hidden"
-                          CanUserAddRows="False" 
-                          CanUserDeleteRows="False"
-                          HorizontalContentAlignment="Center"
-                          Margin="4">
+                      ItemsSource="{Binding Path=ObjectDetectionData}" 
+                      AutoGenerateColumns="False"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      CanUserAddRows="False" 
+                      CanUserDeleteRows="False"
+                      HorizontalContentAlignment="Center"
+                      Margin="4">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="1*" />
                     <DataGridTextColumn Header="Count" Binding="{Binding Path=Count}" Width="1*"/>
@@ -97,30 +86,23 @@
             <liveCharts:CartesianChart x:Name="ImageFileLiveChart"
                                        DataContext="{Binding Path=ImageFileChart}"
                                        Grid.Row="0"
-                                       Series="{Binding Path=SeriesCollection}" 
-                                       LegendLocation="Bottom"
-                                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <liveCharts:CartesianChart.AxisX>
-                    <liveCharts:Axis Title="Object Name" Labels="{Binding Path=Labels}">
-                        <liveCharts:Axis.Separator>
-                            <liveCharts:Separator Step="{Binding Path=Separator}" />
-                        </liveCharts:Axis.Separator>
-                    </liveCharts:Axis>
-                </liveCharts:CartesianChart.AxisX>
-                <liveCharts:CartesianChart.AxisY>
-                    <liveCharts:Axis Title="Count" LabelFormatter="{Binding Path=Formatter}" />
-                </liveCharts:CartesianChart.AxisY>
+                                       Series="{Binding Path=SeriesCollection}"
+                                       XAxes="{Binding Path=XAxes}"
+                                       YAxes="{Binding Path=YAxes}" 
+                                       VerticalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch">
+
             </liveCharts:CartesianChart>
 
             <DataGrid Grid.Row="1" 
-                          ItemsSource="{Binding Path=ImageFileData}"
-                          AutoGenerateColumns="False"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Hidden"
-                          CanUserAddRows="False" 
-                          CanUserDeleteRows="False"
-                          HorizontalContentAlignment="Center"
-                          Margin="4">
+                      ItemsSource="{Binding Path=ImageFileData}"
+                      AutoGenerateColumns="False"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      CanUserAddRows="False" 
+                      CanUserDeleteRows="False"
+                      HorizontalContentAlignment="Center"
+                      Margin="4">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Date" Binding="{Binding Path=Date, StringFormat='yyyy-MM-dd'}" Width="1*"/>
                     <DataGridTextColumn Header="Count" Binding="{Binding Path=Count}" Width="1*"/>

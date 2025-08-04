@@ -1,6 +1,7 @@
 ﻿using MZ.DTO;
 using MZ.Core;
 using MZ.Util;
+using MZ.Xray.Engine;
 using MZ.Domain.Models;
 using MZ.Infrastructure;
 using MZ.Domain.Entities;
@@ -10,19 +11,34 @@ using System.Collections.Generic;
 using Prism.Ioc;
 using Prism.Commands;
 using Microsoft.Win32;
-using LiveCharts.Wpf;
 using LiveCharts;
+using LiveCharts.Wpf;
 using System.Windows.Media;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using SkiaSharp;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.Kernel.Events;
+using LiveChartsCore;
+using Axis = LiveChartsCore.SkiaSharpView.Axis;
 
 namespace MZ.Dashboard.ViewModels
 {
     public class ReportControlViewModel : MZBindableBase
     {
+        #region Service
         private readonly IDatabaseService _databaseService;
+        private readonly IXrayService _xrayService;
 
+        public PDFProcesser PDF 
+        {
+            get => _xrayService.PDF;
+            set => _xrayService.PDF = value;
+        }
+
+        #endregion
         #region Params
         private DateTime? _startSelectedDate = DateTime.Today;
         public DateTime? StartSelectedDate { get => _startSelectedDate; set => SetProperty(ref _startSelectedDate, value); }
@@ -69,19 +85,27 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
-        public ReportControlViewModel(IContainerExtension container, IDatabaseService databaseService) : base(container)
+        public ReportControlViewModel(IContainerExtension container, IXrayService xrayService, IDatabaseService databaseService) : base(container)
         {
             _databaseService = databaseService;
+            _xrayService = xrayService;
+
 
             base.Initialize();
         }
+
+        public override async void InitializeModel()
+        {
+            await UpdateReport();
+        }
+
 
         private async void SearchButton()
         {
             await UpdateReport();
         }
 
-        private void SaveButton(object charts)
+        private async void SaveButton(object charts)
         {
             SaveFileDialog saveFileDialog = new()
             {
@@ -93,56 +117,109 @@ namespace MZ.Dashboard.ViewModels
             bool? result = saveFileDialog.ShowDialog();
             if (result == true)
             {
-                //todo pdf save
+                PDF.StartSelectedDate = StartSelectedDate.Value;
+                PDF.EndSelectedDate = EndSelectedDate.Value;
+                PDF.Username = _databaseService.User.CurrentUser().Data;
+
+                if (StartSelectedDate.HasValue && EndSelectedDate.HasValue)
+                {
+                    var response = await _databaseService.Image.Load(new ReportImageLoadRequest(StartSelectedDate.Value, EndSelectedDate.Value));
+
+                    if (response.Success)
+                    {
+                        ICollection<ImageEntity> images = response.Data;
+                        PDF.Make(charts, saveFileDialog.FileName, "ObjectDetectionLiveChart", "ImageFileLiveChart", images);
+                    }
+                }
             }
         }
 
         private void GridObjectDetectionChart(ICollection<ImageEntity> images)
         {
-            // grid predict result (live chart)
-
-            if (images.Count == 0)
+            if (images == null || images.Count == 0)
             {
+                ObjectDetectionChart = new ReportChartModel();
                 return;
             }
 
-            ObjectDetectionChart = new();
-
             var model = images
-               .SelectMany(image => image.ObjectDetections)
-               .ToList();
+                .SelectMany(image => image.ObjectDetections)
+                .ToList();
 
             var groupedData = model
                 .GroupBy(od => od.Name)
-                .Select(g => new { Name = g.Key, Count = g.Count(), g.First().Color })
+                .Select(g => new
+                {
+                    Name = g.Key,
+                    Count = g.Count(),
+                    Color = g.First().Color,
+                })
                 .OrderByDescending(x => x.Count)
                 .ToList();
-
-            var totalCount = groupedData.Sum(g => g.Count);
-
-            ObjectDetectionChart.Labels = [.. groupedData.Select(x => x.Name)];
-            ObjectDetectionChart.SeriesCollection = [];
-
-            foreach (var group in groupedData)
+            groupedData.Reverse();
+            //
+            List<SolidColorPaint> paints = [];
+            foreach (var g in groupedData)
             {
-                var brushConverter = new BrushConverter();
-                var brush = (SolidColorBrush)brushConverter.ConvertFrom(group.Color);
-
-                double percent = totalCount > 0 ? (group.Count / (double)totalCount) * 100 : 0;
-                ObjectDetectionChart.SeriesCollection.Add(new RowSeries
+                if (!string.IsNullOrEmpty(g.Color))
                 {
-                    Values = new ChartValues<int> { group.Count },
-                    Fill = brush,
-                    DataLabels = true,
-                    LabelPoint = point => $"{point.X:N0}",
-                    LabelsPosition = BarLabelPosition.Top
-                });
+                    paints.Add(new SolidColorPaint(SKColor.Parse(g.Color)));
+                }
+                else
+                {
+                    paints.Add(new SolidColorPaint(SKColors.SkyBlue));
+                }
             }
 
-            ObjectDetectionChart.Separator = (groupedData == null || groupedData.Count == 0) ? 1 : Math.Max(1, (int)(groupedData[0].Count / 10));
-            ObjectDetectionChart.Formatter = value => value.ToString("N0");
-        }
+            // 
+            var values = groupedData.Select(g => g.Count).ToArray();
+            var labels = groupedData.Select(g => g.Name).ToArray();
 
+            var series = new RowSeries<int>
+            {
+                Values = values,
+                DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle,
+                DataLabelsFormatter = (point) =>
+                {
+                    var idx = point.Index;
+                    if (idx >= 0 && idx < labels.Length)
+                    {
+                        return labels[idx];
+                    }
+                    return string.Empty;
+                }
+            }
+            .OnPointMeasured(point =>
+            {
+                if (point.Visual is null)
+                {
+                    return;
+                }
+                point.Visual.Fill = paints[point.Index % paints.Count];
+            });
+
+            ObjectDetectionChart.SeriesCollection = [series];
+            ObjectDetectionChart.XAxes =
+            [
+                new Axis
+                {
+                    Name = "Count",
+                    Labeler = value => value.ToString("N0"),
+                    NameTextSize = 12
+                }
+            ];
+            ObjectDetectionChart.YAxes =
+            [
+                new Axis
+                {
+                    Name = "Object Name",
+                    Labels = labels,
+                    IsVisible = false
+                }
+            ];
+        }
+        
         private void GridObjectDetectionData(ICollection<ImageEntity> images)
         {
             // grid predict result (tabel)
@@ -186,19 +263,44 @@ namespace MZ.Dashboard.ViewModels
                 .OrderBy(x => x.Date)
                 .ToList();
 
-            ImageFileChart.Labels = [.. model.Select(x => x.Date.ToString("yyyy-MM-dd"))];
-            var values = new ChartValues<int>(model.Select(x => x.Count));
+            var labels = model.Select(x => x.Date.ToString("yyyy-MM-dd")).ToArray();
+            var values = model.Select(x => x.Count).ToArray();
 
-            ImageFileChart.SeriesCollection =
-            [
-                new ColumnSeries
+            var series = new RowSeries<int>
+            {
+                Values = values,
+                DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle,
+                DataLabelsFormatter = (point) =>
                 {
-                    Title = "Image Count",
-                    Values = values
+                    var idx = point.Index;
+                    if (idx >= 0 && idx < labels.Length)
+                    {
+                        return labels[idx];
+                    }
+                    return string.Empty;
+                }
+            };
+
+            ImageFileChart.SeriesCollection = [series];
+            ImageFileChart.XAxes =
+            [
+                new Axis
+                {
+                    Name = "Count",
+                    Labeler = value => value.ToString("N0"),
+                    NameTextSize = 12
                 }
             ];
-            ImageFileChart.Separator = (int)(1);
-            ImageFileChart.Formatter = value => value.ToString("N0");
+            ImageFileChart.YAxes =
+            [
+                new Axis
+                {
+                    Name = "Date",
+                    Labels = labels,
+                    IsVisible = false
+                }
+            ];
         }
 
         private void GridImageFileData(ICollection<ImageEntity> images)
@@ -221,11 +323,6 @@ namespace MZ.Dashboard.ViewModels
             ImageFileData = [.. groupedData];
         }
 
-        public override async void InitializeModel()
-        {
-            await UpdateReport();
-        }
-
         public async Task UpdateReport()
         {
 
@@ -243,7 +340,6 @@ namespace MZ.Dashboard.ViewModels
                     GridObjectDetectionChart(images);
                     GridObjectDetectionData(images);
                 }
-
             }
         }
     }

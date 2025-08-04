@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using DryIoc;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MZ.AI.Engine;
@@ -134,12 +135,15 @@ namespace MZ.App
             containerRegistry.RegisterSingleton<IWindowDialogService, WindowDialogService>();
             containerRegistry.RegisterSingleton<IXrayService, XrayService>();
             containerRegistry.RegisterSingleton<IAIService, AIService>();
+
         }
 
         private void RegisterUIServices(IContainerRegistry containerRegistry)
         {
             //mahapp : custom dialog
             containerRegistry.RegisterDialogWindow<MZDialogMetroWindowChrome>();
+
+            containerRegistry.RegisterInstance<IDialogCoordinator>(DialogCoordinator.Instance);
         }
 
 

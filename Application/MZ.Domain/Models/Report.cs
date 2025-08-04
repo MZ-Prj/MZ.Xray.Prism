@@ -1,6 +1,8 @@
-﻿using LiveCharts;
+﻿using LiveChartsCore;
 using System;
 using Prism.Mvvm;
+using System.Collections.ObjectModel;
+using LiveChartsCore.SkiaSharpView;
 
 namespace MZ.Domain.Models
 {
@@ -31,27 +33,21 @@ namespace MZ.Domain.Models
 
     public class ReportChartModel : BindableBase
     {
-        private SeriesCollection _seriesCollection;
-        public SeriesCollection SeriesCollection { get => _seriesCollection; set => SetProperty(ref _seriesCollection, value); }
+        private ObservableCollection<ISeries> _seriesCollection;
+        public ObservableCollection<ISeries> SeriesCollection { get => _seriesCollection; set => SetProperty(ref _seriesCollection, value); }
 
-        private string[] _labels;
-        public string[] Labels { get => _labels; set => SetProperty(ref _labels, value); }
-
-        private Func<double, string> _formatter;
-        public Func<double, string> Formatter { get => _formatter; set => SetProperty(ref _formatter, value); }
-
-        private int _separator = 1;
-        public int Separator
+        private Axis[] _xAxes;
+        public Axis[] XAxes
         {
-            get => _separator;
-            set
-            {
-                if (_separator < 1)
-                {
-                    _separator = 1;
-                }
-                SetProperty(ref _separator, value);
-            }
+            get => _xAxes;
+            set => SetProperty(ref _xAxes, value);
+        }
+
+        private Axis[] _yAxes;
+        public Axis[] YAxes
+        {
+            get => _yAxes;
+            set => SetProperty(ref _yAxes, value);
         }
 
     }
