@@ -57,9 +57,9 @@
                   HorizontalAlignment="Stretch">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Content" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="{DynamicResource LngZeffectControlRegion_Content}" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
 
-                <DataGridTemplateColumn Header="Color" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngZeffectControlRegion_Color}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -70,7 +70,7 @@
                 <DataGridTextColumn Header="Min" Width="1*" Binding="{Binding Path=Min, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
                 <DataGridTextColumn Header="Max" Width="1*" Binding="{Binding Path=Max, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
 
-                <DataGridTemplateColumn Header="Add" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngZeffectControlRegion_Add}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Command="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
@@ -97,8 +97,8 @@
                   Width="Auto"
                   HorizontalAlignment="Stretch">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Content" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
-                <DataGridTemplateColumn Header="Color" Width="1*">
+                <DataGridTextColumn Header="{DynamicResource LngZeffectControlRegion_Content}" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>
+                <DataGridTemplateColumn Header="{DynamicResource LngZeffectControlRegion_Color}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding Path=Color}" Background="{Binding Path=ColorBrush}" />
@@ -109,7 +109,7 @@
                 <DataGridTextColumn Header="Min" Width="1*" Binding="{Binding Path=Min, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
                 <DataGridTextColumn Header="Max" Width="1*" Binding="{Binding Path=Max, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
 
-                <DataGridTemplateColumn Header="Delete" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngZeffectControlRegion_Delete}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"

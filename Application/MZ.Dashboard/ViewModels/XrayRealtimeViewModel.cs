@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -181,7 +182,7 @@ namespace MZ.Dashboard.ViewModels
         private async void SettingButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.DashboardFooterButtonControlRegion,
+                title: LanguageService.GetString($"Lng{MZRegionNames.DashboardFooterButtonControlRegion}"),
                 regionName: nameof(DashboardFooterButtonControlView),
                 parameters : new Prism.Regions.NavigationParameters{
                     { "ActionButtons", ActionButtons }
@@ -314,12 +315,12 @@ namespace MZ.Dashboard.ViewModels
         }
 
         /// <summary>
-        /// Z-effect 화면
+        /// Zeffect 화면
         /// </summary>
         private async void ZeffectButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.ZeffectControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.ZeffectControl}"),
                 regionName: nameof(ZeffectControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -334,7 +335,7 @@ namespace MZ.Dashboard.ViewModels
         {
             SaveFileDialog saveFileDialog = new()
             {
-                Title = "Save Capture Image",
+                Title = LanguageService.GetString($"Lng{MZResourceNames.SavePDF}"),
                 Filter = "PNG  (*.png)|*.png",
                 DefaultExt = ".png"
             };
@@ -428,7 +429,6 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
         }
-
 
 
         #region Behavior

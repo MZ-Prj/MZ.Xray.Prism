@@ -253,7 +253,6 @@
                             <RepeatButton Command="{Binding Path=Command}" 
                                           CommandParameter="{Binding Path=UId}"
                                           Background="{Binding Path=ColorBrush}"
-                                          ToolTip="{Binding Path=ToolTip}"
                                           IsEnabled="{Binding Path=IsVisibility}"
                                           BorderThickness="0" Width="48" Height="48" Cursor="Hand"
                                           Margin="4">
@@ -275,7 +274,6 @@
                             <RepeatButton Command="{Binding Path=Command}" 
                                           CommandParameter="{Binding Path=UId}"
                                           Background="{Binding Path=ColorBrush}"
-                                          ToolTip="{Binding Path=ToolTip}"
                                           Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           BorderThickness="0" Width="48" Height="48" Cursor="Hand"
                                           Margin="4">
@@ -297,7 +295,6 @@
                             <RepeatButton Command="{Binding Path=Command}" 
                                           CommandParameter="{Binding Path=UId}"
                                           Background="{Binding Path=ColorBrush}"
-                                          ToolTip="{Binding Path=ToolTip}"
                                           BorderThickness="0" Width="48" Height="48" Cursor="Hand"
                                           Margin="4">
                                 <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 

@@ -1,6 +1,5 @@
 ﻿using MZ.Domain.Models;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 
 namespace MZ.Loading

@@ -447,7 +447,7 @@ namespace MZ.Domain.Models
         private ObservableCollection<FrameModel> _frames = [];
         public ObservableCollection<FrameModel> Frames { get => _frames; set => SetProperty(ref _frames, value); }
         /// <summary>
-        /// 현재 선택된 Z-effect 제어
+        /// 현재 선택된 Zeffect 제어
         /// </summary>
         private ZeffectControlModel _control = new();
         public ZeffectControlModel Control 
@@ -465,7 +465,7 @@ namespace MZ.Domain.Models
             }
         }
         /// <summary>
-        /// Z-effect 제어 포인트 목록  
+        /// Zeffect 제어 포인트 목록  
         /// </summary>
         private ObservableCollection<ZeffectControlModel> _controls = [];
         public ObservableCollection<ZeffectControlModel> Controls { get => _controls; set => SetProperty(ref _controls, value); }
@@ -474,7 +474,7 @@ namespace MZ.Domain.Models
     }
 
     /// <summary>
-    /// Z-effect 개별 제어 바인딩용 모델  
+    /// Zeffect 개별 제어 바인딩용 모델  
     /// </summary>
     public class ZeffectControlModel : BindableBase, IZeffectControl
     {

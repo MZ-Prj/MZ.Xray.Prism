@@ -8,6 +8,9 @@ using Prism.Ioc;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System;
+using MZ.Resource;
+using MZ.Infrastructure;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -84,9 +87,9 @@ namespace MZ.Dashboard.ViewModels
             Controls = Material.Controls ?? [];
             SetControls.Add(new(Material.UpdateAllMaterialGraph));
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand, tooltip: "tooltip"));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand, tooltip: "tooltip"));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, tooltip: "tooltip"));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand));
 
             _undoRedoManager.SaveState(Controls);
 

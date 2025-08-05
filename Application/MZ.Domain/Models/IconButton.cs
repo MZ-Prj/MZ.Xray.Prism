@@ -43,12 +43,6 @@ namespace MZ.Domain.Models
         public string Name { get => _name; set => SetProperty(ref _name, value); }
 
         /// <summary>
-        /// 툴팁
-        /// </summary>
-        private string _toolTip;
-        public string ToolTip { get => _toolTip; set => SetProperty(ref _toolTip, value); }
-
-        /// <summary>
         /// 버튼 클릭시 실행될 ICommand
         /// </summary>
         private ICommand _command;
@@ -60,6 +54,11 @@ namespace MZ.Domain.Models
         private Brush _colorBrush;
         public Brush ColorBrush { get => _colorBrush; set => SetProperty(ref _colorBrush, value); }
 
+        /// <summary>
+        /// 언어 변경시 적용할 ICommand
+        /// </summary>
+        private ICommand _languageCommand;
+        public ICommand LanguageCommand { get => _languageCommand; set => SetProperty(ref _languageCommand, value); }
 
         /// <summary>
         /// 아이콘버튼 객체 생성자  
@@ -72,9 +71,8 @@ namespace MZ.Domain.Models
         /// <param name="isVisibility">표시 여부</param>
         /// <param name="uid">추가 식별값</param>
         /// <param name="name">버튼명/Key</param>
-        /// <param name="tooltip">툴팁</param>
         /// <param name="id">Id</param>
-        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null, string name = null, string tooltip = "tooltip", int id = 0)
+        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null, string name = null, int id = 0)
         {
             Id = id;
             IsVisibility = isVisibility;
@@ -82,7 +80,6 @@ namespace MZ.Domain.Models
             IconKind = iconKind;
             ColorBrush = colorBrush;
             UId = uid ?? iconKind;
-            ToolTip = tooltip;
             Name = name;
         }
     }

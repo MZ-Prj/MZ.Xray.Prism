@@ -35,7 +35,7 @@ namespace MZ.Resource
         {
             Thread.CurrentThread.CurrentUICulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
-            
+
             CurrentLanguage = MZEnum.Get<LanguageRole>(culture.Name) ?? LanguageRole.KoKR;
 
             var resourceSet = resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
@@ -50,6 +50,7 @@ namespace MZ.Resource
 
         public static string GetString(string key)
         {
+            Load(MZEnum.GetName(CurrentLanguage));
             return resourceManager.GetString(key);
         }
 
@@ -60,7 +61,7 @@ namespace MZ.Resource
 
         public static LanguageRole? GetCurrentLanguageRole()
         {
-            string code = CultureInfo.CurrentUICulture.Name;
+            string code = GetCurrentLanguage();
             return MZEnum.Get<LanguageRole>(code);
         }
 

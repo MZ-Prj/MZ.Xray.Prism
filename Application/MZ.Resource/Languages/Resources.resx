@@ -120,72 +120,6 @@
   <data name="Code" xml:space="preserve">
     <value>Code</value>
   </data>
-  <data name="LngBright" xml:space="preserve">
-    <value>Bright</value>
-  </data>
-  <data name="LngCalibrationControlRegion" xml:space="preserve">
-    <value>Calibration</value>
-  </data>
-  <data name="LngColorMapControlRegion" xml:space="preserve">
-    <value>Color Map</value>
-  </data>
-  <data name="LngContrast" xml:space="preserve">
-    <value>Contrast</value>
-  </data>
-  <data name="LngLoading" xml:space="preserve">
-    <value>Loading, Please Wait...</value>
-  </data>
-  <data name="LngSharp" xml:space="preserve">
-    <value>Sharp</value>
-  </data>
-  <data name="LngZoom" xml:space="preserve">
-    <value>Zoom</value>
-  </data>
-  <data name="LngVirtualDataControlRegion" xml:space="preserve">
-    <value>Virtual Data</value>
-  </data>
-  <data name="LngVideoControlRegion" xml:space="preserve">
-    <value>Video</value>
-  </data>
-  <data name="LngAIControlRegion" xml:space="preserve">
-    <value>AI</value>
-  </data>
-  <data name="LngImageStorageRegion" xml:space="preserve">
-    <value>Image Storage</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion" xml:space="preserve">
-    <value>AI Analysis</value>
-  </data>
-  <data name="LngLanguageRegion" xml:space="preserve">
-    <value>Language</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion_ObjectDetections" xml:space="preserve">
-    <value>Object Detections</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion_ImageFiles" xml:space="preserve">
-    <value>Image Files</value>
-  </data>
-  <data name="LngAIControlRegion_ModelSetting" xml:space="preserve">
-    <value>Model Setting</value>
-  </data>
-  <data name="LngAIControlRegion_Categories" xml:space="preserve">
-    <value>Categories</value>
-  </data>
-  <data name="LngAIControlRegion_Predicts" xml:space="preserve">
-    <value>Predicts</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImage" xml:space="preserve">
-    <value>Color Image</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImageParameter" xml:space="preserve">
-    <value>Color Image Parameters</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImageSetting" xml:space="preserve">
-    <value>Color Image Settings</value>
-  </data>
-  <data name="LngLogStorageRegion" xml:space="preserve">
-    <value>Log Storage</value>
-  </data>
   <data name="LngUserLoginRegion_Username" xml:space="preserve">
     <value>Username</value>
   </data>
@@ -200,72 +134,6 @@
   </data>
   <data name="LngUserLoginRegion_Register" xml:space="preserve">
     <value>Register</value>
-  </data>
-  <data name="LngZeffectControlRegion" xml:space="preserve">
-    <value>Z-Effect</value>
-  </data>
-  <data name="LngZeffectControlRegion_ZeffectParamter" xml:space="preserve">
-    <value>Z-Effect Paramters</value>
-  </data>
-  <data name="LngZeffectControlRegion_ZeffectSetting" xml:space="preserve">
-    <value>Z-Effect Settings</value>
-  </data>
-  <data name="LngFilterControlRegion_PixelInformation" xml:space="preserve">
-    <value>Pixel Information</value>
-  </data>
-  <data name="LngFilterControlRegion" xml:space="preserve">
-    <value>Filter</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorMapFilter" xml:space="preserve">
-    <value>Filter Algorithm</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterThreshold" xml:space="preserve">
-    <value>Filter Threshold</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterBrightnessContrast" xml:space="preserve">
-    <value>Filter Brightness/Contrast</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterCurve" xml:space="preserve">
-    <value>Filter Curve</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterSelectColor" xml:space="preserve">
-    <value>Filter Color</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterExposure" xml:space="preserve">
-    <value>Filter Exposure</value>
-  </data>
-  <data name="LngHistoryControlRegion_HistoryList" xml:space="preserve">
-    <value>History List</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderHistory" xml:space="preserve">
-    <value>History</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderFilter" xml:space="preserve">
-    <value>Filter</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderColorMap" xml:space="preserve">
-    <value>ColorMap</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderZEffect" xml:space="preserve">
-    <value>Z-Effect</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderAI" xml:space="preserve">
-    <value>AI</value>
-  </data>
-  <data name="LngAIControlRegion_Confidence" xml:space="preserve">
-    <value>Confidence</value>
-  </data>
-  <data name="LngAIControlRegion_SelectAIModel" xml:space="preserve">
-    <value>Select Model</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderLLM" xml:space="preserve">
-    <value>LLM</value>
-  </data>
-  <data name="LngLMMControlRegion_OpenModel" xml:space="preserve">
-    <value>Open Model(LLM)</value>
-  </data>
-  <data name="LngLMMControlRegion_Chat" xml:space="preserve">
-    <value>Chat</value>
   </data>
   <data name="LngUserRegisterRegion_Username" xml:space="preserve">
     <value>Username</value>
@@ -287,5 +155,101 @@
   </data>
   <data name="LngUserRegisterRegion_IsAdmin" xml:space="preserve">
     <value>Is Admin</value>
+  </data>
+  <data name="LngAIControlRegion_Index" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="LngAIControlRegion_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LngAIControlRegion_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="LngAIControlRegion" xml:space="preserve">
+    <value>AI</value>
+  </data>
+  <data name="LngSavePDF" xml:space="preserve">
+    <value>Save PDF</value>
+  </data>
+  <data name="LngSaveScreen" xml:space="preserve">
+    <value>Save Screen</value>
+  </data>
+  <data name="LngDashboardFooterButtonControlRegion" xml:space="preserve">
+    <value>Action Buttons</value>
+  </data>
+  <data name="LngMaterialControlRegion_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="LngMaterialControlRegion_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="LngMaterialControlRegion_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="LngZeffectControlRegion_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="LngZeffectControlRegion" xml:space="preserve">
+    <value>Zeffect</value>
+  </data>
+  <data name="LngZeffectControlRegion_Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="LngZeffectControlRegion_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="LngZeffectControlRegion_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="LngReportControlRegion_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LngReportControlRegion_Percent" xml:space="preserve">
+    <value>Percent</value>
+  </data>
+  <data name="LngReportControlRegion_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="LngReportControlRegion_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="LngReportControlRegion" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="LngReportControlRegion_Count" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="LngLogStorageControlRegion_LineNumber" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="LngLogStorageControlRegion_LogLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="LngAIControlRegion_IsUsing" xml:space="preserve">
+    <value>Is Using</value>
+  </data>
+  <data name="LngAIControlRegion_Confidence" xml:space="preserve">
+    <value>Confidence</value>
+  </data>
+  <data name="LngMaterialControlRegion" xml:space="preserve">
+    <value>Material</value>
+  </data>
+  <data name="LngLogStorageControlRegion" xml:space="preserve">
+    <value>Log Storage</value>
+  </data>
+  <data name="LngImageStorageControlRegion" xml:space="preserve">
+    <value>Image Storage</value>
+  </data>
+  <data name="LngLanguageRegion" xml:space="preserve">
+    <value>Language</value>
   </data>
 </root>

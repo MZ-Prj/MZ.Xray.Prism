@@ -120,72 +120,6 @@
   <data name="Code" xml:space="preserve">
     <value>ko-KR</value>
   </data>
-  <data name="LngBright" xml:space="preserve">
-    <value>밝기</value>
-  </data>
-  <data name="LngCalibrationControlRegion" xml:space="preserve">
-    <value>측정</value>
-  </data>
-  <data name="LngColorMapControlRegion" xml:space="preserve">
-    <value>색상 맵</value>
-  </data>
-  <data name="LngContrast" xml:space="preserve">
-    <value>대조</value>
-  </data>
-  <data name="LngLoading" xml:space="preserve">
-    <value>잠시만 기다려 주세요...</value>
-  </data>
-  <data name="LngSharp" xml:space="preserve">
-    <value>선명도</value>
-  </data>
-  <data name="LngZoom" xml:space="preserve">
-    <value>확대/축소</value>
-  </data>
-  <data name="LngVirtualDataControlRegion" xml:space="preserve">
-    <value>가상 데이터</value>
-  </data>
-  <data name="LngVideoControlRegion" xml:space="preserve">
-    <value>영상</value>
-  </data>
-  <data name="LngAIControlRegion" xml:space="preserve">
-    <value>인공지능</value>
-  </data>
-  <data name="LngImageStorageRegion" xml:space="preserve">
-    <value>이미지 저장소</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion" xml:space="preserve">
-    <value>인공지능 분석</value>
-  </data>
-  <data name="LngLanguageRegion" xml:space="preserve">
-    <value>언어</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion_ObjectDetections" xml:space="preserve">
-    <value>객채 탐지</value>
-  </data>
-  <data name="LngAIAnalysisControlRegion_ImageFiles" xml:space="preserve">
-    <value>이미지 목록</value>
-  </data>
-  <data name="LngAIControlRegion_ModelSetting" xml:space="preserve">
-    <value>인공지능 모델 설정</value>
-  </data>
-  <data name="LngAIControlRegion_Categories" xml:space="preserve">
-    <value>카테고리</value>
-  </data>
-  <data name="LngAIControlRegion_Predicts" xml:space="preserve">
-    <value>예측 결과</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImage" xml:space="preserve">
-    <value>색상 정보 이미지</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImageParameter" xml:space="preserve">
-    <value>색상 정보 변수</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorImageSetting" xml:space="preserve">
-    <value>색상 정보 설정</value>
-  </data>
-  <data name="LngLogStorageRegion" xml:space="preserve">
-    <value>로그 저장소</value>
-  </data>
   <data name="LngUserLoginRegion_Username" xml:space="preserve">
     <value>사용자 계정</value>
   </data>
@@ -200,72 +134,6 @@
   </data>
   <data name="LngUserLoginRegion_Register" xml:space="preserve">
     <value>사용자 등록</value>
-  </data>
-  <data name="LngZeffectControlRegion" xml:space="preserve">
-    <value>물성 분석</value>
-  </data>
-  <data name="LngZeffectControlRegion_ZeffectParamter" xml:space="preserve">
-    <value>물성 분석 변수</value>
-  </data>
-  <data name="LngZeffectControlRegion_ZeffectSetting" xml:space="preserve">
-    <value>물성 분성 설정</value>
-  </data>
-  <data name="LngFilterControlRegion_PixelInformation" xml:space="preserve">
-    <value>픽셀 정보</value>
-  </data>
-  <data name="LngFilterControlRegion" xml:space="preserve">
-    <value>필터</value>
-  </data>
-  <data name="LngColorMapControlRegion_ColorMapFilter" xml:space="preserve">
-    <value>필터 알고리즘</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterThreshold" xml:space="preserve">
-    <value>임계</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterBrightnessContrast" xml:space="preserve">
-    <value>밝기/대조</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterCurve" xml:space="preserve">
-    <value>곡선</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterSelectColor" xml:space="preserve">
-    <value>색상</value>
-  </data>
-  <data name="LngFilterControlRegion_FilterExposure" xml:space="preserve">
-    <value>노출</value>
-  </data>
-  <data name="LngHistoryControlRegion_HistoryList" xml:space="preserve">
-    <value>기록 목록</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderHistory" xml:space="preserve">
-    <value>기록</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderFilter" xml:space="preserve">
-    <value>필터</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderColorMap" xml:space="preserve">
-    <value>색상 지표</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderZEffect" xml:space="preserve">
-    <value>물성 분석</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderAI" xml:space="preserve">
-    <value>인공지능</value>
-  </data>
-  <data name="LngAIControlRegion_Confidence" xml:space="preserve">
-    <value>식별율</value>
-  </data>
-  <data name="LngAIControlRegion_SelectAIModel" xml:space="preserve">
-    <value>인공지능 모델 선택</value>
-  </data>
-  <data name="LngPropertyRegion_HeaderLLM" xml:space="preserve">
-    <value>언어 모델</value>
-  </data>
-  <data name="LngLMMControlRegion_OpenModel" xml:space="preserve">
-    <value>인공지능 모델(LLM) 불러오기</value>
-  </data>
-  <data name="LngLMMControlRegion_Chat" xml:space="preserve">
-    <value>대화</value>
   </data>
   <data name="LngUserRegisterRegion_Username" xml:space="preserve">
     <value>사용자 계정</value>
@@ -287,5 +155,101 @@
   </data>
   <data name="LngUserRegisterRegion_IsAdmin" xml:space="preserve">
     <value>관리자 설정</value>
+  </data>
+  <data name="LngAIControlRegion_Index" xml:space="preserve">
+    <value>색인</value>
+  </data>
+  <data name="LngAIControlRegion_Name" xml:space="preserve">
+    <value>명칭</value>
+  </data>
+  <data name="LngAIControlRegion_Color" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="LngAIControlRegion" xml:space="preserve">
+    <value>인공지능</value>
+  </data>
+  <data name="LngSavePDF" xml:space="preserve">
+    <value>보고서 저장</value>
+  </data>
+  <data name="LngSaveScreen" xml:space="preserve">
+    <value>화면 저장</value>
+  </data>
+  <data name="LngDashboardFooterButtonControlRegion" xml:space="preserve">
+    <value>활성 버튼</value>
+  </data>
+  <data name="LngMaterialControlRegion_Color" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="LngMaterialControlRegion_Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="LngMaterialControlRegion_Add" xml:space="preserve">
+    <value>추가</value>
+  </data>
+  <data name="LngZeffectControlRegion_Add" xml:space="preserve">
+    <value>추가</value>
+  </data>
+  <data name="LngZeffectControlRegion" xml:space="preserve">
+    <value>유효 핵전하</value>
+  </data>
+  <data name="LngZeffectControlRegion_Content" xml:space="preserve">
+    <value>명칭</value>
+  </data>
+  <data name="LngZeffectControlRegion_Color" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="LngZeffectControlRegion_Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="LngReportControlRegion_Name" xml:space="preserve">
+    <value>명칭</value>
+  </data>
+  <data name="LngReportControlRegion_Percent" xml:space="preserve">
+    <value>비율</value>
+  </data>
+  <data name="LngReportControlRegion_Date" xml:space="preserve">
+    <value>일자</value>
+  </data>
+  <data name="LngReportControlRegion_Color" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="LngReportControlRegion" xml:space="preserve">
+    <value>보고서</value>
+  </data>
+  <data name="LngReportControlRegion_Count" xml:space="preserve">
+    <value>개수</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Date" xml:space="preserve">
+    <value>일자</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Message" xml:space="preserve">
+    <value>메시지</value>
+  </data>
+  <data name="LngLogStorageControlRegion_LineNumber" xml:space="preserve">
+    <value>줄</value>
+  </data>
+  <data name="LngLogStorageControlRegion_LogLevel" xml:space="preserve">
+    <value>수준</value>
+  </data>
+  <data name="LngLogStorageControlRegion_Time" xml:space="preserve">
+    <value>시간</value>
+  </data>
+  <data name="LngAIControlRegion_IsUsing" xml:space="preserve">
+    <value>사용여부</value>
+  </data>
+  <data name="LngAIControlRegion_Confidence" xml:space="preserve">
+    <value>식별율</value>
+  </data>
+  <data name="LngMaterialControlRegion" xml:space="preserve">
+    <value>물성분석</value>
+  </data>
+  <data name="LngLogStorageControlRegion" xml:space="preserve">
+    <value>로그 저장소</value>
+  </data>
+  <data name="LngImageStorageControlRegion" xml:space="preserve">
+    <value>이미지 저장소</value>
+  </data>
+  <data name="LngLanguageRegion" xml:space="preserve">
+    <value>언어</value>
   </data>
 </root>

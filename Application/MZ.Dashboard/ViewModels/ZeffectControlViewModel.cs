@@ -86,8 +86,8 @@ namespace MZ.Dashboard.ViewModels
             Controls = Zeffect.Controls ?? [];
             SetControls.Add(new());
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand, tooltip: "tooltip"));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand, tooltip: "tooltip"));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand));
 
             _undoRedoManager.SaveState(Controls);
 

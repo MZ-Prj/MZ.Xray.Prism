@@ -64,10 +64,10 @@
                       HorizontalContentAlignment="Center"
                       Margin="4">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="1*" />
-                    <DataGridTextColumn Header="Count" Binding="{Binding Path=Count}" Width="1*"/>
-                    <DataGridTextColumn Header="Percent" Binding="{Binding Path=Percent, StringFormat={}{0:F2}%}" Width="1*"/>
-                    <DataGridTemplateColumn Header="Color" Width="1*" >
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Name}" Binding="{Binding Path=Name}" Width="1*" />
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Count}" Binding="{Binding Path=Count}" Width="1*"/>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Percent}" Binding="{Binding Path=Percent, StringFormat={}{0:F2}%}" Width="1*"/>
+                    <DataGridTemplateColumn Header="{DynamicResource LngReportControlRegion_Color}" Width="1*" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Label Background="{Binding Path=Color}"/>
@@ -90,8 +90,9 @@
                                        XAxes="{Binding Path=XAxes}"
                                        YAxes="{Binding Path=YAxes}" 
                                        VerticalAlignment="Stretch" 
-                                       HorizontalAlignment="Stretch">
-
+                                       HorizontalAlignment="Stretch"
+                                       ZoomMode="X"
+                                       TooltipPosition="Hidden" >
             </liveCharts:CartesianChart>
 
             <DataGrid Grid.Row="1" 
@@ -104,8 +105,8 @@
                       HorizontalContentAlignment="Center"
                       Margin="4">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Binding="{Binding Path=Date, StringFormat='yyyy-MM-dd'}" Width="1*"/>
-                    <DataGridTextColumn Header="Count" Binding="{Binding Path=Count}" Width="1*"/>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Date}" Binding="{Binding Path=Date, StringFormat='yyyy-MM-dd'}" Width="1*"/>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Count}" Binding="{Binding Path=Count}" Width="1*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

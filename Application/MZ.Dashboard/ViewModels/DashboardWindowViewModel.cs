@@ -131,7 +131,7 @@ namespace MZ.Dashboard.ViewModels
                 "DialogView",
                 new DialogParameters
                 {
-                    {"Title",  MZRegionNames.LanguageRegion},
+                    {"Title",  LanguageService.GetString($"Lng{MZRegionNames.LanguageRegion}") },
                     {"RegionName", MZRegionNames.LanguageRegion}
                 },
                 (IDialogResult result) => {
@@ -158,7 +158,7 @@ namespace MZ.Dashboard.ViewModels
         private async void ImageStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.ImageStorageControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.ImageStorageControl}"),
                 regionName: nameof(ImageStorageControlView),
                 isMultiple: false);
         }
@@ -169,7 +169,7 @@ namespace MZ.Dashboard.ViewModels
         private async void LogStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.LogStorageControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.LogStorageControl}"),
                 regionName: nameof(LogStorageControlView),
                 isMultiple:false);
         }
@@ -180,7 +180,7 @@ namespace MZ.Dashboard.ViewModels
         private async void MaterialButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.MaterialControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.MaterialControl}"),
                 regionName: nameof(MaterialControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -194,7 +194,7 @@ namespace MZ.Dashboard.ViewModels
         private async void AIButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.AIControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.AIControl}"),
                 regionName: nameof(AIControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -208,7 +208,7 @@ namespace MZ.Dashboard.ViewModels
         private async void ReportButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.ReportControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.ReportControl}"),
                 regionName: nameof(ReportControlView),
                 isMultiple: false);
         }

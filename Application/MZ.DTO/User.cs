@@ -109,7 +109,7 @@ namespace MZ.DTO
         public const string ContrastUpButton = "ContrastUpButton";
         /// <summary>필터 초기화 버튼</summary>
         public const string FilterClearButton = "FilterClearButton";
-        /// <summary>Z-effect 버튼</summary>
+        /// <summary>Zeffect 버튼</summary>
         public const string ZeffectButton = "ZeffectButton";
         /// <summary>AI On/Off 버튼</summary>
         public const string AIOnOffButton = "AIOnOffButton";

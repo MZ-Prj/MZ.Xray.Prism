@@ -2,6 +2,7 @@
 using MZ.Domain.Models;
 using MZ.Loading;
 using Prism.Ioc;
+using System;
 
 namespace MZ.WindowDialog.ViewModels
 {
@@ -22,7 +23,6 @@ namespace MZ.WindowDialog.ViewModels
         private LoadingModel _loadingModel;
         public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.WindowDialogRegion]; set => SetProperty(ref _loadingModel, value); }
         #endregion
-
 
         public WindowDialogViewModel(IContainerExtension container, ILoadingService loadingService) : base(container)
         {

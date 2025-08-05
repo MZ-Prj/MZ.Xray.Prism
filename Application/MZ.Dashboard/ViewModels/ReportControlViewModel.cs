@@ -19,6 +19,8 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel.Events;
 using Axis = LiveChartsCore.SkiaSharpView.Axis;
+using MZ.Resource;
+using LiveChartsCore;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -115,7 +117,7 @@ namespace MZ.Dashboard.ViewModels
         {
             SaveFileDialog saveFileDialog = new()
             {
-                Title = "Save PDF",
+                Title = LanguageService.GetString($"Lng{MZResourceNames.SavePDF}"),
                 Filter = "PDF  (*.pdf)|*.pdf",
                 DefaultExt = ".pdf"
             };
@@ -277,48 +279,43 @@ namespace MZ.Dashboard.ViewModels
 
             var model = images
                 .GroupBy(image => image.CreateDate.Date)
-                .Select(s => new { Date = s.Key, Count = s.Count() })
-                .OrderBy(x => x.Date)
-                .ToList();
+                .ToDictionary(g => g.Key, g => g.Count());
 
-            var labels = model.Select(x => x.Date.ToString("yyyy-MM-dd")).ToArray();
-            var values = model.Select(x => x.Count).ToArray();
+            var minDate = model.Keys.Min();
+            var maxDate = model.Keys.Max();
 
-            var series = new RowSeries<int>
+            var dateList = new List<DateTime>();
+            for (var d = minDate; d <= maxDate; d = d.AddDays(1))
             {
-                Values = values,
-                DataLabelsPaint = new SolidColorPaint(SKColors.White),
-                DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle,
-                DataLabelsFormatter = (point) =>
-                {
-                    var idx = point.Index;
-                    if (idx >= 0 && idx < labels.Length)
-                    {
-                        return labels[idx];
-                    }
-                    return string.Empty;
-                }
-            };
+                dateList.Add(d);
+            }
 
-            ImageFileChart.SeriesCollection = [series];
+            var labels = dateList.Select(x => x.ToString("yyyy-MM-dd")).ToArray();
+            var values = dateList.Select(x => model.TryGetValue(x, out int value) ? (double)value : 0.0).ToArray();
+
+            ImageFileChart.SeriesCollection =
+            [
+                new LineSeries<double>
+                {
+                    Values = values,
+                }
+            ];
+
             ImageFileChart.XAxes =
             [
                 new Axis
                 {
-                    Name = "Count",
-                    Labeler = value => value.ToString("N0"),
-                    NameTextSize = 12
+                    Labels = labels,
                 }
             ];
+
             ImageFileChart.YAxes =
             [
                 new Axis
                 {
-                    Name = "Date",
-                    Labels = labels,
-                    IsVisible = false
                 }
             ];
+
         }
 
         /// <summary>
@@ -344,6 +341,7 @@ namespace MZ.Dashboard.ViewModels
 
             ImageFileData = [.. groupedData];
         }
+
 
         /// <summary>
         /// 차트 및 데이터 갱신

@@ -1,5 +1,15 @@
 ﻿namespace MZ.Core
 {
+
+    /// <summary>
+    /// 다른 모듈에 있는 View Name을 불러오기 위함
+    /// </summary>
+    public static class MZViewNames
+    {
+        public readonly static string DashboardControlView = "DashboardControlView";
+        public readonly static string AnalysisControlView = "AnalysisControlView";
+    }
+
     public static class MZRegionNames
     {
         //Common
@@ -32,4 +42,11 @@
         public readonly static string IpNetworkRegion = "IpNetworkRegion";
 
     }
+
+    public static class MZResourceNames
+    {
+        public readonly static string SavePDF = "SavePDF";
+        public readonly static string SaveScreen = "SaveScreen";
+    }
+
 }
