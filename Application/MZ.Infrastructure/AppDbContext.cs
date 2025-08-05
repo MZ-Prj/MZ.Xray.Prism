@@ -8,8 +8,14 @@ using System.IO;
 
 namespace MZ.Infrastructure
 {
+    /// <summary>
+    /// EF Core 마이그레이션에서 AppDbContext 생성
+    /// </summary>
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
+        /// <summary>
+        /// DbContext를 생성
+        /// </summary>
         public AppDbContext CreateDbContext(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -25,6 +31,12 @@ namespace MZ.Infrastructure
             return new AppDbContext(optionsBuilder.Options);
         }
     }
+
+    /// <summary>
+    /// 애플리케이션의 메인 DB 컨텍스트 (EF Core)  
+    /// - 모든 도메인 엔티티의 DB 매핑, 관계, 제약조건 설정  
+    /// - SaveChanges시 자동 타임스탬프 관리
+    /// </summary>
     public class AppDbContext : DbContext
     {
         public AppDbContext() { }
@@ -209,6 +221,10 @@ namespace MZ.Infrastructure
 
         }
 
+        /// <summary>
+        /// SaveChanges 오버라이드  
+        /// - UserEntity의 생성/수정 시간 자동 업데이트  
+        /// </summary>
         public override int SaveChanges()
         {
             var entries = ChangeTracker.Entries();

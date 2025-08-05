@@ -1,16 +1,19 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Domain.Models;
 using MZ.Util;
 using MZ.Xray.Engine;
-using Prism.Commands;
+using MZ.Domain.Models;
 using Prism.Ioc;
-using System.Collections.ObjectModel;
+using Prism.Commands;
 using System.Linq;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Zeffect Control ViewModel : 물성 제어 
+    /// </summary>
     public class ZeffectControlViewModel : MZBindableBase
     {
         #region Services
@@ -90,6 +93,10 @@ namespace MZ.Dashboard.ViewModels
 
         }
 
+        /// <summary>
+        /// Zeffect에서 볼 영역 추가
+        /// </summary>
+        /// <param name="model">ZeffectControlModel</param>
         private void AddButton(ZeffectControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
@@ -107,6 +114,10 @@ namespace MZ.Dashboard.ViewModels
             UpdateCanUndoRedo();
         }
 
+        /// <summary>
+        /// Zeffect에서 볼 영역 삭제
+        /// </summary>
+        /// <param name="model">ZeffectControlModel</param>
         private void DeleteButton(ZeffectControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
@@ -117,6 +128,9 @@ namespace MZ.Dashboard.ViewModels
             UpdateCanUndoRedo();
         }
 
+        /// <summary>
+        /// Undo
+        /// </summary>
         private void UndoButton()
         {
             var state = _undoRedoManager.Undo(Controls);
@@ -137,6 +151,9 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// Redo
+        /// </summary>
         private void RedoButton()
         {
 
@@ -158,11 +175,17 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// Controls -> Zeffect.Controls 복사
+        /// </summary>
         private void CopyControlsToZeffect()
         {
             Zeffect.Controls = Controls;
         }
 
+        /// <summary>
+        /// Undo/Redo 갱신
+        /// </summary>
         private void UpdateCanUndoRedo()
         {
             _undoCommand.RaiseCanExecuteChanged();

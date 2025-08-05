@@ -12,9 +12,6 @@ namespace MZ.Xray.Engine
         #region Params
         private CalibrationModel _model = new();
         public CalibrationModel Model { get => _model; set => SetProperty(ref _model, value); }
-        #endregion
-
-        #region Wrapper
 
         public Mat Origin
         {
@@ -178,7 +175,5 @@ namespace MZ.Xray.Engine
             Model.Gain = line;
         }
 
-        #region Mapper
-        #endregion
     }
 }

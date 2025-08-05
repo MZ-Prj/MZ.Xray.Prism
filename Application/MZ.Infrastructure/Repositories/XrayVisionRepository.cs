@@ -9,6 +9,12 @@ using System.Collections.Generic;
 #nullable enable
 namespace MZ.Infrastructure.Repositories
 {
+    /// <summary>
+    /// XrayVision 이미지 저장소
+    /// 
+    /// - ImageEntity 테이블의 데이터 접근 담당
+    /// - 페이지/기간별 조회, 오브젝트 탐지 포함 메소드 제공
+    /// </summary>
     [Repository]
     public class XrayVisionImageRepository : RepositoryBase<ImageEntity>, IXrayVisionImageRepository
     {
@@ -47,6 +53,12 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    /// <summary>
+    /// XrayVision Calibration(캘리브레이션)  저장소
+    /// 
+    /// - CalibrationEntity 관련 DB 접근 담당
+    /// - 사용자별 보정값 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionCalibrationRepository : RepositoryBase<CalibrationEntity>, IXrayVisionCalibrationRepository
     {
@@ -62,6 +74,12 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    /// <summary>
+    /// XrayVision Filter(필터) 저장소
+    /// 
+    /// - FilterEntity 관련 DB 접근 담당
+    /// - 사용자별 필터값 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionFilterRepository : RepositoryBase<FilterEntity>, IXrayVisionFilterRepository
     {
@@ -76,6 +94,12 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    /// <summary>
+    /// XrayVision Material(재질/물질) 저장소
+    /// 
+    /// - MaterialEntity 관련 DB 접근 담당
+    /// - 사용자별 재질 정보 및 MaterialControls 포함 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionMaterialRepository : RepositoryBase<MaterialEntity>, IXrayVisionMaterialRepository
     {
@@ -91,7 +115,12 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
-
+    /// <summary>
+    /// XrayVision ZeffectControl 저장소
+    /// 
+    /// - ZeffectControlEntity 관련 DB 접근 담당
+    /// - 사용자별 Zeffect 컨트롤 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionZeffectControlRepository : RepositoryBase<ZeffectControlEntity>, IXrayVisionZeffectControlRepository
     {

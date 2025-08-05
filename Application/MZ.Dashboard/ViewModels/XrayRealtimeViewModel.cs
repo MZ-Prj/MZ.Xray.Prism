@@ -13,7 +13,6 @@ using MahApps.Metro.IconPacks;
 using Prism.Ioc;
 using Prism.Events;
 using Prism.Commands;
-using Prism.Services.Dialogs;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
@@ -24,6 +23,9 @@ using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Xray Realtime ViewModel : Xray 실시간 화면 & 제어
+    /// </summary>
     public class XrayRealtimeViewModel : MZBindableBase
     {
         #region Service
@@ -172,26 +174,36 @@ namespace MZ.Dashboard.ViewModels
 
         #region Button
 
-        private void SettingButton()
+        /// <summary>
+        /// 설정 버튼 : 버튼 보여질 유무
+        /// DashboardFooterButtonControlView에 값 전달
+        /// </summary>
+        private async void SettingButton()
         {
-            _dialogService.ShowDialog(
-                "DashboardFooterButtonControlView",
-                new DialogParameters
-                {
-                    {"Title",  MZRegionNames.DashboardFooterButtonControlRegion},
-                    {"RegionName", MZRegionNames.DashboardFooterButtonControlRegion},
-                    {"ActionButtons", ActionButtons}
+            await _windowDialogService.ShowWindow(
+                title: MZRegionNames.DashboardFooterButtonControlRegion,
+                regionName: nameof(DashboardFooterButtonControlView),
+                parameters : new Prism.Regions.NavigationParameters{
+                    { "ActionButtons", ActionButtons }
                 },
-                (IDialogResult result) => {
-                });
-
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 240,
+                height: 220);
         }
 
+        /// <summary>
+        /// Pin 토글
+        /// </summary>
         private void PickerButton()
         {
-            //ui
+            // ui
             ToggleFooterButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff), VideoButtons);
         }
+
+        /// <summary>
+        /// 재생/정지 토글
+        /// </summary>
         private void PlayStopButton()
         {
             // ui
@@ -205,26 +217,42 @@ namespace MZ.Dashboard.ViewModels
             
         }
 
+        /// <summary>
+        /// 이전 영상 : 프레임 단위
+        /// </summary>
         private void PreviousButton()
         {
             _xrayService.PrevNextSlider(-1);
         }
 
+        /// <summary>
+        /// 다음 영상 : 프레임 단위
+        /// </summary>
         private void NextButton()
         {
             _xrayService.PrevNextSlider(+1);
         }
 
+        /// <summary>
+        /// 축소
+        /// </summary>
         private void ZoomOutButton()
         {
             Media.ChangedFilterZoom(-0.1f);
         }
 
+        /// <summary>
+        /// 확대
+        /// </summary>
         private void ZoomInButton()
         {
             Media.ChangedFilterZoom(+0.1f);
         }
 
+        /// <summary>
+        /// 색상 변경
+        /// </summary>
+        /// <param name="color">ColorRole</param>
         private void ColorButton(object color)
         {
             if (color is ColorRole colorRole)
@@ -233,31 +261,49 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 밝기 감소
+        /// </summary>
         private void BrightDownButton()
         {
             Media.ChangedFilterBrightness(-0.01f);
         }
 
+        /// <summary>
+        /// 밝기 증가
+        /// </summary>
         private void BrightUpButton()
         {
             Media.ChangedFilterBrightness(+0.01f);
         }
 
+        /// <summary>
+        /// 명암 감소
+        /// </summary>
         private void ContrastDownButton()
         {
             Media.ChangedFilterContrast(-0.1f);
         }
 
+        /// <summary>
+        /// 명암 증가
+        /// </summary>
         private void ContrastUpButton()
         {
             Media.ChangedFilterContrast(+0.1f);
         }
 
+        /// <summary>
+        /// 필터 초기화
+        /// </summary>
         private void FilterClearButton()
         {
             Media.ClearFilter();
         }
 
+        /// <summary>
+        /// 인공지능 탐지 토글
+        /// </summary>
         private void AIOnOffButton()
         {
             // ui
@@ -267,6 +313,9 @@ namespace MZ.Dashboard.ViewModels
             Yolo.ChangedVisibility();
         }
 
+        /// <summary>
+        /// Z-effect 화면
+        /// </summary>
         private async void ZeffectButton()
         {
             await _windowDialogService.ShowWindow(
@@ -278,6 +327,9 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
+        /// <summary>
+        /// 화면 캡쳐 저장
+        /// </summary>
         private void SaveImageButton()
         {
             SaveFileDialog saveFileDialog = new()
@@ -296,6 +348,10 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
+        /// <summary>
+        /// 뷰 로드 시 기본 상태 초기화
+        /// </summary>
+        /// <param name="check">bool</param>
         private void Load(bool check)
         {
             if (check)
@@ -312,6 +368,12 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 버튼 아이콘 변경
+        /// </summary>
+        /// <param name="targetCommand">ICommand</param>
+        /// <param name="icon">string</param>
+        /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
         private void ChangeFooterButton(ICommand targetCommand, string icon, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
@@ -326,6 +388,13 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 버튼 아이콘 On/Off 토글
+        /// </summary>
+        /// <param name="targetCommand">ICommand</param>
+        /// <param name="iconOn">string</param>
+        /// <param name="iconOff">string</param>
+        /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
         private void ToggleFooterButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
@@ -340,6 +409,12 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 버튼 노출상태 변경
+        /// </summary>
+        /// <param name="targetCommand">ICommand</param>
+        /// <param name="isVisibility">bool</param>
+        /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
         private void VisibilityFooterButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
@@ -357,6 +432,11 @@ namespace MZ.Dashboard.ViewModels
 
 
         #region Behavior
+        /// <summary>
+        /// Behavior에서 지정할 초기 가로/세로
+        /// </summary>
+        /// <param name="width">width</param>
+        /// <param name="height">heightparam>
         public void CreateMedia(int width, int height)
         {
             Media.Create(width, height);

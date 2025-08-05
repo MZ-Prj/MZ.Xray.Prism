@@ -2,10 +2,11 @@
 {
     public static class MZRegionNames
     {
+        //Common
         public readonly static string DashboardRegion = "DashboardRegion";
-        public readonly static string AnalysisRegion = "AnalysisRegion";
         public readonly static string SplashRegion = "SplashRegion";
 
+        //Template
         public readonly static string DialogRegion = "DialogRegion";
         public readonly static string WindowDialogRegion = "WindowDialogRegion";
         public readonly static string LanguageRegion = "LanguageRegion";
@@ -26,9 +27,8 @@
         public readonly static string AIControl = "AIControlRegion";
         public readonly static string ZeffectControl = "ZeffectControlRegion";
         public readonly static string ReportControl = "ReportControlRegion";
-
         
-        //producer
+        //Producer
         public readonly static string IpNetworkRegion = "IpNetworkRegion";
 
     }

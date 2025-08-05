@@ -11,6 +11,10 @@ using System.Collections.Generic;
 
 namespace MZ.Infrastructure.Services
 {
+    /// <summary>
+    /// Xray 영상 및 결과 이미지에 대한 비즈니스 로직을 담당하는 서비스
+    /// - 이미지 저장, 조회, 분석 결과 반환 등
+    /// </summary>
     [Service]
     public class XrayVisionImageService : ServiceBase, IXrayVisionImageService
     {
@@ -25,7 +29,10 @@ namespace MZ.Infrastructure.Services
             this.userRepository = userRepository;
             this.xrayVisionImageRepository = xrayVisionImageRepository;
         }
-
+        /// <summary>
+        /// 요청 조건(기간, 페이지 등)에 맞는 이미지 목록을 조회
+        /// - 결과는 LoadResponse로 가공
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ICollection<ImageLoadResponse>>> Load(ImageLoadRequest request)
         {
             try
@@ -44,6 +51,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 리포트 등에서 기간별 이미지 전체 조회
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ReportImageLoadRequest request)
         {
             try
@@ -63,6 +73,10 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 이미지 및 객체탐지 결과 저장
+        /// - DB에 신규 이미지와 ObjectDetection 리스트를 함께 저장
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ImageEntity>> Save(ImageSaveRequest request)
         {
             try
@@ -100,6 +114,10 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    /// <summary>
+    /// 사용자별 Xray Calibration 관리 서비스
+    /// - 사용자 ID로 Calibration 등록/수정/조회
+    /// </summary>
     [Service]
     public class XrayVisionCalibrationService : IXrayVisionCalibrationService
     {
@@ -116,6 +134,9 @@ namespace MZ.Infrastructure.Services
             this.xrayVisionCalibrationRepository = xrayVisionCalibrationRepository;
         }
 
+        /// <summary>
+        /// 지정 사용자명에 해당하는 보정값(Calibration) 조회
+        /// </summary>
         public async Task<BaseResponse<BaseRole, CalibrationEntity>> Load(CalibrationLoadRequest request)
         {
             try
@@ -137,6 +158,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 현재 로그인 사용자 보정값(Calibration) 저장(없으면 신규, 있으면 수정)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, CalibrationEntity>> Save(CalibrationSaveRequest request)
         {
             try
@@ -188,6 +212,10 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    /// <summary>
+    /// 사용자별 Xray Filter(필터값) 관리 서비스
+    /// - 사용자별 필터값 조회/저장 처리
+    /// </summary>
     [Service]
     public class XrayVisionFilterService : IXrayVisionFilterService
     {
@@ -203,7 +231,9 @@ namespace MZ.Infrastructure.Services
             this.userRepository = userRepository;
             this.xrayVisionFilterRepository = xrayVisionFilterRepository;
         }
-
+        /// <summary>
+        /// 지정 사용자명에 해당하는 필터값(Filter) 조회
+        /// </summary>
         public async Task<BaseResponse<BaseRole, FilterEntity>> Load(FilterLoadRequest request)
         {
             try
@@ -224,7 +254,9 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 현재 로그인 사용자 필터값(Filter) 저장(없으면 신규, 있으면 수정)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, FilterEntity>> Save(FilterSaveRequest request)
         {
             try
@@ -272,6 +304,10 @@ namespace MZ.Infrastructure.Services
         }
     }
 
+    /// <summary>
+    /// 사용자별 Xray Material 관리 서비스
+    /// - Material 및 MaterialControl 집합 저장/수정/조회
+    /// </summary>
     [Service]
     public class XrayVisionMaterialService : IXrayVisionMaterialService
     {
@@ -287,7 +323,9 @@ namespace MZ.Infrastructure.Services
             this.userRepository = userRepository;
             this.xrayVisionMaterialRepository = xrayVisionMaterialRepository;
         }
-
+        /// <summary>
+        /// 지정 사용자명에 해당하는 Material 조회
+        /// </summary>
         public async Task<BaseResponse<BaseRole, MaterialEntity>> Load(MaterialLoadRequest request)
         {
             try
@@ -308,7 +346,10 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 현재 로그인 사용자 Material 저장/수정
+        /// - MaterialControl의 추가/수정/삭제까지 반영
+        /// </summary>
         public async Task<BaseResponse<BaseRole, MaterialEntity>> Save(MaterialSaveRequest request)
         {
             try
@@ -389,7 +430,10 @@ namespace MZ.Infrastructure.Services
         }
     }
 
-
+    /// <summary>
+    /// 사용자별 Zeffect 컨트롤 집합 관리 서비스
+    /// - Zeffect 컨트롤 저장/수정/조회
+    /// </summary>
     [Service]
     public class XrayVisionZeffectControlService : IXrayVisionZeffectControlService
     {
@@ -406,6 +450,9 @@ namespace MZ.Infrastructure.Services
             this.xrayVisionZeffectControlRepository = xrayVisionZeffectControlRepository;
         }
 
+        /// <summary>
+        /// 지정 사용자명에 해당하는 Zeffect 컨트롤 조회
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Load(ZeffectControlLoadRequest request)
         {
             try
@@ -433,6 +480,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 현재 로그인 사용자 Zeffect 컨트롤 저장/수정(존재하면 수정, 없으면 신규)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Save(ZeffectControlSaveRequest request)
         {
             try

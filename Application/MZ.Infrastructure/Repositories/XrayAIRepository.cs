@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 #nullable enable
 namespace MZ.Infrastructure.Repositories
 {
+    /// <summary>
+    /// AIOptionEntity (인공지능 옵션) 저장소
+    /// 
+    /// - AI 모델 옵션, 카테고리 등 관련 데이터베이스 접근 기능 제공
+    /// - 단일 인스턴스, 카테고리 포함 CRUD, 카테고리 일괄 업데이트 등 지원
+    /// </summary>
     [Repository]
     public class XrayAIOptionRepository : RepositoryBase<AIOptionEntity>, IXrayAIOptionRepository
     {

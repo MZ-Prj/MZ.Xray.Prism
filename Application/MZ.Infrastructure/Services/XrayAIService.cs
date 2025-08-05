@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
 {
+    /// <summary>
+    /// AI 모델 옵션(AIOption) 관리 서비스
+    /// - ONNX 모델 및 카테고리 등 AI 옵션 등록/변경/조회/삭제 처리
+    /// </summary>
     [Service]
     public class XrayAIOptionService : ServiceBase, IXrayAIOptionService
     {
@@ -20,6 +24,11 @@ namespace MZ.Infrastructure.Services
             this.xrayAIOptionRepository = xrayAIOptionRepository;
         }
 
+        /// <summary>
+        /// AIOption 신규 등록
+        /// - 이미 등록된 레코드가 1개 존재할 경우 등록 불가
+        /// - 신규 AIOptionEntity와 하위 Category 엔티티 생성 및 저장
+        /// </summary>
         public async Task<BaseResponse<BaseRole, AIOptionEntity>> Create(AIOptionCreateRequest request)
         {
             try
@@ -62,7 +71,11 @@ namespace MZ.Infrastructure.Services
             }
         }
 
-
+        /// <summary>
+        /// 카테고리 정보 저장(수정)
+        /// - 기존 옵션이 있을 때만 카테고리 수정 가능
+        /// - CategoryEntity의 속성 값 동기화
+        /// </summary>
         public async Task<BaseResponse<BaseRole, AIOptionEntity>> Save(AIOptionSaveRequest request)
         {
             try
@@ -83,6 +96,10 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 단일 AIOption 레코드 존재여부 확인
+        /// - 하나만 존재해야 정상(true)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, bool>> ExistOneRecord()
         {
             try
@@ -101,6 +118,10 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// AIOption 단일 옵션 정보 로드
+        /// - 옵션이 없으면 Fail 반환
+        /// </summary>
         public async Task<BaseResponse<BaseRole, AIOptionEntity>> Load()
         {
             try
@@ -119,6 +140,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 모든 AIOption(및 하위 카테고리) 데이터 삭제
+        /// </summary>
         public async Task<BaseResponse<BaseRole, bool>> Delete()
         {
             try

@@ -5,7 +5,6 @@ using MahApps.Metro.Controls;
 
 namespace MZ.Core
 {
-
     public class MZDialogMetroWindowChrome : MetroWindow, IDialogWindow
     {
         public IDialogResult Result { get; set; }

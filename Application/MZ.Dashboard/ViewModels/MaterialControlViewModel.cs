@@ -5,30 +5,29 @@ using MZ.Util;
 using MZ.Xray.Engine;
 using Prism.Commands;
 using Prism.Ioc;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Material Control ViewModel : 물질분석(xray) 색상 표현 제어
+    /// </summary>
     public class MaterialControlViewModel : MZBindableBase
     {
         #region Services
         private readonly IXrayService _xrayService;
-        #endregion
-
-        #region Manager
-        private readonly UndoRedoManager<MaterialControlModel> _undoRedoManager;
-        #endregion
-
-        #region Wrapper
 
         public MaterialProcesser Material
         {
             get => _xrayService.Material;
             set => _xrayService.Material = value;
         }
+        #endregion
 
+        #region Manager
+        private readonly UndoRedoManager<MaterialControlModel> _undoRedoManager;
         #endregion
 
         #region Params
@@ -93,6 +92,10 @@ namespace MZ.Dashboard.ViewModels
 
         }
 
+        /// <summary>
+        /// 물성분석 색상 항목 추가
+        /// </summary>
+        /// <param name="model">MaterialControlModel : 추가 항목</param>
         private void AddButton(MaterialControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
@@ -112,6 +115,11 @@ namespace MZ.Dashboard.ViewModels
             Material.UpdateAllMaterialGraph();
         }
 
+
+        /// <summary>
+        /// 물성분석 색상 항목 삭제
+        /// </summary>
+        /// <param name="model">MaterialControlModel : 삭제 항목</param>
         private void DeleteButton(MaterialControlModel model)
         {
             _undoRedoManager.SaveState(Controls);
@@ -124,6 +132,10 @@ namespace MZ.Dashboard.ViewModels
             Material.UpdateAllMaterialGraph();
         }
 
+
+        /// <summary>
+        /// Undo 
+        /// </summary>
         private void UndoButton()
         {
             var state = _undoRedoManager.Undo(Controls);
@@ -145,6 +157,9 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// Redo 
+        /// </summary>
         private void RedoButton()
         {
             var state = _undoRedoManager.Redo(Controls);
@@ -166,21 +181,28 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 물성분석 ColorMap 새로고침
+        /// </summary>
         private void RefreshButton()
         {
             Material.UpdateAllMaterialGraph();
         }
 
+        /// <summary>
+        /// Controls -> Material.Controls 복사
+        /// </summary>
         private void CopyControlsToMaterial()
         {
             Material.Controls = Controls;
         }
-
+        /// <summary>
+        /// Undo/Redo 가능 갱신
+        /// </summary>
         private void UpdateCanUndoRedo()
         {
             _undoCommand.RaiseCanExecuteChanged();
             _redoCommand.RaiseCanExecuteChanged();
         }
     }
-
 }

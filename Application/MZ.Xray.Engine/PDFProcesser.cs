@@ -19,6 +19,9 @@ using MigraDocColors = MigraDoc.DocumentObjectModel.Colors;
 
 namespace MZ.Xray.Engine
 {
+    /// <summary>
+    /// Xray 이미지 및 객체 감지 통계 기반의 PDF 리포트 클래스
+    /// </summary>
     public class PDFProcesser
     {
         public DateTime? StartSelectedDate { get; set; }
@@ -32,11 +35,16 @@ namespace MZ.Xray.Engine
 
         }
 
+        /// <summary>
+        /// PDF 리포트를 생성
+        /// - 차트 이미지를 추출하여 보고서 표지, 목차, 통계, 이미지 섹션 등 포함
+        /// - 최종 PDF 저장 및 임시 이미지 파일 삭제까지 처리
+        /// </summary>
         public void Make(object framework, string outputPath, string objectDetectionChartName, string imageFileChartName, ICollection<ImageEntity> images)
         {
             //framework 에서 이미지 불러옴
-            var objectDetectChart = FindChildByName(framework as DependencyObject, objectDetectionChartName);
-            var imageFileChart = FindChildByName(framework as DependencyObject, imageFileChartName);
+            var objectDetectChart = MZFramework.FindChildByName(framework as DependencyObject, objectDetectionChartName);
+            var imageFileChart = MZFramework.FindChildByName(framework as DependencyObject, imageFileChartName);
 
             (_, string objectDetectImagePath) = SaveChartImage(objectDetectChart, Path.Combine(TempPath, "ObjDetectChart.png"));
             (_, string imageFileImagePath) = SaveChartImage(imageFileChart, Path.Combine(TempPath, "ImgFileChart.png"));
@@ -67,7 +75,9 @@ namespace MZ.Xray.Engine
             MZIO.TryDeleteFile(objectDetectImagePath);
             MZIO.TryDeleteFile(imageFileImagePath);
         }
-
+        /// <summary>
+        /// 전역 스타일, 폰트, 문서 속성 설정
+        /// </summary>
         public void SetDocument(Document document)
         {
             GlobalFontSettings.FontResolver = new FontResolver();
@@ -89,7 +99,9 @@ namespace MZ.Xray.Engine
             heading1.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.5);
 
         }
-
+        /// <summary>
+        /// PDF 리포트 표지(커버) 페이지
+        /// </summary>
         public void AddSectionCover(Document document, Unit availableWidth)
         {
             Section section = document.AddSection();
@@ -134,7 +146,9 @@ namespace MZ.Xray.Engine
             madeByPara.Format.Font.Size = 8;
             madeByPara.Format.Font.Color = MigraDocColors.Gray;
         }
-
+        /// <summary>
+        /// PDF 리포트 목차 페이지
+        /// </summary>
         public void AddSectionIndex(Document document, Unit availableWidth)
         {
 
@@ -149,7 +163,9 @@ namespace MZ.Xray.Engine
             
         }
 
-
+        /// <summary>
+        /// 목차 한 항목을 표 형태로 추가
+        /// </summary>
         public void IndexEntryParagraph(Section section, Unit availableWidth, string title)
         {
             Paragraph entry = section.AddParagraph();
@@ -160,6 +176,9 @@ namespace MZ.Xray.Engine
             entry.AddTab();
             entry.AddPageRefField(title);
         }
+        /// <summary>
+        /// Object Detection(객체 감지 통계) 섹션 및 차트, 표 삽입
+        /// </summary>
         public void AddSectionObjectDetections(Document document, string imagePath, Unit availableWidth, ICollection<ImageEntity> images, string titleName = "Object Detections")
         {
             Section section = document.AddSection();
@@ -282,7 +301,9 @@ namespace MZ.Xray.Engine
             tableCaption.Format.SpaceBefore = Unit.FromCentimeter(0.2);
             tableCaption.Format.Alignment = ParagraphAlignment.Center;
         }
-
+        /// <summary>
+        /// 이미지 파일 통계 섹션 및 차트, 표 삽입
+        /// </summary>
         public void AddSectionImageFiles(Document document, string imagePath, Unit availableWidth, ICollection<ImageEntity> images, string titleName = "Image Files")
         {
             Section section = document.AddSection();
@@ -381,9 +402,8 @@ namespace MZ.Xray.Engine
         }
 
         /// <summary>
-        /// header/footer 적용
+        /// 각 섹션에 Header/Footer 추가
         /// </summary>
-        /// <param name="section"></param>
         public void AddHeaderFooter(Document document, Section section)
         {
             //header
@@ -408,6 +428,10 @@ namespace MZ.Xray.Engine
             footerParagraph.Format.Alignment = ParagraphAlignment.Center;
         }
 
+        /// <summary>
+        /// PDF 파일로 렌더링 및 저장
+        /// PDF 페이지에 외곽선 테두리 추가
+        /// </summary>
         public void Rendering(Document document, string path)
         {
 
@@ -430,7 +454,9 @@ namespace MZ.Xray.Engine
             pdfRenderer.PdfDocument.Save(path);
 
         }
-
+        /// <summary>
+        /// FrameworkElement(차트 등)를 이미지 파일(PNG)로 저장
+        /// </summary>
         private (bool, string) SaveChartImage(FrameworkElement chart, string path)
         {
             int width = (int)chart.ActualWidth;
@@ -456,44 +482,24 @@ namespace MZ.Xray.Engine
             return (false, string.Empty);
         }
 
-
-        private FrameworkElement FindChildByName(DependencyObject parent, string name)
-        {
-            if (parent == null) return null;
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is FrameworkElement fe && fe.Name == name)
-                {
-                    return fe;
-                }
-                var result = FindChildByName(child, name);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-            return null;
-        }
-
+        /// <summary>
+        /// #RRGGBB hex 색상 문자열을 MigraDoc Color로 변환
+        /// </summary>
         public MigraDoc.DocumentObjectModel.Color HexToColor(string hexColor)
         {
-            if (hexColor.StartsWith("#"))
-            {
-                hexColor = hexColor.Substring(1);
-            }
-
-            byte r = byte.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
-            byte g = byte.Parse(hexColor.Substring(2, 2), NumberStyles.HexNumber);
-            byte b = byte.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
-
-            return MigraDoc.DocumentObjectModel.Color.FromRgb(r, g, b);
+            var color = (System.Windows.Media.Color)ColorConverter.ConvertFromString(hexColor);
+            return MigraDoc.DocumentObjectModel.Color.FromRgb(color.R, color.G, color.B);
         }
     }
 
+    /// <summary>
+    /// 한글(맑은 고딕 등) 및 영문 폰트 파일을 로드해주는 폰트 
+    /// </summary>
     public class FontResolver : IFontResolver
     {
+        /// <summary>
+        /// 폰트명(faceName)별로 폰트 파일 바이트 배열 반환
+        /// </summary>
         public byte[] GetFont(string faceName)
         {
             if (faceName == "맑은 고딕#")
@@ -544,6 +550,9 @@ namespace MZ.Xray.Engine
             return null;
         }
 
+        /// <summary>
+        /// 폰트명 매핑 반환
+        /// </summary>
         public FontResolverInfo ResolveTypeface(string familyName, bool bold, bool italic)
         {
             if (string.Equals(familyName, "맑은 고딕", StringComparison.OrdinalIgnoreCase))

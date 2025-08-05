@@ -16,6 +16,9 @@ using System.Windows.Media;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// LogStorage Control ViewModel : 저장된 로그 기록 관리
+    /// </summary>
     public class LogStorageControlViewModel : MZBindableBase
     {
         #region Service
@@ -76,7 +79,7 @@ namespace MZ.Dashboard.ViewModels
 
         #endregion
 
-        #region Command
+        #region Commands
         private DelegateCommand _searchCommand;
         public ICommand SearchCommand => _searchCommand ??= new DelegateCommand(MZAction.Wrapper(SearchButton));
         #endregion
@@ -102,12 +105,20 @@ namespace MZ.Dashboard.ViewModels
             InitializeFilter();
         }
 
+        /// <summary>
+        /// 로그 필터링 초기화
+        /// </summary>
         private void InitializeFilter()
         {
             FilteredTexts = CollectionViewSource.GetDefaultView(Logs);
             FilteredTexts.Filter = FilterTexts;
         }
 
+
+        /// <summary>
+        /// 로그 필터 조건
+        /// </summary>
+        /// <param name="item">LogControlModel : 로그 항목</param>
         private bool FilterTexts(object item)
         {
             if (item is LogControlModel images)
@@ -121,6 +132,10 @@ namespace MZ.Dashboard.ViewModels
             return false;
         }
 
+
+        /// <summary>
+        /// 로그 검색
+        /// </summary>
         private void SearchButton()
         {
             Logs.Clear();
@@ -131,6 +146,10 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 로그 파일을 읽어 목록으로 변환
+        /// </summary>
+        /// <param name="path">string : 로그 폴더 경로</param>
         private void UpdateLogs(string path)
         {
             if (Directory.Exists(path))
@@ -198,7 +217,12 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private static string ReadFileContent(string filePath)
+        /// <summary>
+        /// 파일 내용 읽기 (임시 복사를 통한 잠금 회피)
+        /// </summary>
+        /// <param name="filePath">string : 파일 경로</param>
+        /// <returns>string : 파일 내용 문자열</returns>
+        private string ReadFileContent(string filePath)
         {
             var tempPath = Path.GetTempFileName();
             try
@@ -216,6 +240,11 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 파일명(날짜) 내림차순 정렬
+        /// </summary>
+        /// <param name="file">string : 파일명</param>
+        /// <returns>DateTime : 날짜</returns>
         private DateTime FileNameOrderByDecress(string file)
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
@@ -230,6 +259,5 @@ namespace MZ.Dashboard.ViewModels
             }
             return DateTime.MinValue;
         }
-
     }
 }

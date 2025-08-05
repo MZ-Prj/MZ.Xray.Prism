@@ -16,6 +16,9 @@ using System.Windows.Input;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Image Storage Control ViewModel : 저장된 이미지 표기 및 검색
+    /// </summary>
     public class ImageStorageControlViewModel : MZBindableBase
     {
         #region Services
@@ -87,7 +90,6 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _closeCommand;
         public ICommand CloseCommand => _closeCommand ??= new DelegateCommand(MZAction.Wrapper(CloseButton));
 
-
         private DelegateCommand<ScrollChangedEventArgs> _scrollChangedCommand;
         public ICommand ScrollChangedCommand => _scrollChangedCommand ??= new DelegateCommand<ScrollChangedEventArgs>(ScrollChanged);
 
@@ -109,44 +111,47 @@ namespace MZ.Dashboard.ViewModels
 
         public override async void InitializeModel()
         {
-            using (_loadingService[MZRegionNames.ImageStorageControl].Show())
-            {
-                Clear();
-                LoadImages();
-                UpdateSearchFilter();
-                await Task.Delay(100);
-            }
-
+            await LoadingWithImage();
         }
 
+        /// <summary>
+        /// 검색 실행
+        /// </summary>
         private async void SearchButton()
         {
-            using (_loadingService[MZRegionNames.ImageStorageControl].Show())
-            {
-                Clear();
-                LoadImages();
-                UpdateSearchFilter();
-                await Task.Delay(100);
-            }
+            await LoadingWithImage();
         }
 
-        private void RefreshButton()
+        /// <summary>
+        /// 새로고침
+        /// </summary>
+        private async void RefreshButton()
         {
-            Clear();
-            LoadImages();
-            UpdateSearchFilter();
+            await LoadingWithImage();
         }
+
+        /// <summary>
+        /// 오른쪽에 보여지는 이미지를 보여지는 창 닫기
+        /// </summary>
         private void CloseButton()
         {
             SelectedImageVisibility = false;
         }
 
+        /// <summary>
+        /// 이미지 선택시 호출
+        /// </summary>
+        /// <param name="response">ImageLoadResponse : 선택 이미지</param>
         private void SelectedImageButton(ImageLoadResponse response)
         {
             SelectedPathName = response.PathName;
             SelectedImageVisibility = true;
         }
 
+        /// <summary>
+        /// 스크롤 하단 도달시 추가 로딩
+        /// </summary>
+        /// <param name="args">ScrollChangedEventArgs : 스크롤 변경 이벤트</param>
         private void ScrollChanged(ScrollChangedEventArgs args)
         {
             if (args.ExtentHeight > args.ViewportHeight)
@@ -158,12 +163,20 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 이미지 필터 갱신
+        /// </summary>
         private void UpdateSearchFilter()
         {
             FilteredImages = CollectionViewSource.GetDefaultView(Images);
             FilteredImages.Filter = FilterImages;
         }
 
+        /// <summary>
+        /// 이미지 필터(이미지 파일명 기준) 조건
+        /// </summary>
+        /// <param name="item">object : ImageLoadResponse</param>
+        /// <returns>조건 충족 여부</returns>
         private bool FilterImages(object item)
         {
             if (item is ImageLoadResponse images)
@@ -177,6 +190,9 @@ namespace MZ.Dashboard.ViewModels
             return false;
         }
 
+        /// <summary>
+        /// 이미지 로딩
+        /// </summary>
         private async void LoadImages()
         {
 
@@ -194,10 +210,28 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 이미지 초기화
+        /// </summary>
         private void Clear()
         {
             Images.Clear();
             CurrentPage = 0;
+        }
+
+        /// <summary>
+        /// 로딩 중 이미지 처리 
+        /// </summary>
+        /// <returns></returns>
+        private async Task LoadingWithImage()
+        {
+            using (_loadingService[MZRegionNames.ImageStorageControl].Show())
+            {
+                Clear();
+                LoadImages();
+                UpdateSearchFilter();
+                await Task.Delay(100);
+            }
         }
 
     }

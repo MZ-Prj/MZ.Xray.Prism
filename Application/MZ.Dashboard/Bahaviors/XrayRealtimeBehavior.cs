@@ -11,8 +11,14 @@ using System.Windows.Media;
 
 namespace MZ.Dashboard.Bahaviors
 {
+    /// <summary>
+    /// Canvas에 실시간 Xray 화면 동작 Behavior 클래스
+    /// </summary>
     public partial class XrayRealtimeBehavior : Behavior<Canvas>
     {
+        /// <summary>
+        /// Behavior OnAttached
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -22,6 +28,9 @@ namespace MZ.Dashboard.Bahaviors
             OnAttachedScale();
         }
 
+        /// <summary>
+        /// Behavior OnDetaching
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
@@ -33,36 +42,57 @@ namespace MZ.Dashboard.Bahaviors
     }
 
     /// <summary>
-    /// 
+    /// Canvas의 Zoom In/Out 기능 담당
     /// </summary>
     public partial class XrayRealtimeBehavior : Behavior<Canvas>
     {
+        /// <summary>
+        /// ScaleTransform 
+        /// </summary>
         private ScaleTransform _scaleTransform;
+
+        /// <summary>
+        /// OnAttached : ScaleTransform 생성 및 RenderTransform 설정
+        /// </summary>
         private void OnAttachedScale()
         {
             _scaleTransform = new(1.0, 1.0);
             this.AssociatedObject.RenderTransform = _scaleTransform;
         }
-
+        /// <summary>
+        /// OnDetaching 
+        /// </summary>
         private void OnDetachingScale()
         {
             this.AssociatedObject.RenderTransform = null;
         }
     }
-
+    /// <summary>
+    /// 마우스가 Canvas Layout In/Out에 따라 Overlay Control 조절
+    /// </summary>
     public partial class XrayRealtimeBehavior : Behavior<Canvas>
     {
+        /// <summary>
+        /// OnAttached : 마우스 이밴트 
+        /// </summary>
         private void OnAttachedMouse()
         {
             this.AssociatedObject.MouseEnter += OnMouseEnter;
             this.AssociatedObject.MouseLeave += OnMouseLeave;
         }
+        /// <summary>
+        /// OnDetaching
+        /// </summary>
         private void OnDetachingMouse()
         {
             this.AssociatedObject.MouseEnter -= OnMouseEnter;
             this.AssociatedObject.MouseLeave -= OnMouseLeave;
         }
-
+        /// <summary>
+        /// 마우스가 Canvas Layout 위에 있을때 Overlay Control 제어
+        /// </summary>
+        /// <param name="sender">Receive Object</param>
+        /// <param name="e">MouseEventArgs</param>
         private void OnMouseEnter(object sender, MouseEventArgs e)
         {
 
@@ -84,7 +114,11 @@ namespace MZ.Dashboard.Bahaviors
                 overlayGradient.Visibility = Visibility.Visible;
             }
         }
-
+        /// <summary>
+        /// 마우스가 Canvas Layer에서 나갈 때, Pin에 따라 Overlay Control Visibility 유무 결정
+        /// </summary>
+        /// <param name="sender">Receive Object</param>
+        /// <param name="e">MouseEventArgs</param>
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
             var viewModel = this.AssociatedObject.DataContext as XrayRealtimeViewModel;
@@ -96,7 +130,11 @@ namespace MZ.Dashboard.Bahaviors
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayBottomControls"), isPinned);
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayGradient"), isPinned);
         }
-
+        /// <summary>
+        /// Overlay Control Visibility 변경(Visibility to bool)
+        /// </summary>
+        /// <param name="overlay">UIElement</param>
+        /// <param name="isVisible">bool</param>
         private void SetOverlayVisibility(UIElement overlay, bool isVisible)
         {
             if (overlay != null)
@@ -105,19 +143,30 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
     }
-
+    /// <summary>
+    /// Canvas Load/UnLoad 초기 동작 수행
+    /// </summary>
     public partial class XrayRealtimeBehavior : Behavior<Canvas>
     {
+        /// <summary>
+        /// Attached : Loaded 
+        /// </summary>
         private void OnAttachedLoaded()
         {
             this.AssociatedObject.Loaded += OnLoaded;
         }
-
+        /// <summary>
+        /// Detaching
+        /// </summary>
         private void OnDetachingLoaded()
         {
             this.AssociatedObject.Loaded -= OnLoaded;
         }
-
+        /// <summary>
+        /// Canvas가 Load될 때 호출. View-ViewModel의 Canvas 연결부
+        /// </summary>
+        /// <param name="sender">Receive Object</param>
+        /// <param name="e">RoutedEventArgs</param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (this.AssociatedObject.DataContext is XrayRealtimeViewModel viewModel)
@@ -139,7 +188,5 @@ namespace MZ.Dashboard.Bahaviors
                 }
             }
         }
-
     }
-
 }

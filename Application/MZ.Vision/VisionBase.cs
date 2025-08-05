@@ -1231,6 +1231,10 @@ namespace MZ.Vision
             return false;
         }
 
+
+        /// <summary>
+        /// ImageSource Freeze
+        /// </summary>
         public static BitmapSource CanFreezeImageSource(BitmapSource bitmap)
         {
             if (bitmap.CanFreeze)

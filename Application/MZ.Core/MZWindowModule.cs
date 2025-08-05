@@ -8,6 +8,12 @@ using WinForms = System.Windows.Forms;
 
 namespace MZ.Core
 {
+    /// <summary>
+    /// 윈도우 관리용 모듈 베이스 클래스
+    /// - DI 컨테이너를 이용해 WPF Window 인스턴스를 생성 및 관리
+    /// - 여러 창(윈도우)의 생성/위치 지정/표시/숨김/닫기 등을 통합적으로 관리
+    /// - Region과 View 탐색(Navigation) 기능도 포함
+    /// </summary>
     public class MZWindowModule : MZModule
     {
         protected Dictionary<string, Window> Windows { get; } = [];
@@ -32,10 +38,8 @@ namespace MZ.Core
         }
 
         /// <summary>
-        /// 
+        /// Window 생성 후 Region/View 등록 및 Region Navigation 수행
         /// </summary>
-        /// <typeparam name="TWindow"></typeparam>
-        /// <param name="regionsAndViews"></param>
         public void SetRegion<TWindow>(string windowKey, params (string regionName, string viewName)[] regionsAndViews) where TWindow : Window
         {
             try
@@ -56,6 +60,9 @@ namespace MZ.Core
             }
         }
 
+        /// <summary>
+        /// 특정 윈도우를 다중 모니터 중 지정된 screenIndex의 위치 및 크기로 이동
+        /// </summary>
         public void SetWindowLocate(string windowKey, int screenIndex)
         {
             try
@@ -84,19 +91,16 @@ namespace MZ.Core
         }
 
         /// <summary>
-        /// 
+        /// Dictionary에 저장된 Window 인스턴스를 반환
         /// </summary>
-        /// <param name="windowKey"></param>
-        /// <returns></returns>
         public Window GetWindow(string windowKey)
         {
             return Windows.TryGetValue(windowKey, out var window) ? window : null;
         }
 
         /// <summary>
-        /// 
+        /// 해당 windowKey로 등록된 Window를 화면에 표시 (Show)
         /// </summary>
-        /// <param name="windowKey"></param>
         public void ShowWindow(string windowKey)
         {
             if (Windows.TryGetValue(windowKey, out var window))
@@ -106,9 +110,8 @@ namespace MZ.Core
         }
 
         /// <summary>
-        /// 
+        /// 해당 windowKey로 등록된 Window를 닫음 (Close)
         /// </summary>
-        /// <param name="windowKey"></param>
         public void CloseWindow(string windowKey)
         {
             if (Windows.TryGetValue(windowKey, out var window))
@@ -118,9 +121,8 @@ namespace MZ.Core
         }
 
         /// <summary>
-        /// 
+        /// 해당 windowKey로 등록된 Window를 숨김 (Hide)
         /// </summary>
-        /// <param name="windowKey"></param>
         public void HideWindow(string windowKey)
         {
             if (Windows.TryGetValue(windowKey, out var window))

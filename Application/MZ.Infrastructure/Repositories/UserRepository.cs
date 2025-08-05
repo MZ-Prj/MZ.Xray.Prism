@@ -7,6 +7,10 @@ using MZ.Infrastructure.Interfaces;
 
 namespace MZ.Infrastructure.Repositories
 {
+    /// <summary>
+    /// 사용자(UserEntity) 관련 저장소  
+    /// - 사용자 인증, 프로필, 사용자 관련 모든 하위 엔티티 연동
+    /// </summary>
     [Repository]
     public class UserRepository : RepositoryBase<UserEntity>, IUserRepository
     {
@@ -57,6 +61,9 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
+    /// <summary>
+    /// 사용자 환경설정(UserSettingEntity) 저장소
+    /// </summary>
     [Repository]
     public class UserSettingRepository : RepositoryBase<UserSettingEntity>, IUserSettingRepository
     {

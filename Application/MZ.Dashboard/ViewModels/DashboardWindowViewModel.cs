@@ -21,6 +21,9 @@ using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Dashboard Window ViewModel :  각종 커맨드, 하위 컨트롤 관리
+    /// </summary>
     public class DashboardWindowViewModel : MZBindableBase
     {
         #region Services
@@ -101,6 +104,9 @@ namespace MZ.Dashboard.ViewModels
             }, ThreadOption.UIThread, true);
         }
 
+        /// <summary>
+        /// Window가 닫힐시 데이터 저장 및 Application 종료
+        /// </summary>
         private void WindowClosing()
         {
             SaveDatabase();
@@ -108,11 +114,17 @@ namespace MZ.Dashboard.ViewModels
             Application.Current.Shutdown();
         }
 
+        /// <summary>
+        /// 태마 변경
+        /// </summary>
         private void ThemeButton()
         {
             _databaseService.User.ChangeTheme(new(ThemeService.ChangeMode()));
         }
 
+        /// <summary>
+        /// 언어 변경
+        /// </summary>
         private void LanguageButton()
         {
             _dialogService.ShowDialog(
@@ -127,6 +139,9 @@ namespace MZ.Dashboard.ViewModels
                 });
         }
 
+        /// <summary>
+        /// 로그아웃 및 로그인 뷰 이벤트
+        /// </summary>
         private void LogoutButton()
         {
             SaveDatabase();
@@ -137,6 +152,9 @@ namespace MZ.Dashboard.ViewModels
                             nameof(UserLoginView)));
         }
 
+        /// <summary>
+        /// 이미지 스토리지 창
+        /// </summary>
         private async void ImageStorageButton()
         {
             await _windowDialogService.ShowWindow(
@@ -145,6 +163,9 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple: false);
         }
 
+        /// <summary>
+        /// 로그 스토리지 창
+        /// </summary>
         private async void LogStorageButton()
         {
             await _windowDialogService.ShowWindow(
@@ -153,6 +174,9 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple:false);
         }
 
+        /// <summary>
+        /// 물성분석 제어 창
+        /// </summary>
         private async void MaterialButton()
         {
             await _windowDialogService.ShowWindow(
@@ -164,6 +188,9 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
+        /// <summary>
+        /// 인공지능 카테고리 제어 창
+        /// </summary>
         private async void AIButton()
         {
             await _windowDialogService.ShowWindow(
@@ -175,6 +202,9 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
+        /// <summary>
+        /// 분석 보고서 창 
+        /// </summary>
         private async void ReportButton()
         {
             await _windowDialogService.ShowWindow(
@@ -183,6 +213,10 @@ namespace MZ.Dashboard.ViewModels
                 isMultiple: false);
         }
 
+        /// <summary>
+        /// 커맨드 버튼 노출 여부
+        /// </summary>
+        /// <param name="check">bool</param>
         private void UpdateWindowCommandButton(bool check)
         {
             foreach (var button in WindowCommandButtons)
@@ -193,11 +227,18 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 데이터 베이스 처리
+        /// </summary>
         private void SaveDatabase()
         {
             _xrayService.SaveDatabase();
         }
 
+        /// <summary>
+        /// 데이터 베이스 로딩 및 사용자 환경 설정 반영
+        /// </summary>
+        /// <param name="check">bool</param>
         private async void LoadDatabase(bool check)
         {
             if (check)

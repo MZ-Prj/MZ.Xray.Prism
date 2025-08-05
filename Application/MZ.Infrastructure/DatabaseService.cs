@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace MZ.Infrastructure
 {
+    /// <summary>
+    /// 데이터베이스 서비스의 엔트리 포인트 클레스
+    /// 
+    /// - 각종 비즈니스 서비스(User, AppSetting, Image 등)에 대한 접근 포인트 역할을 수행
+    /// - 시스템 초기 데이터 생성(Admin, User, AppSetting 등) 유틸리티 메서드 제공
+    /// - DI(의존성 주입) 컨테이너에서 하나의 서비스로 등록해 사용 가능
+    /// </summary>
     public class DatabaseService : IDatabaseService
     {
         public IUserService User { get; } 

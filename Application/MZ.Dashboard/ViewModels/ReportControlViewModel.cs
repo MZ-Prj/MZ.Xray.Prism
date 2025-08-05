@@ -11,9 +11,6 @@ using System.Collections.Generic;
 using Prism.Ioc;
 using Prism.Commands;
 using Microsoft.Win32;
-using LiveCharts;
-using LiveCharts.Wpf;
-using System.Windows.Media;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -21,11 +18,13 @@ using SkiaSharp;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel.Events;
-using LiveChartsCore;
 using Axis = LiveChartsCore.SkiaSharpView.Axis;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Report Control ViewModel : 현 수집된 데이터 분석(인공지능, 파일개수) 수행 
+    /// </summary>
     public class ReportControlViewModel : MZBindableBase
     {
         #region Service
@@ -39,6 +38,7 @@ namespace MZ.Dashboard.ViewModels
         }
 
         #endregion
+
         #region Params
         private DateTime? _startSelectedDate = DateTime.Today;
         public DateTime? StartSelectedDate { get => _startSelectedDate; set => SetProperty(ref _startSelectedDate, value); }
@@ -75,7 +75,7 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
 
-        #region Command
+        #region Commands
 
         private DelegateCommand _searchCommand;
         public ICommand SearchCommand => _searchCommand ??= new DelegateCommand(MZAction.Wrapper(SearchButton));
@@ -99,12 +99,18 @@ namespace MZ.Dashboard.ViewModels
             await UpdateReport();
         }
 
-
+        /// <summary>
+        /// 분석(검색) 실행
+        /// </summary>
         private async void SearchButton()
         {
             await UpdateReport();
         }
 
+        /// <summary>
+        /// PDF 저장 다이얼로그 및 저장 처리
+        /// </summary>
+        /// <param name="charts">object : 차트 오브젝트(Framework)</param>
         private async void SaveButton(object charts)
         {
             SaveFileDialog saveFileDialog = new()
@@ -134,6 +140,10 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// 객체 탐지 차트 갱신
+        /// </summary>
+        /// <param name="images">ICollection<ImageEntity> </param>
         private void GridObjectDetectionChart(ICollection<ImageEntity> images)
         {
             if (images == null || images.Count == 0)
@@ -141,7 +151,7 @@ namespace MZ.Dashboard.ViewModels
                 ObjectDetectionChart = new ReportChartModel();
                 return;
             }
-
+            // 데이터 수집
             var model = images
                 .SelectMany(image => image.ObjectDetections)
                 .ToList();
@@ -157,7 +167,9 @@ namespace MZ.Dashboard.ViewModels
                 .OrderByDescending(x => x.Count)
                 .ToList();
             groupedData.Reverse();
-            //
+            
+            
+            //Live Charts
             List<SolidColorPaint> paints = [];
             foreach (var g in groupedData)
             {
@@ -171,7 +183,6 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
 
-            // 
             var values = groupedData.Select(g => g.Count).ToArray();
             var labels = groupedData.Select(g => g.Name).ToArray();
 
@@ -219,16 +230,19 @@ namespace MZ.Dashboard.ViewModels
                 }
             ];
         }
-        
+
+        /// <summary>
+        /// 객체 탐지 데이터(테이블) 갱신
+        /// </summary>
+        /// <param name="images">ICollection<ImageEntity></param>
         private void GridObjectDetectionData(ICollection<ImageEntity> images)
         {
-            // grid predict result (tabel)
-
             if (images.Count == 0)
             {
                 return;
             }
 
+            // 데이터 수집
             var model = images.SelectMany(image => image.ObjectDetections).ToList();
 
             var groupedData = model
@@ -248,13 +262,17 @@ namespace MZ.Dashboard.ViewModels
                 item.Percent = totalCount > 0 ? (item.Count / (double)totalCount) * 100 : 0;
             }
 
+            // Data Grid
             ObjectDetectionData = [.. groupedData];
         }
 
+        /// <summary>
+        /// 이미지 파일 차트 갱신
+        /// </summary>
+        /// <param name="images">ICollection<ImageEntity></param>
         private void GridImageFileChart(ICollection<ImageEntity> images)
         {
-            // grid predict result (live chart)
-
+            //Live Charts
             ImageFileChart = new();
 
             var model = images
@@ -303,6 +321,10 @@ namespace MZ.Dashboard.ViewModels
             ];
         }
 
+        /// <summary>
+        /// 이미지 파일 데이터(테이블) 갱신
+        /// </summary>
+        /// <param name="images">ICollection<ImageEntity></param>
         private void GridImageFileData(ICollection<ImageEntity> images)
         {
             // grid predict result (tabel)
@@ -323,9 +345,11 @@ namespace MZ.Dashboard.ViewModels
             ImageFileData = [.. groupedData];
         }
 
+        /// <summary>
+        /// 차트 및 데이터 갱신
+        /// </summary>
         public async Task UpdateReport()
         {
-
             if (StartSelectedDate.HasValue && EndSelectedDate.HasValue)
             {
                 var response = await _databaseService.Image.Load(new ReportImageLoadRequest(StartSelectedDate.Value, EndSelectedDate.Value));
