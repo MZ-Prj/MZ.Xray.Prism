@@ -217,13 +217,20 @@ namespace MZ.Dashboard.ViewModels
         /// 커맨드 버튼 노출 여부
         /// </summary>
         /// <param name="check">bool</param>
-        private void UpdateWindowCommandButton(bool check)
+        private async void UpdateWindowCommandButton(bool check)
         {
+            var response = await _databaseService.User.IsAdmin();
+            bool isAdmin = response.Data;
+
             foreach (var button in WindowCommandButtons)
             {
-                button.IsVisibility = check ||
-                                      button.IconKind == nameof(PackIconMaterialKind.Earth) ||
-                                      button.IconKind == nameof(PackIconMaterialKind.ThemeLightDark);
+                button.IsVisibility = button.IconKind switch
+                {
+                    nameof(PackIconMaterialKind.FileSearch) => isAdmin,
+                    nameof(PackIconMaterialKind.Earth) => true,
+                    nameof(PackIconMaterialKind.ThemeLightDark) => true,
+                    _ => check,
+                };
             }
         }
 

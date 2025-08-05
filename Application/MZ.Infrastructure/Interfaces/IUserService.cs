@@ -47,6 +47,12 @@ namespace MZ.Infrastructure.Interfaces
         /// 사용자 설정 저장 (비동기)
         /// </summary>
         Task<BaseResponse<BaseRole, UserSettingEntity>> SaveUserSetting(UserSettingSaveRequest request);
+
+        /// <summary>
+        /// 관리자 유무
+        /// </summary>
+        Task<BaseResponse<BaseRole, bool>> IsAdmin();
+
         /// <summary>
         /// 로그인 상태 여부 반환
         /// </summary>

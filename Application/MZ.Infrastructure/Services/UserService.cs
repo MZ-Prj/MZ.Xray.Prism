@@ -292,5 +292,30 @@ namespace MZ.Infrastructure.Services
         {
             return !string.IsNullOrWhiteSpace(CurrentUser().Data);
         }
+
+        public async Task<BaseResponse<BaseRole, bool>> IsAdmin()
+        {
+            try
+            {
+                bool check = false;
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Valid);
+                }
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                if (user.Role == UserRole.Admin)
+                {
+                    check = true;
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, check);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Fail, ex);
+            }
+        }
     }
 }
