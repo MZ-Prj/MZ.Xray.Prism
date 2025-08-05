@@ -3,6 +3,9 @@ using System.Windows;
 
 namespace MZ.Resource.Managers
 {
+    /// <summary>
+    /// PasswordBox의 Password 바인딩을 지원하는 Property Manager
+    /// </summary>
     public static class PasswordManager
     {
         public static readonly DependencyProperty PasswordProperty = DependencyProperty.RegisterAttached("Password", typeof(string), typeof(PasswordManager), new FrameworkPropertyMetadata(string.Empty, OnPasswordPropertyChanged));

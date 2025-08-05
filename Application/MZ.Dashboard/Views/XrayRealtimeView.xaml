@@ -16,7 +16,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
-        <converters:NumericFloatConverter x:Key="NumericFloatConverter"/>
+        <converters:NumericEnumConverter x:Key="NumericEnumConverter"/>
         <converters:VisibilityConverter x:Key="VisibilityConverter"/>
         <converters:ContrastColorConverter  x:Key="ContrastColorConverter"/>
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
@@ -47,7 +47,7 @@
                                             SharpnessLevel="{Binding Path=Filter.Sharpness, Mode=TwoWay}"
                                             BrightnessLevel="{Binding Path=Filter.Brightness, Mode=TwoWay}" 
                                             ContrastLevel="{Binding Path=Filter.Contrast, Mode=TwoWay}"
-                                            ColorMode="{Binding Path=Filter.ColorMode, Mode=TwoWay, Converter={StaticResource NumericFloatConverter}}"/>
+                                            ColorMode="{Binding Path=Filter.ColorMode, Mode=TwoWay, Converter={StaticResource NumericEnumConverter}}"/>
             </Canvas.Effect>
             
             <Canvas.RenderTransform>

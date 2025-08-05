@@ -9,8 +9,14 @@ using System.Windows;
 
 namespace MZ.Resource
 {
+    /// <summary>
+    /// 다국어 문자열 관리 및 런타임 언어 변경 기능을 제공
+    /// </summary>
     public static class LanguageService
     {
+        /// <summary>
+        /// 언어 정보 
+        /// </summary>
         public static LanguageRole CurrentLanguage = LanguageRole.EnUS; 
 
         private static readonly ResourceManager resourceManager;

@@ -7,8 +7,14 @@ using MZ.Util;
 
 namespace MZ.Resource
 {
+    /// <summary>
+    /// 테마(라이트/다크 등) 관리 및 시스템 테마 감지, 리소스 브러시 조회 
+    /// </summary>
     public static class ThemeService
     {
+        /// <summary>
+        /// 테마 정보
+        /// </summary>
         public static ThemeRole CurrentTheme = ThemeRole.LightSteel;
 
         public static void Load(ThemeRole theme)

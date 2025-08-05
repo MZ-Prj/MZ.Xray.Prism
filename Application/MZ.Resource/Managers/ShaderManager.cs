@@ -5,6 +5,9 @@ using System;
 
 namespace MZ.Resource.Managers
 {
+    /// <summary>
+    /// Zeffect ShaderEffect 클래스
+    /// </summary>
     public class ZeffShaderManager : ShaderEffect
     {
 
@@ -56,7 +59,9 @@ namespace MZ.Resource.Managers
         }
     }
 
-
+    /// <summary>
+    /// Xray ShaderEffect 클래스
+    /// </summary>
     public class XrayShaderManager : ShaderEffect
     {
         public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(XrayShaderManager), 0);

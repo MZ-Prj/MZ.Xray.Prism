@@ -6,6 +6,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 경로 문자열에서 디렉토리 이름만 추출하여 반환
+    /// </summary>
     public class LastestDirectoryConverter : IValueConverter
     {
 

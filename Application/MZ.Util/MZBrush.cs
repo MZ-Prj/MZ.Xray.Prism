@@ -6,7 +6,9 @@ namespace MZ.Util
 {
     public class MZBrush
     {
-
+        /// <summary>
+        /// HSV 색상환(Rainbow) 형태의 RadialGradientBrush 생성 (중앙을 기준으로 360도 전 색상)
+        /// </summary>
         public static RadialGradientBrush CreateHsvCircularGradientBrush()
         {
             var gradientBrush = new RadialGradientBrush
@@ -27,6 +29,9 @@ namespace MZ.Util
             return gradientBrush;
         }
 
+        /// <summary>
+        /// HSV 색상 그라데이션(좌→우) LinearGradientBrush 생성 (0~270도)
+        /// </summary>
         public static LinearGradientBrush CreateHsvGradientBrush()
         {
             var gradientBrush = new LinearGradientBrush
@@ -45,6 +50,9 @@ namespace MZ.Util
             return gradientBrush;
         }
 
+        /// <summary>
+        /// 특정 범위의 HSV 색상만 사용하는 RadialGradientBrush 생성 (30~120도)
+        /// </summary>
         public static RadialGradientBrush CreateHsvRadialGradientBrush()
         {
             var gradientBrush = new RadialGradientBrush
@@ -65,6 +73,9 @@ namespace MZ.Util
             return gradientBrush;
         }
 
+        /// <summary>
+        /// HSV(Hue, Saturation, Value) 값을 RGB(Color)로 변환
+        /// </summary>
         public static Color HsvToRgb(double hue, double saturation, double value)
         {
             int hi = (int)(hue / 60) % 6;

@@ -5,6 +5,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// bool 값을 WPF Visibility(Visible/Collapsed)로 변환
+    /// </summary>
     public class VisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

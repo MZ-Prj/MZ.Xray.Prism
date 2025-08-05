@@ -4,6 +4,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 자료형 반환 (string <-> int)
+    /// </summary>
     public class NumericIntegerConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -8,7 +8,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
-
+    /// <summary>
+    /// 값이 비어 있으면 placeholder(매개변수)로 대체, 그렇지 않으면 원래 값을 반환
+    /// </summary>
     public class PlaceholderConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

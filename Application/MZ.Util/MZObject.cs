@@ -4,8 +4,14 @@ using System.Reflection;
 
 namespace MZ.Util
 {
+    /// <summary>
+    /// 객체 복사 및 매핑 관련 확장 메서드를 제공하는 유틸리티 클래스
+    /// </summary>
     public static class MZObject
     {
+        /// <summary>
+        /// 같은 타입의 두 객체 간 public 속성 값 전체 복사
+        /// </summary>
         public static void CopyTo<T>(this T source, T target) where T : class
         {
             if (source == null || target == null)
@@ -25,6 +31,9 @@ namespace MZ.Util
             }
         }
 
+        /// <summary>
+        /// 지정한 속성명을 제외하고 복사(새 객체 반환)
+        /// </summary>
         public static T CopyToWithoutProperties<T>(this T source, params string[] propertiesToExclude) where T : new()
         {
             T target = new();
@@ -47,11 +56,17 @@ namespace MZ.Util
             return target;
         }
 
+        /// <summary>
+        /// "Id" 속성을 제외하고 복사(새 객체 반환)
+        /// </summary>
         public static T CopyToWithoutId<T>(this T source) where T : new()
         {
             return source.CopyToWithoutProperties("Id");
         }
 
+        /// <summary>
+        /// 서로 다른 타입의 객체 간 동일한 이름/타입의 속성 매핑 (새 객체 반환)
+        /// </summary>
         public static TDestination MapTo<TSource, TDestination>(this TSource source) where TDestination : new()
         {
             TDestination destination = new();
@@ -80,6 +95,9 @@ namespace MZ.Util
             return destination;
         }
 
+        /// <summary>
+        /// 값이 null이 아니면 action을 수행
+        /// </summary>
         public static void Let<T>(this T value, Action<T> action)
         {
             if (value != null)

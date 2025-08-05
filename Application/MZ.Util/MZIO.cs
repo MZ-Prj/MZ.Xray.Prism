@@ -6,19 +6,31 @@ using System.Text;
 
 namespace MZ.Util
 {
+    /// <summary>
+    /// 파일 및 디렉토리 관련 기능을 제공하는 유틸리티 클래스
+    /// </summary>
     public class MZIO
     {
+        /// <summary>
+        /// 시스템 임시폴더 경로 반환
+        /// </summary>
         public static string GetSystemTempPath()
         {
             return Path.GetTempPath();
         }
 
+        /// <summary>
+        /// 전달받은 경로의 파일명만 시스템 임시폴더에 결합하여 반환
+        /// </summary>
         public static string GetSystemTempPath(string path)
         {
             var fileName = Path.GetFileName(path);
             return Path.Combine(Path.GetTempPath(), fileName);
         }
 
+        /// <summary>
+        /// 지정한 경로에서 확장자에 해당하는 파일명 리스트 반환 (재귀)
+        /// </summary>
         public static string[] GetFileNamesWithExtension(string path, string extension)
         {
             try
@@ -48,6 +60,9 @@ namespace MZ.Util
             }
         }
 
+        /// <summary>
+        /// 지정한 경로에서 확장자에 해당하는 전체 파일 경로 리스트 반환 (재귀)
+        /// </summary>
         public static string[] GetFilesWithExtension(string path, string extension)
         {
             try
@@ -74,9 +89,11 @@ namespace MZ.Util
             {
                 return [];
             }
-
         }
 
+        /// <summary>
+        /// 파일 존재 시 안전하게 삭제 시도
+        /// </summary>
         public static void TryDeleteFile(string path)
         {
             try
@@ -90,9 +107,11 @@ namespace MZ.Util
             {
 
             }
-            
         }
 
+        /// <summary>
+        /// 경로가 존재하지 않으면 디렉토리 생성 시도
+        /// </summary>
         public static void TryMakeDirectory(string path)
         {
             try
@@ -108,6 +127,9 @@ namespace MZ.Util
             }
         }
 
+        /// <summary>
+        /// 파일 경로에서 디렉토리만 추출하여 존재하지 않으면 생성
+        /// </summary>
         public static void TryMakeDirectoryRemoveFile(string path)
         {
             try
@@ -125,6 +147,9 @@ namespace MZ.Util
             }
         }
 
+        /// <summary>
+        /// 대상 경로에 디렉토리 생성 후 파일 복사
+        /// </summary>
         public static void TryMakeDirectoryAndCopy(string input, string copy)
         {
             try
@@ -140,7 +165,9 @@ namespace MZ.Util
 
             }
         }
-
+        /// <summary>
+        /// 파일 존재 여부 반환
+        /// </summary>
         public static bool IsFileExist(string input)
         {
             if (File.Exists(input))
@@ -151,8 +178,14 @@ namespace MZ.Util
         }
     }
 
+    /// <summary>
+    /// AES 암호화/복호화 및 파일 삭제 지원 유틸리티 클래스
+    /// </summary>
     public class MZSecurityIO
     {
+        /// <summary>
+        /// 파일을 AES로 암호화해서 다른 경로에 저장
+        /// </summary>
         public static void Encrypt(string inputFilePath, string outputFilePath, string fileKey)
         {
             byte[] fileBytes = File.ReadAllBytes(inputFilePath);
@@ -177,6 +210,9 @@ namespace MZ.Util
             File.WriteAllBytesAsync(outputFilePath, encryptedData);
         }
 
+        /// <summary>
+        /// AES로 암호화된 파일을 복호화해서 다른 경로에 저장
+        /// </summary>
         public static void Decrypt(string inputFilePath, string outputFilePath, string fileKey)
         {
             byte[] encryptedFileBytes = File.ReadAllBytes(inputFilePath);
@@ -206,6 +242,9 @@ namespace MZ.Util
             File.WriteAllBytesAsync(outputFilePath, decryptedData);
         }
 
+        /// <summary>
+        /// 파일을 암호화하고 원본 삭제
+        /// </summary>
         public static void EncryptAndRemove(string filePath, string fileKey, string extension = ".mz")
         {
             string newFilePath = Path.ChangeExtension(filePath, extension);

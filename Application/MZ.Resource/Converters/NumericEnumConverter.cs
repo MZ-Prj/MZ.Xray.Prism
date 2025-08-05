@@ -4,7 +4,10 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
-    public class NumericFloatConverter : IValueConverter
+    /// <summary>
+    /// 자료형 반환 (enum <-> float)
+    /// </summary>
+    public class NumericEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

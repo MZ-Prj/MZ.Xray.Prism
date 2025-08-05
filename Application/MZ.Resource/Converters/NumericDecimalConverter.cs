@@ -4,6 +4,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 문자를 숫자로 변환 및 입력값 필터링 지원(double ↔ string)
+    /// </summary>
     public class NumericDecimalConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

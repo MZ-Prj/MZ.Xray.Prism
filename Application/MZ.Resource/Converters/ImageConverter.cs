@@ -7,6 +7,9 @@ using System.Windows;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 이미지 경로(string)를 ImageBrush로 변환
+    /// </summary>
     public class ImagePathToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
