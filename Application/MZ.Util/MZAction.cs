@@ -51,18 +51,21 @@ namespace MZ.Util
         /// <summary>
         /// Action을 예외처리 래퍼로 감싸는 함수
         /// </summary>
-        public static Action Wrapper(Action action)
+        public static Action Wrapper(Action action, bool isComment = true)
         {
-            return () => Execute(action);
+            return () => Execute(action, isComment);
         }
 
         /// <summary>
         /// Action을 실행하며 예외 발생 시 로깅
         /// </summary>
-        public static void Execute(Action action)
+        public static void Execute(Action action, bool isComment = true)
         {
             string className = GetClassName(action.Method.DeclaringType);
-            MZLogger.Information($"Executing : {className}.{action.Method.Name}");
+            if (isComment)
+            {
+                MZLogger.Information($"Executing : {className}.{action.Method.Name}");
+            }
             try
             {
                 action();

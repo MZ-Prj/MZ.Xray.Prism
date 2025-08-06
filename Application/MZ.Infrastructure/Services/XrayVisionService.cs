@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MZ.Util;
 
 namespace MZ.Infrastructure.Services
 {
@@ -33,21 +34,22 @@ namespace MZ.Infrastructure.Services
         /// 요청 조건(기간, 페이지 등)에 맞는 이미지 목록을 조회
         /// - 결과는 LoadResponse로 가공
         /// </summary>
-        public async Task<BaseResponse<BaseRole, ICollection<ImageLoadResponse>>> Load(ImageLoadRequest request)
+        public async Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ImageLoadRequest request)
         {
             try
             {
                 var loads = await xrayVisionImageRepository.GetByDateTimeBetweenStartEndAndPageSize(request.Start, request.End, request.Page, request.Size);
 
-                ICollection<ImageLoadResponse> images = [.. loads.Select(
-                    image => new ImageLoadResponse(
-                        Path.Combine(image.Path, image.Filename), image.Filename, image.CreateDate))];
+                if (loads.Count == 0)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageEntity>>(BaseRole.Valid);
+                }
 
-                return BaseResponseExtensions.Success(BaseRole.Success, images);
+                return BaseResponseExtensions.Success(BaseRole.Success, loads);
             }
             catch (Exception ex)
             {
-                return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageLoadResponse>>(BaseRole.Fail, ex);
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<ImageEntity>>(BaseRole.Fail, ex);
             }
         }
 
@@ -90,15 +92,10 @@ namespace MZ.Infrastructure.Services
                     Filename = request.Filename,
                     Width = request.Width,
                     Height = request.Height,
-                    ObjectDetections = [.. request.ObjectDetections.Select(c => new ObjectDetectionEntity() {
-                        Index = c.Index,
-                        Name = c.Name,
-                        Color = c.Color,
-                        Confidence = c.Confidence,
-                        X  = c.X,
-                        Y  = c.Y,
-                        Width = c.Width,
-                        Height = c.Height,
+                    ObjectDetections = [.. request.ObjectDetections.Select(c => {
+                        var copy = new ObjectDetectionEntity();
+                        c.CopyTo(copy);
+                        return copy;
                     }) ?? []],
                 };
 
@@ -191,6 +188,7 @@ namespace MZ.Infrastructure.Services
                 }
                 else
                 {
+                    
                     calibration.RelativeWidthRatio = request.RelativeWidthRatio;
                     calibration.OffsetRegion = request.OffsetRegion;
                     calibration.GainRegion = request.GainRegion;

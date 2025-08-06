@@ -111,6 +111,26 @@ namespace MZ.DTO
         }
 
         /// <summary>
+        /// ObjectDetectionEntity로 ObjectDetectionModel 변환
+        /// </summary>
+        /// <param name="entity">ObjectDetectionEntity</param>
+        /// <returns>ObjectDetectionModel</returns>
+        public static ObjectDetectionModel EntityToModel(ObjectDetectionEntity entity)
+        {
+            return new ObjectDetectionModel()
+            {
+                Index = entity.Index,
+                Name = entity.Name,
+                Color = entity.Color,
+                Confidence = entity.Confidence,
+                X = entity.X,
+                Y = entity.Y,
+                Width = entity.Width,
+                Height = entity.Height,
+            };
+        }
+
+        /// <summary>
         /// ObjectDetectionModel 컬렉션을 ObjectDetectionEntity 컬렉션으로 변환
         /// </summary>
         /// <param name="model">ICollection<ObjectDetectionModel></param>
@@ -120,6 +140,15 @@ namespace MZ.DTO
             return [.. model.Select(ModelToEntity)];
         }
 
+        /// <summary>
+        /// ObjectDetectionEntity 컬렉션을 ObjectDetectionModel 컬렉션으로 변환
+        /// </summary>
+        /// <param name="model">ICollection<ObjectDetectionEntity></param>
+        /// <returns>ICollection<ObjectDetectionModel></returns>
+        public static ICollection<ObjectDetectionModel> EntitiesToModels(ICollection<ObjectDetectionEntity> model)
+        {
+            return [.. model.Select(EntityToModel)];
+        }
     }
     #endregion
 }

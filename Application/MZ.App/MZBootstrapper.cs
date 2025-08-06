@@ -30,19 +30,11 @@ namespace MZ.App
 {
     public class MZBootstrapper : PrismBootstrapper
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         protected override DependencyObject CreateShell()
         {
             return null!;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="containerRegistry"></param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             // Config
@@ -56,10 +48,6 @@ namespace MZ.App
             RegisterUIServices(containerRegistry);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moduleCatalog"></param>
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             // Clients (UI)
@@ -76,9 +64,6 @@ namespace MZ.App
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         protected override void OnInitialized()
         {
             // Theme
@@ -147,15 +132,12 @@ namespace MZ.App
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Exit()
         {
 
         }
 
-        public static void RegisterByAttribute(IContainerRegistry containerRegistry, Assembly assembly)
+        public void RegisterByAttribute(IContainerRegistry containerRegistry, Assembly assembly)
         {
             foreach (var type in assembly.GetTypes())
             {

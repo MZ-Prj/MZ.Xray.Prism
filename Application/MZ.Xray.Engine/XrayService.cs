@@ -16,7 +16,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace MZ.Xray.Engine
 {
@@ -117,6 +117,7 @@ namespace MZ.Xray.Engine
         private Task _screenTask;
         private Task _videoTask;
         private bool IsRunning => _screenCts != null && !_screenCts.IsCancellationRequested;
+
         #endregion
 
         /// <summary>
@@ -299,18 +300,27 @@ namespace MZ.Xray.Engine
                 Media.IncrementSlider();
             }
             Media.IncreaseInterval();
+
         }
 
         /// <summary>
-        /// UI에서 슬라이더(프레임) 인덱스 이동 시, Media/Zeffect/AI 상태 동기화
+        /// UI에서 슬라이더(프레임) 인덱스 이동 시, Media/Zeffect/AI 상태 동기화 (버튼)
         /// </summary>
         public void PrevNextSlider(int index)
         {
             int slider = Media.PrevNextSlider(index);
 
-            Media.ChangeFrame(slider);
-            Zeffect.ChangeFrame(slider);
-            _aiService.ChangeObjectDetections(slider);
+            PrevNextSliderBar(slider);
+        }
+
+        /// <summary>
+        /// UI에서 슬라이더(프레임) 인덱스 이동 시, Media/Zeffect/AI 상태 동기화 (슬라이드바)
+        /// </summary>
+        public void PrevNextSliderBar(int index)
+        {
+            Media.ChangeFrame(index);
+            Zeffect.ChangeFrame(index);
+            _aiService.ChangeObjectDetections(index);
         }
 
     }
@@ -528,11 +538,12 @@ namespace MZ.Xray.Engine
         /// <returns></returns>
         public async Task ShiftAsync(Mat line, Mat color, Mat zeff)
         {
+            int width = color.Width;
             await Task.WhenAll(
                 Calibration.ShiftAsync(line),
                 Media.ShiftAsync(color),
                 Zeffect.ShiftAsync(zeff),
-                _aiService.ShiftAsync(line.Width));
+                _aiService.ShiftAsync(width));
         }
 
         /// <summary>
@@ -558,16 +569,16 @@ namespace MZ.Xray.Engine
 
             (int start, int end) = XrayDataSaveManager.GetSplitPosition(width, sensorWidth, frameCount);
 
-            //저장은 UI 처리와 별계여야함으로 백그라운드에서 수행
+            // 저장은 UI 처리와 별계여야함으로 백그라운드에서 수행
             Task.Run(async () =>
             {
                 await Task.WhenAll(
                     XrayDataSaveManager.ImageAsync(Media.Image, start, end, path, $"{time}.png"),
                     XrayDataSaveManager.OriginAsync(Calibration.Origin, Calibration.Offset, Calibration.Gain, start, end, path, $"{time}.tiff"),
                     XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"),
-                    _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height, ObjectDetectionMapper.ModelsToEntities(_aiService.Yolo.ObjectDetections))),
+                    _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height, ObjectDetectionMapper.ModelsToEntities(_aiService.Yolo.ChangePositionCanvasToMat()))),
                     _aiService.Save(path, $"{time}.json"));
-            });
+            }); 
         }
     }
 
@@ -602,25 +613,25 @@ namespace MZ.Xray.Engine
         /// </summary>
         public async void LoadDatabase()
         {
-            //current username
+            // Current Username
             var currentUser = _databaseService.User.CurrentUser();
             string username = currentUser.Data;
 
-            //calibration
+            // Calibration
             var calibration = await _databaseService.Calibration.Load(new(username));
             if (calibration.Success)
             {
                 Calibration.Model = XrayVisionCalibrationMapper.EntityToModel(calibration.Data);
             }
 
-            //filter
+            // Filter
             var filter = await _databaseService.Filter.Load(new(username));
             if (filter.Success)
             {
                 Media.Filter = XrayVisionFilterMapper.EntityToModel(filter.Data);
             }
 
-            //material
+            // Material
             var material = await _databaseService.Material.Load(new(username));
             if (material.Success)
             {
@@ -628,7 +639,7 @@ namespace MZ.Xray.Engine
                 Material.UpdateAllMaterialGraph();
             }
 
-            //zeffect control
+            // Zeffect Control
             var zeffectControl = await _databaseService.ZeffectControl.Load(new(username));
             if (zeffectControl.Success)
             {
@@ -636,7 +647,7 @@ namespace MZ.Xray.Engine
                 Zeffect.UpdateZeffectControl();
             }
 
-            //curve control
+            // Curve Control
             var curveControl = await _databaseService.CurveControl.Load(new(username));
             if (curveControl.Success)
             {
@@ -753,7 +764,10 @@ namespace MZ.Xray.Engine
 
                 var mat = VisionBase.SplitCol(VisionBase.BlendWithBackground(Media.Image), start, end);
 
-                _aiService.Predict(mat.ToMemoryStream(), new(mat.Width, mat.Height) , new((Media.Information.Width* mat.Width/Media.Image.Width), Media.Information.Height), (Media.Image.Width- mat.Width));
+                double canvasWidth = (Media.Information.Width * mat.Width / Media.Image.Width);
+                double canvasHeigth = Media.Information.Height;
+
+                _aiService.Predict(mat.ToMemoryStream(), new(mat.Width, mat.Height) , new(canvasWidth, canvasHeigth), (Media.Image.Width - mat.Width));
 
             }
             catch (Exception ex)

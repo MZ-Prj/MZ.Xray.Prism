@@ -7,6 +7,7 @@ namespace MZ.Util
     /// <summary>
     /// 객체 복사 및 매핑 관련 확장 메서드를 제공하는 유틸리티 클래스
     /// </summary>
+    [Obsolete("TODO : Deep Clone 검증 수행 ")]
     public static class MZObject
     {
         /// <summary>

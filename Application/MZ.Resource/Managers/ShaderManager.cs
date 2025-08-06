@@ -37,7 +37,21 @@ namespace MZ.Resource.Managers
         public Brush Input
         {
             get => (Brush)GetValue(InputProperty);
-            set => SetValue(InputProperty, value);
+            set
+            {
+                if (value == null)
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+                else if (value is Brush brush)
+                {
+                    SetValue(InputProperty, brush);
+                }
+                else
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+            }
         }
 
         public float Min
@@ -95,7 +109,21 @@ namespace MZ.Resource.Managers
         public Brush Input
         {
             get => (Brush)GetValue(InputProperty);
-            set => SetValue(InputProperty, value);
+            set
+            {
+                if (value == null)
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+                else if (value is Brush brush)
+                {
+                    SetValue(InputProperty, brush);
+                }
+                else
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+            }
         }
 
         public Size TextureSize

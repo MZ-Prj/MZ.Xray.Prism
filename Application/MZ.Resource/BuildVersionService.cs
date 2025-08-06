@@ -16,7 +16,7 @@ namespace MZ.Resource
 
         public static void Load(this Assembly assembly)
         {
-            BuildVersion = GetBuildVersion(assembly);
+            BuildVersion = GetBuildInformation(assembly);
         }
 
         /// <summary>

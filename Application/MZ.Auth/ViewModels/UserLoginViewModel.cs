@@ -12,6 +12,7 @@ using MZ.Util;
 using MZ.Logger;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using MZ.Resource;
 
 namespace MZ.Auth.ViewModels
 {
@@ -22,10 +23,13 @@ namespace MZ.Auth.ViewModels
         private readonly IDatabaseService _databaseService;
         #endregion
 
-
         #region Params
         private UserModel _user = new();
         public UserModel User { get => _user; set => SetProperty(ref _user, value); }
+
+        private string buildVersion;
+        public string BuildVersion { get => buildVersion; set => SetProperty(ref buildVersion, value); }
+
         #endregion
 
         #region Command
@@ -42,6 +46,11 @@ namespace MZ.Auth.ViewModels
             _databaseService = databaseService;
 
             base.Initialize();  
+        }
+
+        public override void InitializeModel()
+        {
+            BuildVersion = BuildVersionService.BuildVersion;
         }
 
         public override async void OnNavigatedTo(NavigationContext context)
@@ -88,5 +97,6 @@ namespace MZ.Auth.ViewModels
                                 MZRegionNames.DashboardRegion,
                                 nameof(UserRegisterView)));
         }
+
     }
 }

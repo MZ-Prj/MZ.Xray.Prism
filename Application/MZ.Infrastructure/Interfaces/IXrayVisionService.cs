@@ -19,7 +19,7 @@ namespace MZ.Infrastructure.Interfaces
         /// <summary>
         /// 페이징, 검색 조건에 따른 이미지 리스트 조회 (일반)
         /// </summary>
-        Task<BaseResponse<BaseRole, ICollection<ImageLoadResponse>>> Load(ImageLoadRequest request);
+        Task<BaseResponse<BaseRole, ICollection<ImageEntity>>> Load(ImageLoadRequest request);
 
         /// <summary>
         /// 기간 조건에 따른 이미지 Entity 컬렉션 조회 (리포트용)

@@ -14,6 +14,8 @@ using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
 using System;
+using HarfBuzzSharp;
+using MZ.Domain.Interfaces;
 
 namespace MZ.AI.Engine
 {
@@ -136,10 +138,16 @@ namespace MZ.AI.Engine
         /// </summary>
         public void Shift(int width)
         {
-            foreach (var detection in Yolo.ObjectDetections)
-            {
-                detection.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
-            }
+            var objectDetections = new ObservableCollection<ObjectDetectionModel>(
+                Yolo.ObjectDetections.Select(c =>
+                {
+                    var copy = new ObjectDetectionModel();
+                    c.CopyTo(copy);
+                    copy.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
+                    return copy;
+                })
+            );
+            Yolo.ObjectDetections = objectDetections;
         }
         /// <summary>
         /// 객체탐지 결과 추가
@@ -154,7 +162,6 @@ namespace MZ.AI.Engine
                     return copy;
                 })
             );
-
             Yolo.ObjectDetectionsList.Add(objectDetections);
         }
         /// <summary>
@@ -194,9 +201,9 @@ namespace MZ.AI.Engine
         /// <summary>
         /// ObjectDetectionModel 리스트로 매핑
         /// </summary>
-        public ICollection<ObjectDetectionModel> Mapper(int start)
+        public ICollection<ObjectDetectionModel> ChangePositionCanvasToMat(int start)
         {
-            return Yolo.Mapper(start);
+            return Yolo.ChangePositionCanvasToMat(start);
         }
         /// <summary>
         /// 현재 카테고리 리스트 반환

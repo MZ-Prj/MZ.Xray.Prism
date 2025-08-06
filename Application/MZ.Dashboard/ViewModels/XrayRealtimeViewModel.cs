@@ -20,7 +20,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -127,6 +126,9 @@ namespace MZ.Dashboard.ViewModels
 
         private DelegateCommand _saveImageCommand;
         public ICommand SaveImageCommand => _saveImageCommand ??= new(MZAction.Wrapper(SaveImageButton));
+
+        private DelegateCommand _changedSliderCommand;
+        public ICommand ChangedSliderCommand => _changedSliderCommand ??= new DelegateCommand(MZAction.Wrapper(ChangedSlider, false));
 
         #endregion
         public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService, IWindowDialogService windowDialogService) : base(container)
@@ -430,6 +432,14 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+        /// <summary>
+        /// Slider Event(ScrollChanged) 
+        /// 마우스로 슬라이더 제어시 사용
+        /// </summary>
+        private void ChangedSlider()
+        {
+            _xrayService.PrevNextSliderBar(Media.Information.Slider);
+        }
 
         #region Behavior
         /// <summary>
@@ -441,6 +451,7 @@ namespace MZ.Dashboard.ViewModels
         {
             Media.Create(width, height);
         }
+
         #endregion
 
     }

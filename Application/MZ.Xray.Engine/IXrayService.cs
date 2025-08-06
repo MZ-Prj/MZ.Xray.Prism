@@ -79,5 +79,9 @@ namespace MZ.Xray.Engine
         /// 슬라이더 제어
         /// </summary>
         void PrevNextSlider(int index);
+        /// <summary>
+        /// 슬라이더 제어
+        /// </summary>
+        void PrevNextSliderBar(int index);
     }
 }

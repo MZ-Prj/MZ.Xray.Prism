@@ -10,9 +10,9 @@ namespace MZ.Domain.Models
     public class ObjectDetectionOptionModel : BindableBase
     {
         /// <summary>
-        /// 신뢰도 임계값(0~1, default: 0.5)
+        /// 신뢰도 임계값(0~1, default: 0.75)
         /// </summary>
-        private double _confidence = 0.5;
+        private double _confidence = 0.75;
         public double Confidence { get => _confidence; set => SetProperty(ref _confidence, value); }
 
         /// <summary>

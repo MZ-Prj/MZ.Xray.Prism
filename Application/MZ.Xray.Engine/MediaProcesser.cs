@@ -31,9 +31,6 @@ namespace MZ.Xray.Engine
 
         #region Command
 
-        private DelegateCommand _changedSliderCommand;
-        public ICommand ChangedSliderCommand => _changedSliderCommand ??= new DelegateCommand(ChangedSlider);
-
         #endregion
 
         #region Wrapper
@@ -118,17 +115,6 @@ namespace MZ.Xray.Engine
         }
 
         /// <summary>
-        /// 슬라이더 정보 변경시 ImageSource 갱신
-        /// </summary>
-        public void ChangedSlider()
-        {
-            if (IsShowFrame(Information.Slider))
-            {
-                ImageSource = VisionBase.CanFreezeImageSource(Frames[Information.Slider-1].Image.ToBitmapSource());
-            }
-        }
-
-        /// <summary>
         /// Video 형식으로 저장
         /// </summary>
         public void SaveVideo()
@@ -172,6 +158,15 @@ namespace MZ.Xray.Engine
                 Information.Slider = slider;
             }
             return slider;
+        }
+
+        public bool ChangedSlider()
+        {
+            if (IsShowFrame(Information.Slider))
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

@@ -73,9 +73,9 @@ namespace MZ.AI.Engine
         /// </summary>
         Task Save(string path, string time, MemoryStream stream);
         /// <summary>
-        /// ObjectDetectionModel 리스트로 매핑
+        /// ObjectDetectionModel의 Canvas좌표를 Mat으로
         /// </summary>
-        ICollection<ObjectDetectionModel> Mapper(int start);
+        ICollection<ObjectDetectionModel> ChangePositionCanvasToMat(int start);
         /// <summary>
         /// 현재 카테고리 리스트 반환
         /// </summary>
@@ -92,6 +92,9 @@ namespace MZ.AI.Engine
         /// 지정 루트경로에 저장된 모델이 있는지 확인
         /// </summary>
         bool IsSavedModel(string root);
+
+        
+
         /// <summary>
         /// 현재 설정값들을 AIOption 생성용 DTO로 변환
         /// </summary>

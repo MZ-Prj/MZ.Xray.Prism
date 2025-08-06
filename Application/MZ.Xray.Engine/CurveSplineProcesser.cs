@@ -23,6 +23,7 @@ namespace MZ.Xray.Engine
         public void InitializeMaterial()
         {
             Points.Add(new() { X = 0, Y = 0 });
+            Points.Add(new() { X = 145, Y = 100 });
             Points.Add(new() { X = 255, Y = 255 });
         }
 

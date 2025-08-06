@@ -146,10 +146,10 @@ namespace MZ.AI.Engine
                 {
                     Formatting = Formatting.Indented
                 };
-
+                var objectDetections = ChangePositionCanvasToMat(); 
                 var data = new
                 {
-                    ObjectDetections,
+                    objectDetections,
                     YoloOption,
                     Categories
                 };
@@ -184,11 +184,11 @@ namespace MZ.AI.Engine
         }
 
         /// <summary>
-        /// 탐지결과 좌표를 원본 이미지 기준으로 변환하여 반환 (Mapper)
+        /// 탐지결과 좌표를 원본 이미지 기준으로 변환하여 반환 (Mapper) 
         /// </summary>
         /// <param name="start">int : 시작 X좌표</param>
         /// <returns>ICollection<ObjectDetectionModel></returns>
-        public ICollection<ObjectDetectionModel> Mapper(int start = 0)
+        public ICollection<ObjectDetectionModel> ChangePositionCanvasToMat(int start = 0)
         {
             ICollection<ObjectDetectionModel> objectDetections = [];
             foreach (var item in ObjectDetections)
@@ -213,6 +213,7 @@ namespace MZ.AI.Engine
             }
             return objectDetections;
         }
+
 
         /// <summary>
         /// 객체 탐지 결과 표시/숨김 상태
