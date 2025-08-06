@@ -1,4 +1,5 @@
 ﻿using MZ.Domain.Enums;
+using MZ.Domain.Interfaces;
 using MZ.DTO;
 using MZ.Infrastructure.Interfaces;
 using System.Threading;
@@ -22,6 +23,7 @@ namespace MZ.Infrastructure
         public IXrayVisionMaterialService Material { get; }
         public IXrayVisionCalibrationService Calibration { get; }
         public IXrayVisionZeffectControlService ZeffectControl { get; }
+        public IXrayVisionCurveControlService CurveControl { get; }
         public IXrayAIOptionService AIOption { get; }
 
         /// <summary>
@@ -37,6 +39,7 @@ namespace MZ.Infrastructure
             IXrayVisionMaterialService xrayVisionMaterialService,
             IXrayVisionCalibrationService xrayVisionCalibrationService,
             IXrayVisionZeffectControlService xrayVisionZeffectControlService,
+            IXrayVisionCurveControlService xrayVisionCurveControlService,
             IXrayAIOptionService xrayAIOptionService)
         {
             _cts = new ();
@@ -48,6 +51,7 @@ namespace MZ.Infrastructure
             Material = xrayVisionMaterialService;
             Calibration = xrayVisionCalibrationService;
             ZeffectControl = xrayVisionZeffectControlService;
+            CurveControl = xrayVisionCurveControlService;
             AIOption = xrayAIOptionService;
         }
 

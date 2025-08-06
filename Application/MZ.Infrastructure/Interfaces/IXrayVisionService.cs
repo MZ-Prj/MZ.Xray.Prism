@@ -88,4 +88,21 @@ namespace MZ.Infrastructure.Interfaces
         /// </summary>
         Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Load(ZeffectControlLoadRequest request);
     }
+
+
+    /// <summary>
+    /// Xray Vision Curve 서비스 인터페이스  
+    /// Curve 제어 정보 저장 및 조회 기능 제공
+    /// </summary>
+    public interface IXrayVisionCurveControlService
+    {
+        /// <summary>
+        /// Curve 제어 정보 저장
+        /// </summary>
+        Task<BaseResponse<BaseRole, ICollection<CurveControlEntity>>> Save(CurveControlSaveRequest request);
+        /// <summary>
+        /// Curve 제어 정보 불러오기
+        /// </summary>
+        Task<BaseResponse<BaseRole, ICollection<CurveControlEntity>>> Load(CurveControlLoadRequest request);
+    }
 }

@@ -131,12 +131,29 @@ namespace MZ.DTO
         ICollection<ZeffectControlEntity> ZeffectControls
     );
     /// <summary>
-    /// Z효과 컨트롤 불러오기 요청 DTO
+    /// Zeffect 컨트롤 불러오기 요청 DTO
     /// </summary>
     /// <param name="Username">조회할 사용자명</param>
     public record ZeffectControlLoadRequest(
         string Username
     );
+
+    /// <summary>
+    /// Curve 컨트롤 저장 요청 DTO
+    /// </summary>
+    /// <param name="ZeffectControls">Curve 컨트롤 리스트</param>
+    public record CurveControlSaveRequest(
+        ICollection<CurveControlEntity> CurveControls
+    );
+    /// <summary>
+    /// Curve 컨트롤 불러오기 요청 DTO
+    /// </summary>
+    /// <param name="Username">조회할 사용자명</param>
+    public record CurveControlLoadRequest(
+        string Username
+    );
+
+
     #endregion
 
     #region Response
@@ -439,6 +456,52 @@ namespace MZ.DTO
             var entities = model.Select(ModelToEntity).ToList();
 
             return new (entities);
+        }
+    }
+
+    public static class XrayVisionCurveControlMapper
+    {
+        public static ICollection<CurveControlModel> EntitiesToModels(ICollection<CurveControlEntity> entity)
+        {
+            return [.. entity.Select(EntityToModel).Where(model => model != null)];
+        }
+
+        public static ICollection<CurveControlEntity> ModelsToEntities(ICollection<CurveControlModel> model)
+        {
+
+            return [.. model.Select(ModelToEntity).Where(entity => entity != null)];
+        }
+
+        public static CurveControlModel EntityToModel(CurveControlEntity entity)
+        {
+
+            var model = new CurveControlModel
+            {
+                Id = entity.Id,
+                X = entity.X,
+                Y = entity.Y,
+            };
+
+            return model;
+        }
+
+        public static CurveControlEntity ModelToEntity(CurveControlModel model)
+        {
+            var entity = new CurveControlEntity
+            {
+                Id = model.Id,
+                X = model.X,
+                Y = model.Y,
+            };
+
+            return entity;
+        }
+
+        public static CurveControlSaveRequest ModelToRequest(ICollection<CurveControlModel> model)
+        {
+            var entities = model.Select(ModelToEntity).ToList();
+
+            return new(entities);
         }
     }
     #endregion

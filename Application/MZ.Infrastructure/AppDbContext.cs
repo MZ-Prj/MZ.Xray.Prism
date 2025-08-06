@@ -92,8 +92,14 @@ namespace MZ.Infrastructure
 
                 // 1:N Zeffect
                 entity.HasMany(u => u.Zeffect)
-                    .WithOne(m => m.User)
-                    .HasForeignKey(m => m.UserId)
+                    .WithOne(z => z.User)
+                    .HasForeignKey(z => z.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // 1:N Curve
+                entity.HasMany(u => u.Curve)
+                    .WithOne(c => c.User)
+                    .HasForeignKey(c => c.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -167,7 +173,7 @@ namespace MZ.Infrastructure
                     .WithOne(u => u.Material)
                     .HasForeignKey<MaterialEntity>(m => m.UserId);
 
-                // 1:N MaterialCurve
+                // 1:N MaterialControls
                 entity.HasMany(m => m.MaterialControls)
                     .WithOne(c => c.Material)
                     .HasForeignKey(c => c.MaterialId)
@@ -185,6 +191,12 @@ namespace MZ.Infrastructure
             {
                 entity.HasKey(z => z.Id);
                 entity.Property(z => z.Check).HasDefaultValue(false);
+            });
+
+            // Curve
+            modelBuilder.Entity<CurveControlEntity>(entity =>
+            {
+                entity.HasKey(c => c.Id);
             });
 
             // AIOption

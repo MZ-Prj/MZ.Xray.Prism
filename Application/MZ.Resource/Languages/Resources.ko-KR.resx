@@ -192,6 +192,9 @@
   <data name="LngZeffectControlRegion" xml:space="preserve">
     <value>유효 핵전하</value>
   </data>
+  <data name="LngCurveControlRegion" xml:space="preserve">
+    <value>LUT 곡선</value>
+  </data>
   <data name="LngZeffectControlRegion_Content" xml:space="preserve">
     <value>명칭</value>
   </data>

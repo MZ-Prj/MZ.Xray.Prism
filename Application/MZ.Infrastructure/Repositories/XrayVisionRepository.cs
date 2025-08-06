@@ -135,4 +135,33 @@ namespace MZ.Infrastructure.Repositories
                                  .ToListAsync();
         }
     }
+
+
+    /// <summary>
+    /// XrayVision CurveControl 저장소
+    /// 
+    /// - CurveControlEntity 관련 DB 접근 담당
+    /// - 사용자별 Curve 컨트롤 조회 제공
+    /// </summary>
+    [Repository]
+    public class XrayVisionCurveControlRepository : RepositoryBase<CurveControlEntity>, IXrayVisionCurveControlRepository
+    {
+        public XrayVisionCurveControlRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task<ICollection<CurveControlEntity>> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<CurveControlEntity>()
+                                 .Where(z => z.UserId == userId)
+                                 .ToListAsync();
+        }
+
+        public async Task DeleteByUserIdAsync(int userId)
+        {
+            var entity = _context.Set<CurveControlEntity>().Where(c => c.UserId == userId);
+            _context.Set<CurveControlEntity>().RemoveRange(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

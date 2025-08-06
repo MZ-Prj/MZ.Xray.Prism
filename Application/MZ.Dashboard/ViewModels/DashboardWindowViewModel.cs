@@ -54,11 +54,11 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _materialCommand;
         public ICommand MaterialCommand => _materialCommand ??= new DelegateCommand(MZAction.Wrapper(MaterialButton));
 
+        private DelegateCommand _curveCommand;
+        public ICommand CurveCommand => _curveCommand ??= new DelegateCommand(MZAction.Wrapper(CurveButton));
+
         private DelegateCommand _aiCommand;
         public ICommand AICommand => _aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
-
-        private DelegateCommand _windowClosingCommand;
-        public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
@@ -68,6 +68,9 @@ namespace MZ.Dashboard.ViewModels
 
         private DelegateCommand _logoutCommand;
         public ICommand LogoutCommand => _logoutCommand ??= new DelegateCommand(MZAction.Wrapper(LogoutButton));
+
+        private DelegateCommand _windowClosingCommand;
+        public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
         #endregion
 
@@ -84,6 +87,7 @@ namespace MZ.Dashboard.ViewModels
         public override void InitializeModel()
         {
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ChartHistogram), CurveCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), ReportCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
@@ -92,6 +96,8 @@ namespace MZ.Dashboard.ViewModels
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand, isVisibility: false));
+
+            
         }
 
         public override void InitializeEvent()
@@ -200,6 +206,20 @@ namespace MZ.Dashboard.ViewModels
                 resizeMode: ResizeMode.NoResize,
                 width: 480,
                 height: 640);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private async void CurveButton()
+        {
+            await _windowDialogService.ShowWindow(
+                title: LanguageService.GetString($"Lng{MZRegionNames.CurveControl}"),
+                regionName: nameof(CurveControlView),
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 260,
+                height: 520);
         }
 
         /// <summary>

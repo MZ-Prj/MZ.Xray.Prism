@@ -108,6 +108,10 @@ namespace MZ.Domain.Entities
         /// ZeffectControls  (1:N)
         /// </summary>
         public ICollection<ZeffectControlEntity> Zeffect { get; set; }
+        /// <summary>
+        /// CurveControls  (1:N)
+        /// </summary>
+        public ICollection<CurveControlEntity> Curve { get; set; }
     }
 
     /// <summary>

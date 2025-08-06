@@ -6,6 +6,8 @@ using Prism.Mvvm;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MZ.Domain.Models
 {
@@ -191,6 +193,11 @@ namespace MZ.Domain.Models
         /// </summary>
         private Mat _image = new(1024, 1024, MatType.CV_8UC4, Scalar.White);
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
+        /// <summary>
+        /// histogram
+        /// </summary>
+        private ImageSource _histogram = null;
+        public ImageSource Histogram { get => _histogram; set => SetProperty(ref _histogram, value); }
         /// <summary>
         /// 재생/분석 중인 프레임의 목록
         /// </summary>
@@ -544,4 +551,21 @@ namespace MZ.Domain.Models
         /// </summary>
         public Brush ColorBrush => new SolidColorBrush(Color);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CurveControlModel : BindableBase
+    {
+        private int _id = 0;
+        public int Id { get => _id; set => SetProperty(ref _id, value); }
+
+        private double _x = 0;
+        public double X { get => _x; set => SetProperty(ref _x, value); }
+
+        private double _y = 0;
+        public double Y { get => _y; set => SetProperty(ref _y, value); }
+
+    }
+
 }

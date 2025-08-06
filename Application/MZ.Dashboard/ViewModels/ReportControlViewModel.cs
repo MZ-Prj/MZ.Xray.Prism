@@ -1,6 +1,7 @@
 ﻿using MZ.DTO;
 using MZ.Core;
 using MZ.Util;
+using MZ.Resource;
 using MZ.Xray.Engine;
 using MZ.Domain.Models;
 using MZ.Infrastructure;
@@ -19,8 +20,6 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel.Events;
 using Axis = LiveChartsCore.SkiaSharpView.Axis;
-using MZ.Resource;
-using LiveChartsCore;
 
 namespace MZ.Dashboard.ViewModels
 {

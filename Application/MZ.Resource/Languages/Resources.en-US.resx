@@ -192,6 +192,9 @@
   <data name="LngZeffectControlRegion" xml:space="preserve">
     <value>Zeffect</value>
   </data>
+  <data name="LngCurveControlRegion" xml:space="preserve">
+    <value>LUT Curve</value>
+  </data>
   <data name="LngZeffectControlRegion_Content" xml:space="preserve">
     <value>Content</value>
   </data>

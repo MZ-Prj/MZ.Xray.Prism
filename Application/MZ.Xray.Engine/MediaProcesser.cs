@@ -56,6 +56,11 @@ namespace MZ.Xray.Engine
             set => Model.ImageSource = value;
         }
 
+        public ImageSource Histogram
+        {
+            get => Model.Histogram;
+            set => Model.Histogram = value;
+        }
         public FilterModel Filter
         {
             get => Model.Filter;
@@ -278,6 +283,7 @@ namespace MZ.Xray.Engine
         public void FreezeImageSource()
         {
             ImageSource = VisionBase.CanFreezeImageSource(Image.ToBitmapSource());
+            Histogram = VisionBase.CanFreezeImageSource(VisionBase.PlotFilledHistogram(Image).ToBitmapSource());
         }
         /// <summary>
         /// Mat -> ImageSource로 변환 (비동기)

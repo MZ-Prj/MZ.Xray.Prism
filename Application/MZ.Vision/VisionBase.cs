@@ -232,7 +232,7 @@ namespace MZ.Vision
         }
 
         /// <summary>
-        /// 컬러 변환 (ex: BGRA→BGR 등)
+        /// 컬러 변환 (ex: BGRA -> BGR 등)
         /// </summary>
         public static Mat CvtColor(Mat input, ColorConversionCodes code)
         {
@@ -369,7 +369,7 @@ namespace MZ.Vision
         }
 
         /// <summary>
-        /// 히스토그램 이미지(Mat) 생성 (하이라이트 영역 지정 가능)
+        /// 히스토그램 이미지(Mat) 생성 
         /// </summary>
         public static Mat PlotFilledHistogram(Mat input, double lower = 0, double upper = byte.MaxValue)
         {
@@ -387,8 +387,7 @@ namespace MZ.Vision
                 Mat hist = new();
                 Cv2.CalcHist([input], [i], null, hist, 1, histSizes, ranges);
 
-                double maxVal = 0;
-                Cv2.MinMaxLoc(hist, out _, out maxVal);
+                Cv2.MinMaxLoc(hist, out _, out double maxVal);
 
                 Scalar color = new(0, 0, 0, 128);
                 if (i == 0) color = new Scalar(255, 0, 0, 128);
@@ -414,7 +413,7 @@ namespace MZ.Vision
             if (lower > 0)
             {
                 int lowerX = (int)lower;
-                Mat overlay = new Mat(histImage.Size(), MatType.CV_8UC4, new Scalar(0, 0, 0, 0));
+                Mat overlay = new(histImage.Size(), MatType.CV_8UC4, new Scalar(0, 0, 0, 0));
                 Cv2.Rectangle(overlay, new Point(0, 0), new Point(lowerX, graphHeight), new Scalar(0, 0, 0, 30), -1);
                 Cv2.Add(histImage, overlay, histImage);
             }
@@ -422,12 +421,10 @@ namespace MZ.Vision
             if (upper < byte.MaxValue)
             {
                 int upperX = (int)upper;
-                Mat overlay = new Mat(histImage.Size(), MatType.CV_8UC4, new Scalar(0, 0, 0, 0));
+                Mat overlay = new(histImage.Size(), MatType.CV_8UC4, new Scalar(0, 0, 0, 0));
                 Cv2.Rectangle(overlay, new Point(upperX, 0), new Point(histSize, graphHeight), new Scalar(0, 0, 0, 30), -1);
                 Cv2.Add(histImage, overlay, histImage);
             }
-
-
             return histImage;
         }
 
@@ -1040,6 +1037,7 @@ namespace MZ.Vision
         /// </summary>
         public static Mat Curve(Mat mat, Point[] points)
         {
+            DateTime start = DateTime.Now;
             if (points.Length == 0)
             {
                 return mat;
@@ -1049,7 +1047,6 @@ namespace MZ.Vision
             int channels = mat.Channels();
             Mat[] channelsArray = Cv2.Split(mat);
 
-            //byte[] lut = GenerateLinearLUT(points); 
             byte[] lut = GenerateSplineLUT(points);
             for (int i = 0; i < channels - 1; i++)
             {
@@ -1057,7 +1054,6 @@ namespace MZ.Vision
 
             }
             Cv2.Merge(channelsArray, result);
-
             return result;
         }
 
@@ -1172,7 +1168,7 @@ namespace MZ.Vision
         /// <summary>
         /// 주어진 점 목록을 바탕으로 스플라인 곡선 포인트 목록을 생성
         /// </summary>
-        private static List<Point> GenerateSpline(List<Point> points)
+        public static List<Point> GenerateSpline(List<Point> points)
         {
             var splinePoints = new List<Point>();
             if (points.Count < 2)
@@ -1201,7 +1197,7 @@ namespace MZ.Vision
         /// <summary>
         /// Catmull-Rom 스플라인 공식에 따라 주어진 t에서 좌표값 계산
         /// </summary>
-        private static double CalculateSplineValue(double t, double p0, double p1, double p2, double p3)
+        public static double CalculateSplineValue(double t, double p0, double p1, double p2, double p3)
         {
             return 0.5 * (
                 (-p0 + 3 * p1 - 3 * p2 + p3) * Math.Pow(t, 3) +
@@ -1266,7 +1262,7 @@ namespace MZ.Vision
             Cv2.FindContours(mat, out Point[][] contours, out HierarchyIndex[] hierarchy, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
             //계산
-            List<Rect> rectangles = new List<Rect>();
+            List<Rect> rectangles = [];
             foreach (var contour in contours)
             {
                 Point[] approx = Cv2.ApproxPolyDP(contour, 0.02 * Cv2.ArcLength(contour, true), true);
@@ -1288,8 +1284,8 @@ namespace MZ.Vision
         /// </summary>
         public static List<Rect> ContourRectangles(Mat mat, int minArea, int maxArea)
         {
-            List<Rect> rectangles = new List<Rect>();
-            Mat matGray = new Mat();
+            List<Rect> rectangles = [];
+            Mat matGray = new();
 
             if (mat.Channels() > 1)
             {
@@ -1347,11 +1343,11 @@ namespace MZ.Vision
             byte s = 255;
             byte v = 255;
 
-            byte[] hsv = new byte[] { h, s, v };
+            byte[] hsv = [h, s, v];
             var hsvMat = new Mat(1, 1, MatType.CV_8UC3);
             Marshal.Copy(hsv, 0, hsvMat.Data, hsv.Length);
 
-            Mat bgrMat = new Mat();
+            Mat bgrMat = new ();
             Cv2.CvtColor(hsvMat, bgrMat, ColorConversionCodes.HSV2BGR);
 
             Vec3b bgrColor = bgrMat.At<Vec3b>(0, 0);
@@ -1420,6 +1416,10 @@ namespace MZ.Vision
             return false;
         }
 
+        public static Point ToOpenCvPoint(System.Windows.Point point)
+        {
+            return new Point((int)point.X, (int)point.Y);
+        }
 
         /// <summary>
         /// ImageSource Freeze
@@ -1433,6 +1433,17 @@ namespace MZ.Vision
             return bitmap;
         }
 
+        /// <summary>
+        /// ImageSource Freeze (비동기)
+        /// </summary>
+        public static async Task<BitmapSource> CanFreezeImageSourceAsync(BitmapSource bitmap)
+        {
+            if (bitmap.CanFreeze)
+            {
+                await Task.Run(() => bitmap.Freeze());
+            }
+            return bitmap;
+        }
 
     }
 }

@@ -294,4 +294,31 @@ namespace MZ.Domain.Entities
         public UserEntity User { get; set; }
 
     }
+
+    [Table("CurveControl")]
+    public class CurveControlEntity : ICurveControl
+    {
+        /// <summary>
+        /// PK. Zeffect 컨트롤 고유 ID
+        /// </summary>
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        /// <summary>
+        /// X 좌표
+        /// </summary>
+        public double X { get; set; }
+        /// <summary>
+        /// Y 좌표
+        /// </summary>
+        public double Y { get; set; }
+
+        /// <summary>
+        /// 연관 사용자 정보
+        /// </summary>
+        public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public UserEntity User { get; set; }
+    }
 }

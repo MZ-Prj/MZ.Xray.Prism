@@ -177,5 +177,17 @@ namespace MZ.Domain.Interfaces
         /// </summary>
         public double Max { get; set; }
     }
+    public interface ICurveControl
+    {
+        /// <summary>
+        /// Y
+        /// </summary>
+        public double Y { get; set; }
+        /// <summary>
+        /// X
+        /// </summary>
+        public double X { get; set; }
 
+
+    }
 }

@@ -48,6 +48,11 @@ namespace MZ.Infrastructure
         IXrayVisionZeffectControlService ZeffectControl { get; }
 
         /// <summary>
+        /// CurveControl 관련 비즈니스 로직 서비스
+        /// </summary>
+        IXrayVisionCurveControlService CurveControl { get; }
+
+        /// <summary>
         /// AI 모델 옵션 관련 비즈니스 로직 서비스
         /// </summary>
         IXrayAIOptionService AIOption { get; }

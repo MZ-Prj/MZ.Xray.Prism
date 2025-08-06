@@ -32,10 +32,17 @@ namespace MZ.Xray.Engine
         /// Zeffect 처리 프로세서
         /// </summary>
         ZeffectProcesser Zeffect { get; set; }
+
+        /// <summary>
+        /// Curve 처리 프로세서
+        /// </summary>
+        CurveSplineProcesser CurveSpline { get; set; }
+
         /// <summary>
         /// 소켓 데이터 수신 프로세서
         /// </summary>
         SocketReceiveProcesser SocketReceive { get; set; }
+
         /// <summary>
         /// 소켓 연결/초기화 작업을 수행
         /// </summary>

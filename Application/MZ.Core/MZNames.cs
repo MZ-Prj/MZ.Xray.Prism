@@ -36,6 +36,7 @@
         public readonly static string MaterialControl = "MaterialControlRegion";
         public readonly static string AIControl = "AIControlRegion";
         public readonly static string ZeffectControl = "ZeffectControlRegion";
+        public readonly static string CurveControl = "CurveControlRegion";
         public readonly static string ReportControl = "ReportControlRegion";
         
         //Producer

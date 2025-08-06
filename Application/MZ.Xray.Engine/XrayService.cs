@@ -16,6 +16,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
+using System.Linq;
 
 namespace MZ.Xray.Engine
 {
@@ -369,6 +370,9 @@ namespace MZ.Xray.Engine
         private ZeffectProcesser _zeffect = new();
         public ZeffectProcesser Zeffect { get => _zeffect; set => SetProperty(ref _zeffect, value); }
 
+        private CurveSplineProcesser _curveSpline = new();
+        public CurveSplineProcesser CurveSpline { get => _curveSpline; set => SetProperty(ref _curveSpline, value); }
+
         #endregion
 
         /// <summary>
@@ -410,7 +414,7 @@ namespace MZ.Xray.Engine
                 bool isObject = await Calibration.IsObjectAsync(high);
                 if (isObject)
                 {
-                    await ShiftAsync(line, color, zeff);
+                    await ShiftAsync(line, CurveSpline.UpdateMat(color), zeff);
                     Media.IncreaseCount();
                 }
                 else
@@ -581,6 +585,7 @@ namespace MZ.Xray.Engine
             _databaseService.Filter.Save(XrayVisionFilterMapper.ModelToRequest(Media.Model.Filter));
             _databaseService.Material.Save(XrayVisionMaterialMapper.ModelToRequest(Material.Model));
             _databaseService.ZeffectControl.Save(XrayVisionZeffectControlMapper.ModelToRequest(Zeffect.Model.Controls));
+            _databaseService.CurveControl.Save(XrayVisionCurveControlMapper.ModelToRequest(CurveSpline.Points));
 
             _databaseService.AIOption.Save(CategoryMapper.ModelToRequest(_aiService.Yolo.Categories));
 
@@ -629,6 +634,13 @@ namespace MZ.Xray.Engine
             {
                 Zeffect.Model.Controls = [.. XrayVisionZeffectControlMapper.EntitiesToModels(zeffectControl.Data)];
                 Zeffect.UpdateZeffectControl();
+            }
+
+            //curve control
+            var curveControl = await _databaseService.CurveControl.Load(new(username));
+            if (curveControl.Success)
+            {
+                CurveSpline.Points = [.. XrayVisionCurveControlMapper.EntitiesToModels(curveControl.Data)];
             }
         }
     }
@@ -762,4 +774,5 @@ namespace MZ.Xray.Engine
         public PDFProcesser PDF { get; set; } = new();
 
     }
+
 }

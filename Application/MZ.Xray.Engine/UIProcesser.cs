@@ -12,7 +12,8 @@ namespace MZ.Xray.Engine
     /// </summary>
     public class UIProcesser : BindableBase
     {
-        public ObservableCollection<IconButtonModel> ActionButtons { set; get; } = [];
+        public ObservableCollection<IconButtonModel> ActionButtons { get; set; } = [];
+        
 
         /// <summary>
         /// DB에서 불러온 버튼 설정값을 UI용 버튼 모델에 매핑/반영

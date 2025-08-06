@@ -23,7 +23,7 @@ namespace MZ.Infrastructure.Services
         protected readonly IXrayVisionImageRepository xrayVisionImageRepository;
         #endregion
 
-        public XrayVisionImageService(IUserRepository userRepository, 
+        public XrayVisionImageService(IUserRepository userRepository,
                                       IXrayVisionImageRepository xrayVisionImageRepository)
         {
             this.userRepository = userRepository;
@@ -37,7 +37,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                var loads = await xrayVisionImageRepository.GetByDateTimeBetweenStartEndAndPageSize(request.Start,request.End, request.Page,request.Size);
+                var loads = await xrayVisionImageRepository.GetByDateTimeBetweenStartEndAndPageSize(request.Start, request.End, request.Page, request.Size);
 
                 ICollection<ImageLoadResponse> images = [.. loads.Select(
                     image => new ImageLoadResponse(
@@ -340,7 +340,7 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Success(BaseRole.Success, material);
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
@@ -419,7 +419,7 @@ namespace MZ.Infrastructure.Services
 
                     await xrayVisionMaterialRepository.UpdateAsync(material);
                 }
-                    
+
                 return BaseResponseExtensions.Success<BaseRole, MaterialEntity>(BaseRole.Success);
             }
             catch (Exception ex)
@@ -530,6 +530,88 @@ namespace MZ.Infrastructure.Services
             {
                 MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail, ex);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 사용자별 Curve 컨트롤 집합 관리 서비스
+    /// - Curve 컨트롤 저장/수정/조회
+    /// </summary>
+    [Service]
+    public class XrayVisionCurveControlService : IXrayVisionCurveControlService
+    {
+        protected readonly IUserSession userSession;
+        protected readonly IUserRepository userRepository;
+        protected readonly IXrayVisionCurveControlRepository xrayVisionCurveControlRepository;
+
+        public XrayVisionCurveControlService(IUserRepository userRepository,
+                                         IUserSession userSession,
+                                         IXrayVisionCurveControlRepository xrayVisionCurveControlRepository)
+        {
+            this.userSession = userSession;
+            this.userRepository = userRepository;
+            this.xrayVisionCurveControlRepository = xrayVisionCurveControlRepository;
+        }
+
+        /// <summary>
+        /// 지정 사용자명에 해당하는 Curve 컨트롤 조회
+        /// </summary>
+        public async Task<BaseResponse<BaseRole, ICollection<CurveControlEntity>>> Load(CurveControlLoadRequest request)
+        {
+            try
+            {
+                var user = userRepository.GetByUsername(request.Username);
+                if (user == null)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail);
+                }
+
+                var zeffects = await xrayVisionCurveControlRepository.GetByUserIdAsync(user.Id);
+
+                if (zeffects == null || zeffects.Count == 0)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Valid);
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, zeffects);
+
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
+            }
+        }
+
+        /// <summary>
+        /// 현재 로그인 사용자 Curve 컨트롤 저장/수정(존재하면 수정, 없으면 신규)
+        /// </summary>
+        public async Task<BaseResponse<BaseRole, ICollection<CurveControlEntity>>> Save(CurveControlSaveRequest request)
+        {
+            try
+            {
+                var user = userRepository.GetByUsername(userSession.CurrentUser);
+                if (user == null)
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail);
+                }
+
+                await xrayVisionCurveControlRepository.DeleteByUserIdAsync(user.Id);
+
+                foreach (var control in request.CurveControls)
+                {
+                    control.UserId = user.Id;
+                    await xrayVisionCurveControlRepository.AddAsync(control);
+                }
+
+                var results = await xrayVisionCurveControlRepository.GetByUserIdAsync(user.Id);
+                return BaseResponseExtensions.Success(BaseRole.Success, results);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
             }
         }
     }
