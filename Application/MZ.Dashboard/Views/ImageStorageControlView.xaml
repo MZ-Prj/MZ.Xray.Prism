@@ -15,13 +15,8 @@
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
-        <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
-        <converters:UppercaseConverter x:Key="UppercaseConverter"/>
-        <converters:ContrastColorConverter x:Key="ContrastColorConverter"/>
-        <converters:VisibilityConverter x:Key="VisibilityConverter" />
-        <converters:ImagePathToBrushConverter x:Key="ImagePathToBrushConverter" />
+        <converters:ImagePathToBrushMultiConverter x:Key="ImagePathToBrushMultiConverter" />
     </UserControl.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,8 +25,6 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="4">
@@ -88,7 +81,14 @@
                                 ToolTip="{Binding Path=Filename}"
                                 Cursor="Hand">
                             <StackPanel>
-                                <Image Source="{Binding Path=PathName}" Height="160" Stretch="Uniform"/>
+                                <Image Height="160" Stretch="Uniform">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource ImagePathToBrushMultiConverter}">
+                                            <Binding Path="Path"/>
+                                            <Binding Path="Filename"/>
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
                                 <TextBlock Text="{Binding Path=Filename}" 
                                            Margin="4"
                                            FontWeight="Bold" 
@@ -99,36 +99,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-        
-        <GridSplitter Grid.Row="1" Grid.Column="1"
-                      Width="4"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      ResizeBehavior="PreviousAndNext"
-                      ResizeDirection="Columns" 
-                      Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-        <StackPanel Grid.Row="1" Grid.Column="2" 
-                    Visibility="{Binding Path=SelectedImageVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DockPanel LastChildFill="False"  Margin="4">
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button Margin="0,0,4,0" Command="{Binding Path=CloseCommand}">
-                        <iconPacks:PackIconMaterial Kind="Close"  Width="16" Height="16"/>
-                    </Button>
-                </StackPanel>
-            </DockPanel>
-            <Image Source="{Binding Path=SelectedPathName}" Stretch="Uniform"
-                   MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}">
-                <Image.Effect>
-                    <managers:XrayShaderManager Input="{Binding Path=SelectedPathName, Converter={StaticResource ImagePathToBrushConverter}}"
-                                            TextureSize="1,1"
-                                            SharpnessLevel="0"
-                                            BrightnessLevel="0" 
-                                            ContrastLevel="2"
-                                            ColorMode="1"/>
-                </Image.Effect>
-            </Image>
-        </StackPanel>
         
         <loading:LoadingView Grid.RowSpan="2" Grid.ColumnSpan="3" DataContext="{Binding Path=LoadingModel}"/>
     </Grid>

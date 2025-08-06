@@ -60,7 +60,7 @@
                   HorizontalAlignment="Stretch">
             
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Color" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngMaterialControlRegion_Color}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -72,7 +72,7 @@
                 <DataGridTextColumn Header="XMin" Width="1*" Binding="{Binding Path=XMin, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
                 <DataGridTextColumn Header="XMax" Width="1*" Binding="{Binding Path=XMax, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
 
-                <DataGridTemplateColumn Header="Add" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngMaterialControlRegion_Add}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Command="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
@@ -99,7 +99,7 @@
                   HorizontalAlignment="Stretch"
                   MaxHeight="250">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Color" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngMaterialControlRegion_Color}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label Content="{Binding Path=Color}" Background="{Binding Path=ColorBrush}" />
@@ -111,7 +111,7 @@
                 <DataGridTextColumn Header="XMin" Width="1*" Binding="{Binding Path=XMin, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
                 <DataGridTextColumn Header="XMax" Width="1*" Binding="{Binding Path=XMax, Mode=TwoWay, Converter={StaticResource NumericDecimalConverter}}"/>
 
-                <DataGridTemplateColumn Header="Delete" Width="1*">
+                <DataGridTemplateColumn Header="{DynamicResource LngMaterialControlRegion_Delete}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"

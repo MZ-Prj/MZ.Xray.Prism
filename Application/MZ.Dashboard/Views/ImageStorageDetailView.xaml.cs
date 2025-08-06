@@ -3,11 +3,11 @@
 namespace MZ.Dashboard.Views
 {
     /// <summary>
-    /// Interaction logic for RecordControlView
+    /// Interaction logic for ImageStorageDetailView
     /// </summary>
-    public partial class RecordControlView : UserControl
+    public partial class ImageStorageDetailView : UserControl
     {
-        public RecordControlView()
+        public ImageStorageDetailView()
         {
             InitializeComponent();
         }

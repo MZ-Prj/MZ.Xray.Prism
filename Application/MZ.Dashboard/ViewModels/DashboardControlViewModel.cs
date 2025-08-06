@@ -1,10 +1,12 @@
 ﻿using MZ.Core;
 using Prism.Ioc;
 using Prism.Regions;
-using System;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Dashboard Control ViewModel : 메인 화면을 보여주기 위한 중간 담당 계층
+    /// </summary>
     public class DashboardControlViewModel : MZBindableBase
     {
         public DashboardControlViewModel(IContainerExtension container) : base(container)

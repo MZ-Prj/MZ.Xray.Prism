@@ -59,6 +59,9 @@ namespace MZ.Xray.Engine
             InitializeZeffectControls();
         }
 
+        /// <summary>
+        /// 초기 설정
+        /// </summary>
         public void InitializeZeffectControls()
         {
             Model.Controls.Add(new () { Content = "None", Color= Color.FromArgb(0, 0, 0, 0), Min = 0.0, Max = 0.0, Check = true});
@@ -67,11 +70,17 @@ namespace MZ.Xray.Engine
             Model.Controls.Add(new () { Content = "Metal", Color = Color.FromArgb(128, 0, 128, 255), Min = 0.75, Max = 1.0 });
         }
 
+        /// <summary>
+        /// Zeffect Controls값중 선택된것 갱신
+        /// </summary>
         public void UpdateZeffectControl()
         {
             Model.Control = Controls.FirstOrDefault(c => c.Check);
         }
 
+        /// <summary>
+        /// Zeffect 계산
+        /// </summary>
         public byte Calculation(double high, double low)
         {
             if (high <= 0 || low <= 0)
@@ -111,6 +120,9 @@ namespace MZ.Xray.Engine
             return (byte)(zeff * byte.MaxValue);
         }
 
+        /// <summary>
+        /// 켄버스(UI) 크기가 변경 되었을 경우 이미지 크기 갱신
+        /// </summary>
         public void UpdateOnResize(Mat line, int width, int maxImageWidth)
         {
             if (width != maxImageWidth)
@@ -118,21 +130,30 @@ namespace MZ.Xray.Engine
                 Image = VisionBase.Create((line.Height / 2), maxImageWidth, MatType.CV_8UC1, new Scalar(0));
             }
         }
+        /// <summary>
+        /// 현제 프레임 추가
+        /// </summary>
         public void AddFrame()
         {
             Frames.Add(new() { Image = Image, DateTime = DateTime.Now });
         }
-
+        /// <summary>
+        /// 가장 첫번째 Frame 제거
+        /// </summary>
         public void RemoveFrame()
         {
             Frames.RemoveAt(0);
         }
-
+        /// <summary>
+        /// ImageSource 갱신
+        /// </summary>
         public void ChangeFrame(int index)
         {
-            ImageSource = CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
+            ImageSource = VisionBase.CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
         }
-
+        /// <summary>
+        /// 켄버스(UI) 크기가 변경 되었을 경우 이미지 크기 갱신 (비동기)
+        /// </summary>
         public async Task UpdateOnResizeAsync(Mat line, int width, int maxImageWidth)
         {
             await Task.Run(() =>
@@ -140,12 +161,16 @@ namespace MZ.Xray.Engine
                 UpdateOnResize(line, width, maxImageWidth);
             });
         }
-
+        /// <summary>
+        /// 이미지 Shift 수행
+        /// </summary>
         public void Shift(Mat zeff)
         {
             Image = VisionBase.ShiftCol(Model.Image, zeff);
         }
-
+        /// <summary>
+        /// 이미지 Shift 수행 (비동기)
+        /// </summary>
         public async Task ShiftAsync(Mat zeff)
         {
             await Task.Run(() =>
@@ -153,24 +178,19 @@ namespace MZ.Xray.Engine
                 Shift(zeff);
             });
         }
-
+        /// <summary>
+        /// Mat -> ImageSource로 변환
+        /// </summary>
         public void FreezeImageSource()
         {
-            ImageSource = CanFreezeImageSource(Image.ToBitmapSource());
+            ImageSource = VisionBase.CanFreezeImageSource(Image.ToBitmapSource());
         }
-
+        /// <summary>
+        /// Mat -> ImageSource로 변환 (비동기)
+        /// </summary>
         public async Task FreezeImageSourceAsync()
         {
             await Task.Run(FreezeImageSource);
-        }
-
-        public BitmapSource CanFreezeImageSource(BitmapSource bitmap)
-        {
-            if (bitmap.CanFreeze)
-            {
-                bitmap.Freeze();
-            }
-            return bitmap;
         }
     }
 }

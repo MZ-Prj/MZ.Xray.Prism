@@ -7,14 +7,15 @@ using Prism.Mvvm;
 
 namespace MZ.Xray.Engine
 {
+    /// <summary>
+    /// Calibration 처리를 담당하는 프로세스
+    /// 이미지 데이터 및 파라미터를 관리 및 연산 수행
+    /// </summary>
     public class CalibrationProcesser : BindableBase
     {
         #region Params
         private CalibrationModel _model = new();
         public CalibrationModel Model { get => _model; set => SetProperty(ref _model, value); }
-        #endregion
-
-        #region Wrapper
 
         public Mat Origin
         {
@@ -48,11 +49,17 @@ namespace MZ.Xray.Engine
 
         #endregion
 
+        /// <summary>
+        /// 이미지 생성
+        /// </summary>
         public void Create(int width, int height)
         {
             Model.Origin = VisionBase.Create(height, width, MatType.CV_16UC1, new Scalar(0));
         }
 
+        /// <summary>
+        /// 원본 이미지를 비율에 맞춰 리사이즈
+        /// </summary>
         public Mat AdjustRatio(Mat origin)
         {
             int width = (int)(origin.Width / Model.RelativeWidthRatio);
@@ -60,6 +67,9 @@ namespace MZ.Xray.Engine
             return VisionBase.Resize(origin, width, origin.Height);
         }
 
+        /// <summary>
+        /// 켄버스(UI) 크기가 변경 되었을 경우 이미지 크기 갱신
+        /// </summary>
         public void UpdateOnResize(Mat line, int width)
         {
             if (width != Model.MaxImageWidth)
@@ -68,6 +78,9 @@ namespace MZ.Xray.Engine
             }
         }
 
+        /// <summary>
+        /// 켄버스(UI) 크기가 변경 되었을 경우 이미지 크기 갱신 (비동기)
+        /// </summary>
         public async Task UpdateOnResizeAsync(Mat line, int width)
         {
             await Task.Run(() => {
@@ -75,6 +88,9 @@ namespace MZ.Xray.Engine
             });
         }
 
+        /// <summary>
+        /// Offset/Gain의 영역에 따라 값 갱신
+        /// </summary>
         public bool UpdateOnEnergy(Mat line)
         {
             (_, double max) = VisionBase.MinMax(line);
@@ -93,11 +109,17 @@ namespace MZ.Xray.Engine
             return check;
         }
 
+        /// <summary>
+        /// 이미지 Shift 수행
+        /// </summary>
         public void Shift(Mat line)
         {
             Model.Origin = VisionBase.ShiftCol(Model.Origin, line);
         }
 
+        /// <summary>
+        /// 이미지 Shift 수행 (비동기)
+        /// </summary>
         public async Task ShiftAsync(Mat line)
         {
             await Task.Run(() =>
@@ -106,12 +128,18 @@ namespace MZ.Xray.Engine
             });
         }
 
+        /// <summary>
+        /// 데이터 정규화 수행(Calibration Algorithm)
+        /// </summary>
         public double Normalize(double value, double offset, double gain, double rate)
         {
             double result = (value - offset) / Math.Max(1.0, (gain - offset)) * rate;
             return Math.Clamp(result, 0.0, 1.0);
         }
 
+        /// <summary>
+        /// 해당 이미지에 물체 유무 확인
+        /// </summary>
         public bool IsObject(Mat high)
         {
             if (high == null || high.Empty())
@@ -127,6 +155,9 @@ namespace MZ.Xray.Engine
             return checkThresholdTask && checkTopPixelTask;
         }
 
+        /// <summary>
+        /// 해당 이미지에 물체 유무 확인 (비동기)
+        /// </summary>
         public async Task<bool> IsObjectAsync(Mat high)
         {
             if (high == null || high.Empty())
@@ -144,6 +175,9 @@ namespace MZ.Xray.Engine
             return results[0] && results[1];
         }
 
+        /// <summary>
+        /// Threshold를 기준으로 한 물건 유무 탐지
+        /// </summary>
         private bool IsObjectCheckThreshold(Mat convert, double maxPercent)
         {
             int size = (int)(convert.Width * 0.8);
@@ -160,6 +194,9 @@ namespace MZ.Xray.Engine
             return checkMax == byte.MaxValue;
         }
 
+        /// <summary>
+        /// 최상단 픽셀을 기준으로 한 물건 유무 탐지
+        /// </summary>
         private bool IsObjectCheckTopPixel(Mat convert, double maxPercent)
         {
             using Mat oneLine = convert.RowRange(0, 1);
@@ -168,17 +205,21 @@ namespace MZ.Xray.Engine
             return checkMin > byte.MaxValue * maxPercent;
         }
 
+        /// <summary>
+        /// Gain값이 해당 boundary 이상 유무 확인
+        /// </summary>
         public bool CompareBoundaryArtifact(double gain)
         {
             return gain > Model.BoundaryArtifact;
         }
 
+        /// <summary>
+        /// Gain값 갱신
+        /// </summary>
         public void UpdateGain(Mat line)
         {
             Model.Gain = line;
         }
 
-        #region Mapper
-        #endregion
     }
 }

@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 
 namespace MZ.Infrastructure.Services
 {
+    /// <summary>
+    /// 사용자(User) 관련 비즈니스 로직 서비스
+    /// - 로그인/로그아웃, 회원가입, 세션/설정 조회 및 변경, 테마/언어 변경 등 계정 전반의 비즈니스 처리 담당
+    /// </summary>
     [Service]
     public class UserService : ServiceBase, IUserService
     {
@@ -33,7 +37,12 @@ namespace MZ.Infrastructure.Services
 
             _informationEncoder = new Sha256InformationEncoder();
         }
-
+        /// <summary>
+        /// 사용자 로그인
+        /// - 사용자명으로 사용자 조회
+        /// - 비밀번호 해시 검증
+        /// - 마지막 로그인 일시 갱신 및 세션 저장
+        /// </summary>
         public async Task<BaseResponse<UserLoginRole, UserEntity>> Login(UserLoginRequest requeset)
         {
             try
@@ -60,7 +69,10 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 사용자 로그아웃
+        /// - 세션 정보 삭제
+        /// </summary>
         public BaseResponse<BaseRole, string> Logout()
         {
             try
@@ -74,7 +86,9 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 현재 세션의 사용자명 조회
+        /// </summary>
         public BaseResponse<BaseRole, string> CurrentUser()
         {
             try
@@ -87,7 +101,12 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 사용자 회원가입
+        /// - 비밀번호 일치 확인
+        /// - 동일 계정 존재여부 확인
+        /// - 신규 사용자, 기본설정 생성 후 저장
+        /// </summary>
         public async Task<BaseResponse<UserRegisterRole, UserEntity>> Register(UserRegisterRequest request)
         {
             try
@@ -135,6 +154,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 언어 설정 변경 (로그인 유저의 설정을 변경)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, LanguageRole>> ChangeLanguage(LanguageRequest request)
         {
             try
@@ -163,6 +185,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 테마 설정 변경 (로그인 유저의 설정을 변경)
+        /// </summary>
         public async Task<BaseResponse<BaseRole, ThemeRole>> ChangeTheme(ThemeRequest request)
         {
             try
@@ -190,6 +215,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 로그인 사용자의 UserSetting(환경설정) 정보 반환
+        /// </summary>
         public async Task<BaseResponse<BaseRole, UserSettingEntity>> GetUserSetting()
         {
             try
@@ -209,6 +237,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 로그인 사용자의 전체 정보(UserEntity + UserSetting) 반환
+        /// </summary>
         public async Task<BaseResponse<BaseRole, UserEntity>> GetUserWithUserSetting()
         {
             try
@@ -228,6 +259,9 @@ namespace MZ.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// 로그인 사용자의 환경설정(UserSetting) 저장
+        /// </summary>
         public async Task<BaseResponse<BaseRole, UserSettingEntity>> SaveUserSetting(UserSettingSaveRequest request)
         {
             try
@@ -251,10 +285,37 @@ namespace MZ.Infrastructure.Services
                 return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
             }
         }
-
+        /// <summary>
+        /// 현재 로그인 여부 반환
+        /// </summary>
         public bool IsLoggedIn()
         {
             return !string.IsNullOrWhiteSpace(CurrentUser().Data);
+        }
+
+        public async Task<BaseResponse<BaseRole, bool>> IsAdmin()
+        {
+            try
+            {
+                bool check = false;
+                if (string.IsNullOrEmpty(userSession.CurrentUser))
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Valid);
+                }
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(userSession.CurrentUser);
+
+                if (user.Role == UserRole.Admin)
+                {
+                    check = true;
+                }
+
+                return BaseResponseExtensions.Success(BaseRole.Success, check);
+            }
+            catch (Exception ex)
+            {
+                MZLogger.Error(ex.ToString());
+                return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Fail, ex);
+            }
         }
     }
 }

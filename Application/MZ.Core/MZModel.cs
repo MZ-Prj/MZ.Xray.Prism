@@ -1,5 +1,4 @@
-﻿
-namespace MZ.Core
+﻿namespace MZ.Core
 {
     public class MZModel
     {

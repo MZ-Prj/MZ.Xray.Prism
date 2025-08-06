@@ -5,6 +5,9 @@ using System;
 
 namespace MZ.Resource.Managers
 {
+    /// <summary>
+    /// Zeffect ShaderEffect 클래스
+    /// </summary>
     public class ZeffShaderManager : ShaderEffect
     {
 
@@ -34,7 +37,21 @@ namespace MZ.Resource.Managers
         public Brush Input
         {
             get => (Brush)GetValue(InputProperty);
-            set => SetValue(InputProperty, value);
+            set
+            {
+                if (value == null)
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+                else if (value is Brush brush)
+                {
+                    SetValue(InputProperty, brush);
+                }
+                else
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+            }
         }
 
         public float Min
@@ -56,7 +73,9 @@ namespace MZ.Resource.Managers
         }
     }
 
-
+    /// <summary>
+    /// Xray ShaderEffect 클래스
+    /// </summary>
     public class XrayShaderManager : ShaderEffect
     {
         public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(XrayShaderManager), 0);
@@ -90,7 +109,21 @@ namespace MZ.Resource.Managers
         public Brush Input
         {
             get => (Brush)GetValue(InputProperty);
-            set => SetValue(InputProperty, value);
+            set
+            {
+                if (value == null)
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+                else if (value is Brush brush)
+                {
+                    SetValue(InputProperty, brush);
+                }
+                else
+                {
+                    SetValue(InputProperty, new SolidColorBrush(Colors.Transparent));
+                }
+            }
         }
 
         public Size TextureSize

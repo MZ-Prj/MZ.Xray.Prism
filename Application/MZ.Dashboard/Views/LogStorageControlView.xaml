@@ -70,13 +70,13 @@
                   IsReadOnly="True"
                   Margin="4">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Date" 
+                <DataGridTextColumn Header="{DynamicResource LngLogStorageControlRegion_Date}" 
                                     Binding="{Binding Path=Date, StringFormat=yyyy-MM-dd}" 
                                     Width="Auto" />
-                <DataGridTextColumn Header="Time" 
+                <DataGridTextColumn Header="{DynamicResource LngLogStorageControlRegion_Time}"
                                     Binding="{Binding Path=Date, StringFormat=HH:mm:ss.fff}" 
                                     Width="Auto" />
-                <DataGridTextColumn Header="LogLevel" 
+                <DataGridTextColumn Header="{DynamicResource LngLogStorageControlRegion_LogLevel}"
                                     Binding="{Binding Path=LogLevel}" 
                                     Width="Auto">
                     <DataGridTextColumn.ElementStyle>
@@ -86,7 +86,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Line" 
+                <DataGridTextColumn Header="{DynamicResource LngLogStorageControlRegion_LineNumber}"
                                     Binding="{Binding Path=LineNumber}" 
                                     Width="Auto">
                     <DataGridTextColumn.ElementStyle>
@@ -96,7 +96,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Message" 
+                <DataGridTextColumn Header="{DynamicResource LngLogStorageControlRegion_Message}"
                                     Binding="{Binding Path=Message}" 
                                     Width="*" />
             </DataGrid.Columns>

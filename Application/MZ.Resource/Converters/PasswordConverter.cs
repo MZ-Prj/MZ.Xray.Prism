@@ -4,6 +4,9 @@ using System.Windows.Data;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 비밀번호 문자열을 '•' 문자로 마스킹하여 반환
+    /// </summary>
     public class PasswordConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

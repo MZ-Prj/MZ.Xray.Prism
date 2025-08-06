@@ -16,10 +16,16 @@ using Newtonsoft.Json;
 
 namespace MZ.AI.Engine
 {
+    /// <summary>
+    /// YOLO 기반 객체 탐지 처리를 담당하는 프로세서
+    /// </summary>
     public class YoloProcessor : BindableBase
     {
+        #region Engine(YoloDotNet)
         public Yolo Yolo { get; set; }
         public YoloOptions YoloOption { get; set; }
+        #endregion
+        #region Params
         public List<ObservableCollection<ObjectDetectionModel>> ObjectDetectionsList { get; set; } = [];
         public ObjectDetectionOptionModel ObjectDetectionOption { get; set; } = new();
 
@@ -31,7 +37,7 @@ namespace MZ.AI.Engine
 
         private bool _isVisibility = false;
         public bool IsVisibility { get => _isVisibility; set => SetProperty(ref _isVisibility, value); }
-
+        #endregion
 
         public YoloProcessor() { }
 
@@ -42,6 +48,9 @@ namespace MZ.AI.Engine
             Categories = [.. categories ?? ConvertCategories()];
         }
 
+        /// <summary>
+        /// YOLO 모델 및 카테고리, 옵션 생성 및 초기화
+        /// </summary>
         public void Create(YoloOptions yoloOptions, ObjectDetectionOptionModel objectDetectionOption, ObservableCollection<CategoryModel> categories = null)
         {
             Yolo = new Yolo(yoloOptions);
@@ -51,6 +60,10 @@ namespace MZ.AI.Engine
 
         }
 
+        /// <summary>
+        /// ONNX 모델의 클래스 정보에서 CategoryModel 목록 생성
+        /// </summary>
+        /// <returns>ICollection<CategoryModel></returns>
         public ICollection<CategoryModel> ConvertCategories()
         {
             ICollection<CategoryModel> categories = [.. Yolo.OnnxModel.Labels.Select((category, index) => new       CategoryModel
@@ -65,6 +78,13 @@ namespace MZ.AI.Engine
             return categories;
         }
 
+        /// <summary>
+        /// 이미지(스트림)에 대해 객체 탐지 수행 및 결과를 ObjectDetections에 저장
+        /// </summary>
+        /// <param name="stream">MemoryStream : 이미지 데이터 스트림</param>
+        /// <param name="imageSize">imageSize : 원본 이미지 사이즈</param>
+        /// <param name="canvasSize">canvasSize : 표시 캔버스 사이즈</param>
+        /// <param name="offsetX">offsetX : X좌표 오프셋</param>
         public void Predict(MemoryStream stream, Size imageSize, Size canvasSize, int offsetX = 0)
         {
             ObjectDetectionOption.ScaleX = canvasSize.Width / (double)imageSize.Width;
@@ -109,6 +129,11 @@ namespace MZ.AI.Engine
             ObjectDetections = [.. result.OrderBy(p => p.Name).ToList()];
         }
 
+        /// <summary>
+        /// 현재 탐지 결과, 옵션, 카테고리 등을 json으로 저장
+        /// </summary>
+        /// <param name="path">string : 저장 디렉토리</param>
+        /// <param name="time">string : 파일명(시간 등)</param>
         public void Save(string path, string time)
         {
             try
@@ -121,10 +146,10 @@ namespace MZ.AI.Engine
                 {
                     Formatting = Formatting.Indented
                 };
-
+                var objectDetections = ChangePositionCanvasToMat(); 
                 var data = new
                 {
-                    ObjectDetections,
+                    objectDetections,
                     YoloOption,
                     Categories
                 };
@@ -137,7 +162,12 @@ namespace MZ.AI.Engine
             }
         }
 
-
+        /// <summary>
+        /// 예측 결과(탐지 박스 포함 이미지)를 png로 저장
+        /// </summary>
+        /// <param name="path">string : 저장 경로</param>
+        /// <param name="time">string : 파일명</param>
+        /// <param name="stream">MemoryStream : 이미지 데이터 스트림</param>
         public void Save(string path, string time, MemoryStream stream)
         {
             string subPath = "Predict";
@@ -153,7 +183,12 @@ namespace MZ.AI.Engine
             }
         }
 
-        public ICollection<ObjectDetectionModel> Mapper(int start = 0)
+        /// <summary>
+        /// 탐지결과 좌표를 원본 이미지 기준으로 변환하여 반환 (Mapper) 
+        /// </summary>
+        /// <param name="start">int : 시작 X좌표</param>
+        /// <returns>ICollection<ObjectDetectionModel></returns>
+        public ICollection<ObjectDetectionModel> ChangePositionCanvasToMat(int start = 0)
         {
             ICollection<ObjectDetectionModel> objectDetections = [];
             foreach (var item in ObjectDetections)
@@ -179,11 +214,18 @@ namespace MZ.AI.Engine
             return objectDetections;
         }
 
+
+        /// <summary>
+        /// 객체 탐지 결과 표시/숨김 상태
+        /// </summary>
         public void ChangedVisibility()
         {
             IsVisibility = !IsVisibility;
         }
 
+        /// <summary>
+        /// YOLO 엔진 리소스를 해제하고 참조 해제
+        /// </summary>
         public void Clear()
         {
             Yolo?.Dispose();

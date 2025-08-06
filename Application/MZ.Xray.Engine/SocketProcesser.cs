@@ -13,6 +13,9 @@ using static MZ.Event.MZEvent;
 
 namespace MZ.Xray.Engine
 {
+    /// <summary>
+    /// 소켓을 통해 외부 X-ray 장비에서 이미지를 수신 및 이벤트 처리
+    /// </summary>
     public class SocketReceiveProcesser : BindableBase
     {
         private readonly IEventAggregator _eventAggregator;
@@ -35,6 +38,9 @@ namespace MZ.Xray.Engine
             _eventAggregator = eventAggregator;
         }
 
+        /// <summary>
+        /// 서버 소켓 생성 및 수신 대기 시작
+        /// </summary>
         public void Create()
         {
             try
@@ -49,6 +55,9 @@ namespace MZ.Xray.Engine
             }
         }
 
+        /// <summary>
+        /// 연결된 클라이언트로부터 데이터를 반복적으로 비동기 수신
+        /// </summary>
         public async Task ReceiveAsync()
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
@@ -71,6 +80,9 @@ namespace MZ.Xray.Engine
             }
         }
 
+        /// <summary>
+        /// 리소스 정리 및 연결 종료
+        /// </summary>
         public void Dispose()
         {
             _stream?.Close();

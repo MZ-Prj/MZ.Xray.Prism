@@ -47,18 +47,18 @@
                   HorizontalContentAlignment="Center"
                   Margin="4">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <DataGridTemplateColumn Header="Color" Width="1*">
+                <DataGridTextColumn Header="{DynamicResource LngAIControlRegion_Index}" Binding="{Binding Path=Index}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{DynamicResource LngAIControlRegion_Name}" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTemplateColumn Header="{DynamicResource LngAIControlRegion_Color}" Width="1*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <mah:ColorPicker SelectedColor="{Binding Path=Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
-                <DataGridCheckBoxColumn Header="Is Using" Binding="{Binding Path=IsUsing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <DataGridTextColumn Header="Confidence" Binding="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NumericDecimalConverter}}" />
+
+                <DataGridCheckBoxColumn Header="{DynamicResource LngAIControlRegion_IsUsing}" Binding="{Binding Path=IsUsing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="{DynamicResource LngAIControlRegion_Confidence}" Binding="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NumericDecimalConverter}}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

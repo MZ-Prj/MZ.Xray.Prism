@@ -1,56 +1,36 @@
 ﻿using MZ.Core;
 using MZ.Domain.Models;
 using Prism.Ioc;
-using Prism.Services.Dialogs;
-using System;
+using Prism.Regions;
 using System.Collections.ObjectModel;
 
 namespace MZ.Dashboard.ViewModels
 {
-    public class DashboardFooterButtonControlViewModel : MZBindableBase, IDialogAware
+    /// <summary>
+    /// Dashboard FooterButton Control ViewModel : Xray RealTime View의 Action 버튼 제어
+    /// </summary>
+    public class DashboardFooterButtonControlViewModel : MZBindableBase
     {
 
-        #region Param
+        #region Params
         private ObservableCollection<IconButtonModel> _actionButtons;
         public ObservableCollection<IconButtonModel> ActionButtons { get => _actionButtons; set => SetProperty(ref _actionButtons, value); }
-
-        private string _title;
-        public string Title { get => _title; set => SetProperty(ref _title, value); }
-
-        public event Action<IDialogResult> RequestClose;
         #endregion
 
         public DashboardFooterButtonControlViewModel(IContainerExtension container) : base(container)
         {
         }
 
-        public bool CanCloseDialog()
+        /// <summary>
+        /// Navigation 진입시 Parameter목록을 받음
+        /// </summary>
+        /// <param name="navigationContext"></param>
+        public override void OnNavigatedTo(NavigationContext navigationContext)
         {
-            return true;
-        }
-
-        public void OnDialogClosed()
-        {
-        }
-
-        public void OnDialogOpened(IDialogParameters parameters)
-        {
-
-            if (parameters.ContainsKey("Title"))
+            if (navigationContext.Parameters.ContainsKey("ActionButtons"))
             {
-                Title = parameters.GetValue<string>("Title");
+                ActionButtons = navigationContext.Parameters["ActionButtons"] as ObservableCollection<IconButtonModel>;
             }
-
-            if (parameters.ContainsKey("ActionButtons"))
-            {
-                ActionButtons = parameters.GetValue<ObservableCollection<IconButtonModel>>("ActionButtons");
-            }
-
-        }
-
-        private void ClosingButton()
-        {
-            RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
         }
 
     }

@@ -7,11 +7,18 @@ using MZ.Logger;
 
 namespace MZ.Util
 {
+    /// <summary>
+    /// 파일 다운로드 비동기 인터페이스
+    /// </summary>
     public interface IFileDownloader
     {
         Task<bool> RunAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default);
     }
 
+
+    /// <summary>
+    /// HttpClient 기반 파일 다운로드 클래스
+    /// </summary>
     public class MZWebDownload : IFileDownloader, IDisposable
     {
         private readonly HttpClient _httpClient;
@@ -24,6 +31,9 @@ namespace MZ.Util
             };
         }
 
+        /// <summary>
+        /// 파일 다운로드 실행, 예외시 파일 삭제 및 로깅
+        /// </summary>
         public async Task<bool> RunAsync(string source, string destination, IProgress<double> progress = null, CancellationToken cancellationToken = default)
         {
             try
@@ -50,6 +60,9 @@ namespace MZ.Util
             }
         }
 
+        /// <summary>
+        /// 실제 파일 다운로드, 진행률 리포트 및 취소 지원
+        /// </summary>
         private async Task Download(HttpResponseMessage response, string filePath, IProgress<double> progress, CancellationToken cancellationToken)
         {
             var totalBytes = response.Content.Headers.ContentLength ?? -1L;
@@ -73,6 +86,9 @@ namespace MZ.Util
                 }
             }
         }
+        /// <summary>
+        /// HttpClient 리소스 해제
+        /// </summary>
         public void Dispose()
         {
             _httpClient?.Dispose();

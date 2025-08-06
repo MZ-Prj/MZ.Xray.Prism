@@ -30,9 +30,6 @@ namespace MZ.Util
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public static class MZComponentHelper
     {
         public static MZComponentInfo? Summary(Type targetType)

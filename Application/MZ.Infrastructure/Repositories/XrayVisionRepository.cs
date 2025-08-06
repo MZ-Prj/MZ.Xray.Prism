@@ -9,6 +9,12 @@ using System.Collections.Generic;
 #nullable enable
 namespace MZ.Infrastructure.Repositories
 {
+    /// <summary>
+    /// XrayVision 이미지 저장소
+    /// 
+    /// - ImageEntity 테이블의 데이터 접근 담당
+    /// - 페이지/기간별 조회, 오브젝트 탐지 포함 메소드 제공
+    /// </summary>
     [Repository]
     public class XrayVisionImageRepository : RepositoryBase<ImageEntity>, IXrayVisionImageRepository
     {
@@ -19,8 +25,8 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByPageSize(int page, int size)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .OrderByDescending(f => f.Id)
+                                 .Include(i => i.ObjectDetections)
+                                 .OrderByDescending(i => i.Id)
                                  .Skip(page * size)
                                  .Take(size)
                                  .ToListAsync();
@@ -29,8 +35,8 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEnd(DateTime start, DateTime end)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .Where(f => f.CreateDate >= start && f.CreateDate <= end)
+                                 .Include(i => i.ObjectDetections)
+                                 .Where(i => i.CreateDate >= start && i.CreateDate <= end)
                                  .OrderByDescending(f => f.Id)
                                  .ToListAsync();
         }
@@ -38,15 +44,21 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ImageEntity>> GetByDateTimeBetweenStartEndAndPageSize(DateTime start, DateTime end, int page, int size)
         {
             return await _context.Set<ImageEntity>()
-                                 .Include(f => f.ObjectDetections)
-                                 .Where(f => f.CreateDate >= start && f.CreateDate <= end)
-                                 .OrderByDescending(f => f.Id)
+                                 .Include(i => i.ObjectDetections)
+                                 .Where(i => i.CreateDate >= start && i.CreateDate <= end)
+                                 .OrderByDescending(i => i.Id)
                                  .Skip(page * size)
                                  .Take(size)
                                  .ToListAsync();
         }
     }
 
+    /// <summary>
+    /// XrayVision Calibration(캘리브레이션)  저장소
+    /// 
+    /// - CalibrationEntity 관련 DB 접근 담당
+    /// - 사용자별 보정값 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionCalibrationRepository : RepositoryBase<CalibrationEntity>, IXrayVisionCalibrationRepository
     {
@@ -58,10 +70,16 @@ namespace MZ.Infrastructure.Repositories
         public async Task<CalibrationEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<CalibrationEntity>()
-                                 .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
     }
 
+    /// <summary>
+    /// XrayVision Filter(필터) 저장소
+    /// 
+    /// - FilterEntity 관련 DB 접근 담당
+    /// - 사용자별 필터값 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionFilterRepository : RepositoryBase<FilterEntity>, IXrayVisionFilterRepository
     {
@@ -72,10 +90,16 @@ namespace MZ.Infrastructure.Repositories
         public async Task<FilterEntity?> GetByUserIdAsync(int userId)
         {
             return await _context.Set<FilterEntity>()
-                                 .FirstOrDefaultAsync(m => m.UserId == userId);
+                                 .FirstOrDefaultAsync(f => f.UserId == userId);
         }
     }
 
+    /// <summary>
+    /// XrayVision Material(재질/물질) 저장소
+    /// 
+    /// - MaterialEntity 관련 DB 접근 담당
+    /// - 사용자별 재질 정보 및 MaterialControls 포함 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionMaterialRepository : RepositoryBase<MaterialEntity>, IXrayVisionMaterialRepository
     {
@@ -91,7 +115,12 @@ namespace MZ.Infrastructure.Repositories
         }
     }
 
-
+    /// <summary>
+    /// XrayVision ZeffectControl 저장소
+    /// 
+    /// - ZeffectControlEntity 관련 DB 접근 담당
+    /// - 사용자별 Zeffect 컨트롤 조회 제공
+    /// </summary>
     [Repository]
     public class XrayVisionZeffectControlRepository : RepositoryBase<ZeffectControlEntity>, IXrayVisionZeffectControlRepository
     {
@@ -102,8 +131,37 @@ namespace MZ.Infrastructure.Repositories
         public async Task<ICollection<ZeffectControlEntity>> GetByUserIdAsync(int userId)
         {
             return await _context.Set<ZeffectControlEntity>()
-                                 .Where(e => e.UserId == userId)
+                                 .Where(z => z.UserId == userId)
                                  .ToListAsync();
+        }
+    }
+
+
+    /// <summary>
+    /// XrayVision CurveControl 저장소
+    /// 
+    /// - CurveControlEntity 관련 DB 접근 담당
+    /// - 사용자별 Curve 컨트롤 조회 제공
+    /// </summary>
+    [Repository]
+    public class XrayVisionCurveControlRepository : RepositoryBase<CurveControlEntity>, IXrayVisionCurveControlRepository
+    {
+        public XrayVisionCurveControlRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task<ICollection<CurveControlEntity>> GetByUserIdAsync(int userId)
+        {
+            return await _context.Set<CurveControlEntity>()
+                                 .Where(z => z.UserId == userId)
+                                 .ToListAsync();
+        }
+
+        public async Task DeleteByUserIdAsync(int userId)
+        {
+            var entity = _context.Set<CurveControlEntity>().Where(c => c.UserId == userId);
+            _context.Set<CurveControlEntity>().RemoveRange(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

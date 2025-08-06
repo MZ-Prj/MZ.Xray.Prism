@@ -5,6 +5,9 @@ using static MZ.Vision.VisionEnums;
 
 namespace MZ.Vision
 {
+    /// <summary>
+    /// LUT 곡선 함수 모델 클래스
+    /// </summary>
     public class VisionLUTModel
     {
         public FunctionNameEnumTypes Name { get; set; }
@@ -14,6 +17,9 @@ namespace MZ.Vision
 
     public class VisionEnums
     {
+        /// <summary>
+        /// LUT에서 지원하는 함수명 Enum
+        /// </summary>
         public enum FunctionNameEnumTypes
         {
             Base,
@@ -23,8 +29,14 @@ namespace MZ.Vision
         }
     }
 
+    /// <summary>
+    /// LUT 곡선 함수별 계산
+    /// </summary>
     public class VisionLUT
     {
+        /// <summary>
+        /// 함수 타입별 LUT 값 계산
+        /// </summary>
         public static double Run(FunctionNameEnumTypes func, double input, double[] values)
         {
             double result = 0;
@@ -47,7 +59,9 @@ namespace MZ.Vision
         }
 
 
-
+        /// <summary>
+        /// 역쌍곡선(Atanh) 함수 적용
+        /// </summary>
         public static double Atanh(double input, double[] values)
         {
             double result = 0.0;
@@ -83,7 +97,9 @@ namespace MZ.Vision
             return ErrorCheck(result);
         }
 
-
+        /// <summary>
+        /// 선형 함수 (y = a(x + b) + c)
+        /// </summary>
         public static double Base(double input, double[] values)
         {
             double a = values[0];
@@ -94,6 +110,9 @@ namespace MZ.Vision
             return result;
         }
 
+        /// <summary>
+        /// 로그 함수 (log<sub>a</sub>(1 + input))
+        /// </summary>
         private static double Log(double input, double[] values)
         {
             double a = values[0];
@@ -101,6 +120,9 @@ namespace MZ.Vision
             return ErrorCheck(result);
         }
 
+        /// <summary>
+        /// 거듭제곱 함수 (input^a)
+        /// </summary>
         private static double Pow(double input, double[] values)
         {
             double a = values[0];
@@ -108,6 +130,9 @@ namespace MZ.Vision
             return ErrorCheck(result);
         }
 
+        /// <summary>
+        /// 결과값 에러 처리(NaN/Infinity → 0 또는 1)
+        /// </summary>
         private static double ErrorCheck(double input)
         {
             if (double.IsNaN(input))

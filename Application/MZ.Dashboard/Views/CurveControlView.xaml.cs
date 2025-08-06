@@ -3,11 +3,11 @@
 namespace MZ.Dashboard.Views
 {
     /// <summary>
-    /// Interaction logic for AnalysisControlView
+    /// Interaction logic for CurveControlView
     /// </summary>
-    public partial class AnalysisControlView : UserControl
+    public partial class CurveControlView : UserControl
     {
-        public AnalysisControlView()
+        public CurveControlView()
         {
             InitializeComponent();
         }

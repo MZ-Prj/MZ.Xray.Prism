@@ -5,7 +5,9 @@ using System.Windows.Media;
 
 namespace MZ.Resource.Converters
 {
-
+    /// <summary>
+    /// 배경색의 명도(밝기)에 따라 검정/흰색 대비 색상을 반환
+    /// </summary>
     public class ContrastColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

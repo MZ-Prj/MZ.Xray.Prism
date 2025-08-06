@@ -5,7 +5,7 @@ using SharpVectors.Converters;
 namespace MZ.Resource.Managers
 {
     /// <summary>
-    /// 
+    /// SVG 이미지를 표시하고 Fill 색상 브러시를 동적으로 변경
     /// </summary>
     public class SvgManager : SvgViewbox
     {

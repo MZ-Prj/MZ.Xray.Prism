@@ -12,7 +12,7 @@ using static MZ.Vision.VisionEnums;
 namespace MZ.Xray.Engine
 {
     /// <summary>
-    /// 물성에 대한 정보를 이미지로 표기
+    /// 물성 정보 이미지 처리 프로세스
     /// </summary>
     public class MaterialProcesser : BindableBase
     {
@@ -41,6 +41,9 @@ namespace MZ.Xray.Engine
             InitializeMaterial();
         }
 
+        /// <summary>
+        /// 초기 설정
+        /// </summary>
         public void InitializeMaterial()
         {
             Model.Image = VisionBase.Create(byte.MaxValue, byte.MaxValue, MatType.CV_8UC4);
@@ -51,7 +54,7 @@ namespace MZ.Xray.Engine
         }
 
         /// <summary>
-        /// 데이터 베이스에서 불러오지 못할 경우 기존 값
+        /// DB에서 불러오지 못할 경우 기존 값
         /// </summary>
         public void InitializeMaterialControls()
         {
@@ -60,6 +63,9 @@ namespace MZ.Xray.Engine
             Model.Controls.Add(new (UpdateAllMaterialGraph) { Y = 100, XMin = -10, XMax = 255, Scalar = new Scalar(255, 128, 0, 255) });
         }
 
+        /// <summary>
+        /// Controls의 모든값에 대한 정보 갱신
+        /// </summary>
         public void UpdateAllMaterialGraph()
         {
             if (Model.Image == null)
@@ -90,6 +96,10 @@ namespace MZ.Xray.Engine
             Model.ImageSource = image.ToBitmapSource();
         }
 
+        /// <summary>
+        /// UI에서 ColorMap 보여주기 위한 영상 처리
+        /// </summary>
+        /// <returns></returns>
         public Mat GridViewImage()
         {
             Mat image = VisionBase.Flip(Model.Image, FlipMode.X);
@@ -98,7 +108,9 @@ namespace MZ.Xray.Engine
             return result;
         }
 
-
+        /// <summary>
+        /// Material Control을 ColorMap에 그림
+        /// </summary>
         public void DrawControl(MaterialControlModel control, int width, int height)
         {
             int xMin = (int)control.XMin;
@@ -152,6 +164,9 @@ namespace MZ.Xray.Engine
             }
         }
 
+        /// <summary>
+        /// Xray 원시(origin) 데이터에서 Color 색상으로 변경
+        /// </summary>
         public Vec4b Calculation(double high, double low)
         {
             // 평균

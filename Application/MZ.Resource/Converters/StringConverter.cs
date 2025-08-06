@@ -3,9 +3,13 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace MZ.Resource.Converters
 {
+    /// <summary>
+    /// 경로 문자열에서 디렉토리 이름만 추출하여 반환
+    /// </summary>
     public class LastestDirectoryConverter : IValueConverter
     {
 
@@ -45,4 +49,5 @@ namespace MZ.Resource.Converters
             return string.Empty;
         }
     }
+
 }

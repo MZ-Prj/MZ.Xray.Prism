@@ -21,6 +21,9 @@ using static MZ.Event.MZEvent;
 
 namespace MZ.Dashboard.ViewModels
 {
+    /// <summary>
+    /// Dashboard Window ViewModel :  각종 커맨드, 하위 컨트롤 관리
+    /// </summary>
     public class DashboardWindowViewModel : MZBindableBase
     {
         #region Services
@@ -45,17 +48,17 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _logStorageCommand;
         public ICommand LogStorageCommand => _logStorageCommand ??= new DelegateCommand(MZAction.Wrapper(LogStorageButton));
 
-        private DelegateCommand _recordCommand;
-        public ICommand RecordCommand => _recordCommand ??= new DelegateCommand(MZAction.Wrapper(RecordButton));
+        private DelegateCommand _reportCommand;
+        public ICommand ReportCommand => _reportCommand ??= new DelegateCommand(MZAction.Wrapper(ReportButton));
 
         private DelegateCommand _materialCommand;
         public ICommand MaterialCommand => _materialCommand ??= new DelegateCommand(MZAction.Wrapper(MaterialButton));
 
+        private DelegateCommand _curveCommand;
+        public ICommand CurveCommand => _curveCommand ??= new DelegateCommand(MZAction.Wrapper(CurveButton));
+
         private DelegateCommand _aiCommand;
         public ICommand AICommand => _aiCommand ??= new DelegateCommand(MZAction.Wrapper(AIButton));
-
-        private DelegateCommand _windowClosingCommand;
-        public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
@@ -65,6 +68,9 @@ namespace MZ.Dashboard.ViewModels
 
         private DelegateCommand _logoutCommand;
         public ICommand LogoutCommand => _logoutCommand ??= new DelegateCommand(MZAction.Wrapper(LogoutButton));
+
+        private DelegateCommand _windowClosingCommand;
+        public ICommand WindowClosingCommand => _windowClosingCommand ??= new DelegateCommand(WindowClosing);
 
         #endregion
 
@@ -81,14 +87,17 @@ namespace MZ.Dashboard.ViewModels
         public override void InitializeModel()
         {
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ChartHistogram), CurveCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), RecordCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), ReportCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false));
 
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand, isVisibility: false));
+
+            
         }
 
         public override void InitializeEvent()
@@ -101,6 +110,9 @@ namespace MZ.Dashboard.ViewModels
             }, ThreadOption.UIThread, true);
         }
 
+        /// <summary>
+        /// Window가 닫힐시 데이터 저장 및 Application 종료
+        /// </summary>
         private void WindowClosing()
         {
             SaveDatabase();
@@ -108,18 +120,24 @@ namespace MZ.Dashboard.ViewModels
             Application.Current.Shutdown();
         }
 
+        /// <summary>
+        /// 태마 변경
+        /// </summary>
         private void ThemeButton()
         {
             _databaseService.User.ChangeTheme(new(ThemeService.ChangeMode()));
         }
 
+        /// <summary>
+        /// 언어 변경
+        /// </summary>
         private void LanguageButton()
         {
             _dialogService.ShowDialog(
                 "DialogView",
                 new DialogParameters
                 {
-                    {"Title",  MZRegionNames.LanguageRegion},
+                    {"Title",  LanguageService.GetString($"Lng{MZRegionNames.LanguageRegion}") },
                     {"RegionName", MZRegionNames.LanguageRegion}
                 },
                 (IDialogResult result) => {
@@ -127,6 +145,9 @@ namespace MZ.Dashboard.ViewModels
                 });
         }
 
+        /// <summary>
+        /// 로그아웃 및 로그인 뷰 이벤트
+        /// </summary>
         private void LogoutButton()
         {
             SaveDatabase();
@@ -137,26 +158,35 @@ namespace MZ.Dashboard.ViewModels
                             nameof(UserLoginView)));
         }
 
+        /// <summary>
+        /// 이미지 스토리지 창
+        /// </summary>
         private async void ImageStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.ImageStorageControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.ImageStorageControl}"),
                 regionName: nameof(ImageStorageControlView),
                 isMultiple: false);
         }
 
+        /// <summary>
+        /// 로그 스토리지 창
+        /// </summary>
         private async void LogStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.LogStorageControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.LogStorageControl}"),
                 regionName: nameof(LogStorageControlView),
                 isMultiple:false);
         }
 
+        /// <summary>
+        /// 물성분석 제어 창
+        /// </summary>
         private async void MaterialButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.MaterialControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.MaterialControl}"),
                 regionName: nameof(MaterialControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -164,10 +194,13 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
+        /// <summary>
+        /// 인공지능 카테고리 제어 창
+        /// </summary>
         private async void AIButton()
         {
             await _windowDialogService.ShowWindow(
-                title: MZRegionNames.AIControl,
+                title: LanguageService.GetString($"Lng{MZRegionNames.AIControl}"),
                 regionName: nameof(AIControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -175,25 +208,64 @@ namespace MZ.Dashboard.ViewModels
                 height: 640);
         }
 
-        private void RecordButton()
+        /// <summary>
+        /// 
+        /// </summary>
+        private async void CurveButton()
         {
+            await _windowDialogService.ShowWindow(
+                title: LanguageService.GetString($"Lng{MZRegionNames.CurveControl}"),
+                regionName: nameof(CurveControlView),
+                isMultiple: false,
+                resizeMode: ResizeMode.NoResize,
+                width: 260,
+                height: 520);
         }
 
-        private void UpdateWindowCommandButton(bool check)
+        /// <summary>
+        /// 분석 보고서 창 
+        /// </summary>
+        private async void ReportButton()
         {
+            await _windowDialogService.ShowWindow(
+                title: LanguageService.GetString($"Lng{MZRegionNames.ReportControl}"),
+                regionName: nameof(ReportControlView),
+                isMultiple: false);
+        }
+
+        /// <summary>
+        /// 커맨드 버튼 노출 여부
+        /// </summary>
+        /// <param name="check">bool</param>
+        private async void UpdateWindowCommandButton(bool check)
+        {
+            var response = await _databaseService.User.IsAdmin();
+            bool isAdmin = response.Data;
+
             foreach (var button in WindowCommandButtons)
             {
-                button.IsVisibility = check ||
-                                      button.IconKind == nameof(PackIconMaterialKind.Earth) ||
-                                      button.IconKind == nameof(PackIconMaterialKind.ThemeLightDark);
+                button.IsVisibility = button.IconKind switch
+                {
+                    nameof(PackIconMaterialKind.FileSearch) => isAdmin,
+                    nameof(PackIconMaterialKind.Earth) => true,
+                    nameof(PackIconMaterialKind.ThemeLightDark) => true,
+                    _ => check,
+                };
             }
         }
 
+        /// <summary>
+        /// 데이터 베이스 처리
+        /// </summary>
         private void SaveDatabase()
         {
             _xrayService.SaveDatabase();
         }
 
+        /// <summary>
+        /// 데이터 베이스 로딩 및 사용자 환경 설정 반영
+        /// </summary>
+        /// <param name="check">bool</param>
         private async void LoadDatabase(bool check)
         {
             if (check)

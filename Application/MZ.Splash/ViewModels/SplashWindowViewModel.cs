@@ -6,15 +6,16 @@ using Prism.Ioc;
 using MZ.Core;
 using MZ.Logger;
 using MZ.Auth.Views;
-using MZ.Blank.Views;
 using MZ.Xray.Engine;
 using MZ.Infrastructure;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using MZ.AI.Engine;
 
 namespace MZ.Splash.ViewModels
 {
+    /// <summary>
+    /// Splash Window ViewModel : 초기 Application 실행시 정보 수집
+    /// </summary>
     public class SplashWindowViewModel : MZBindableBase
     {
         #region Service

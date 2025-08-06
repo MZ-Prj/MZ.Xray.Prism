@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"            
              xmlns:views="clr-namespace:MZ.Dashboard.Views"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Border CornerRadius="8"

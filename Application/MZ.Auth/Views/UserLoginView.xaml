@@ -75,7 +75,7 @@
                 <Button Background="Transparent" Command="{Binding Path=RegisterCommand}" Margin="8" Padding="4" Content="{DynamicResource LngUserLoginRegion_Register}"/>
             </StackPanel>
             <StackPanel Grid.Row="3" Margin="8" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                <Label Content="{Binding Path=MZService.BuildVersion}" Opacity="0.5"/>
+                <Label Content="{Binding Path=BuildVersion}" Opacity="0.5"/>
             </StackPanel>
         </Grid>
     </Border>

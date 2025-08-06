@@ -23,6 +23,9 @@ namespace MZ.Splash
             RegisterViews(containerRegistry);
         }
 
+        /// <summary>
+        /// Splash 종료 이벤트 구독
+        /// </summary>
         public override void InitializeEvent()
         {
             _eventAggregator.GetEvent<SplashCloseEvent>().Subscribe(() =>

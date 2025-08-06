@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="MZ.Dashboard.Views.ReportControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"         
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:liveCharts="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ReportControlViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             mc:Ignorable="d"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+
+    <Grid x:Name="ChartsContainer">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Margin="8">
+            <StackPanel Orientation="Horizontal">
+                <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
+                    <iconPacks:PackIconMaterial Kind="TableSearch"  Width="16" Height="16"/>
+                </Button>
+                <Button Margin="0,0,4,0" Command="{Binding Path=SaveCommand}" >
+                    <iconPacks:PackIconMaterial Kind="Download"  Width="16" Height="16"/>
+                    <Button.CommandParameter>
+                        <Binding ElementName="ChartsContainer"/>
+                    </Button.CommandParameter>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <liveCharts:CartesianChart x:Name="ObjectDetectionLiveChart"
+                                       Grid.Row="0"
+                                       DataContext="{Binding Path=ObjectDetectionChart}"
+                                       Series="{Binding Path=SeriesCollection}" 
+                                       XAxes="{Binding Path=XAxes}"
+                                       YAxes="{Binding Path=YAxes}" 
+                                       VerticalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch">
+            </liveCharts:CartesianChart>
+
+            <DataGrid Grid.Row="1" 
+                      ItemsSource="{Binding Path=ObjectDetectionData}" 
+                      AutoGenerateColumns="False"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      CanUserAddRows="False" 
+                      CanUserDeleteRows="False"
+                      HorizontalContentAlignment="Center"
+                      Margin="4">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Name}" Binding="{Binding Path=Name}" Width="1*" />
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Count}" Binding="{Binding Path=Count}" Width="1*"/>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Percent}" Binding="{Binding Path=Percent, StringFormat={}{0:F2}%}" Width="1*"/>
+                    <DataGridTemplateColumn Header="{DynamicResource LngReportControlRegion_Color}" Width="1*" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Label Background="{Binding Path=Color}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <liveCharts:CartesianChart x:Name="ImageFileLiveChart"
+                                       DataContext="{Binding Path=ImageFileChart}"
+                                       Grid.Row="0"
+                                       Series="{Binding Path=SeriesCollection}"
+                                       XAxes="{Binding Path=XAxes}"
+                                       YAxes="{Binding Path=YAxes}" 
+                                       VerticalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch"
+                                       ZoomMode="X"
+                                       TooltipPosition="Hidden" >
+            </liveCharts:CartesianChart>
+
+            <DataGrid Grid.Row="1" 
+                      ItemsSource="{Binding Path=ImageFileData}"
+                      AutoGenerateColumns="False"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      CanUserAddRows="False" 
+                      CanUserDeleteRows="False"
+                      HorizontalContentAlignment="Center"
+                      Margin="4">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Date}" Binding="{Binding Path=Date, StringFormat='yyyy-MM-dd'}" Width="1*"/>
+                    <DataGridTextColumn Header="{DynamicResource LngReportControlRegion_Count}" Binding="{Binding Path=Count}" Width="1*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </Grid>
+</UserControl>

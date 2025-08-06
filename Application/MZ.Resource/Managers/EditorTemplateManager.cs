@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace MZ.Resource.Managers
 {
+    /// <summary>
+    /// 데이터 타입에 따라 DataTemplate을 반환
+    /// </summary>
     public class EditorTemplateManager : DataTemplateSelector
     {
         public DataTemplate StringTemplate { get; set; }

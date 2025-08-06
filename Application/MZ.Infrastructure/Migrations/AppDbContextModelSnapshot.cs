@@ -153,6 +153,28 @@ namespace MZ.Infrastructure.Migrations
                     b.ToTable("Category");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.CurveControlEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("X")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CurveControl");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.FilterEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -459,6 +481,17 @@ namespace MZ.Infrastructure.Migrations
                     b.Navigation("AIOption");
                 });
 
+            modelBuilder.Entity("MZ.Domain.Entities.CurveControlEntity", b =>
+                {
+                    b.HasOne("MZ.Domain.Entities.UserEntity", "User")
+                        .WithMany("Curve")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MZ.Domain.Entities.FilterEntity", b =>
                 {
                     b.HasOne("MZ.Domain.Entities.UserEntity", "User")
@@ -554,6 +587,8 @@ namespace MZ.Infrastructure.Migrations
             modelBuilder.Entity("MZ.Domain.Entities.UserEntity", b =>
                 {
                     b.Navigation("Calibration");
+
+                    b.Navigation("Curve");
 
                     b.Navigation("Filter");
 
