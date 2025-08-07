@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using MZ.DTO.Enums;
 using MZ.Util;
 using OpenCvSharp;

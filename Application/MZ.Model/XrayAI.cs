@@ -2,7 +2,7 @@
 using Prism.Mvvm;
 using System;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
     /// <summary>
     /// 객체 검출 옵션

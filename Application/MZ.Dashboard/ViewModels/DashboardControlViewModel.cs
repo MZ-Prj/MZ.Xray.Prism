@@ -1,4 +1,5 @@
 ﻿using MZ.Core;
+using MZ.Resource;
 using Prism.Ioc;
 using Prism.Regions;
 

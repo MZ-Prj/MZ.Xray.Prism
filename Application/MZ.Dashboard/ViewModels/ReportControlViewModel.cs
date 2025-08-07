@@ -3,7 +3,7 @@ using MZ.Core;
 using MZ.Util;
 using MZ.Resource;
 using MZ.Xray.Engine;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Infrastructure;
 using MZ.Domain.Entities;
 using System;

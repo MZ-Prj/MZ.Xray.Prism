@@ -15,14 +15,20 @@ namespace MZ.Infrastructure.Interfaces
         /// 사용자 로그인 (비동기)
         /// </summary>
         Task<BaseResponse<UserLoginRole, UserEntity>> Login(UserLoginRequest request);
+
         /// <summary>
         /// 사용자 로그아웃
         /// </summary>
-        BaseResponse<BaseRole, string> Logout();
+        Task<BaseResponse<BaseRole, string>> Logout();
+
         /// <summary>
         /// 현재 로그인된 사용자 조회
         /// </summary>
         BaseResponse<BaseRole, string> CurrentUser();
+        /// <summary>
+        /// 현재 로그인된 사용자 조회(전체정보)
+        /// </summary>
+        Task<BaseResponse<BaseRole, UserEntity>> GetUser();
         /// <summary>
         /// 사용자 및 사용자 설정 정보 조회 (비동기)
         /// </summary>

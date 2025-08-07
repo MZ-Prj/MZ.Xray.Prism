@@ -1,15 +1,13 @@
-﻿using System;
+﻿using MZ.Domain.Enums;
 using MZ.Domain.Interfaces;
-using MZ.Domain.Enums;
 using OpenCvSharp;
 using Prism.Mvvm;
-using System.Windows.Media;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using System.Linq;
-using System.Collections.Generic;
+using System.Windows.Media;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
     /// <summary>
     /// 필터(Filter) 파라미터 정보 바인딩용 모델
@@ -360,7 +358,7 @@ namespace MZ.Domain.Models
         /// - (B,G,R,A) 순서로 컬러값 저장  
         /// - 변경시 WPF Color로 변환 및 콜백(Invoke) 호출
         /// </summary>
-        private Scalar _scalar = new (byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+        private Scalar _scalar = new(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
         public Scalar Scalar
         {
             get => _scalar;
@@ -382,7 +380,7 @@ namespace MZ.Domain.Models
         /// - 변경시 Scalar와 동기화 및 콜백(Invoke) 호출
         /// </summary>
         private Color _color;
-        public Color Color 
+        public Color Color
         {
             get => _color;
             set
@@ -457,12 +455,12 @@ namespace MZ.Domain.Models
         /// 현재 선택된 Zeffect 제어
         /// </summary>
         private ZeffectControlModel _control = new();
-        public ZeffectControlModel Control 
-        { 
+        public ZeffectControlModel Control
+        {
             get => _control;
             set
             {
-                if(SetProperty(ref _control, value))
+                if (SetProperty(ref _control, value))
                 {
                     foreach (var c in Controls)
                     {
@@ -488,7 +486,7 @@ namespace MZ.Domain.Models
         /// <summary>
         /// 고유 번호
         /// </summary>
-        private int _id ;
+        private int _id;
         public int Id { get => _id; set => SetProperty(ref _id, value); }
         /// <summary>
         /// 커스텀 적용 여부
@@ -553,7 +551,7 @@ namespace MZ.Domain.Models
     }
 
     /// <summary>
-    /// 
+    /// LUT 곡선을 그리기 위한 바인딩용 모델
     /// </summary>
     public class CurveControlModel : BindableBase
     {
@@ -567,5 +565,4 @@ namespace MZ.Domain.Models
         public double Y { get => _y; set => SetProperty(ref _y, value); }
 
     }
-
 }

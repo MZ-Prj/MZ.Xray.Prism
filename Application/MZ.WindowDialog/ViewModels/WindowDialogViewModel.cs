@@ -1,5 +1,5 @@
 ﻿using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Loading;
 using Prism.Ioc;
 using System;

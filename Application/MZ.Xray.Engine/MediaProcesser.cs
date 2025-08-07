@@ -1,13 +1,11 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using MZ.Domain.Enums;
 using MZ.Vision;
-using Prism.Commands;
 using Prism.Mvvm;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
@@ -295,6 +293,21 @@ namespace MZ.Xray.Engine
         {
             return Information.Interval % Information.MaxInterval == 0;
         }
+
+        /// <summary>
+        /// 신호가 들어오면 화면 갱신 여부
+        /// </summary>
+        /// <returns></returns>
+        public bool IsCountUpperZero()
+        {
+            return Information.Count > 0;
+        }
+
+        public bool CompareSlider()
+        {
+            return Information.Slider >= Information.MaxSlider;
+        }
+
         /// <summary>
         /// 현제 프레임 추가
         /// </summary>

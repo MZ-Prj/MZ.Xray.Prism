@@ -2,7 +2,7 @@
 using MZ.Core;
 using MZ.Util;
 using MZ.Xray.Engine;
-using MZ.Domain.Models;
+using MZ.Model;
 using Prism.Ioc;
 using Prism.Commands;
 using System.Linq;

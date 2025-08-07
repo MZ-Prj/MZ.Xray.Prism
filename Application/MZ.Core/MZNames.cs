@@ -22,9 +22,6 @@
         public readonly static string LanguageRegion = "LanguageRegion";
         public readonly static string LoadingRegion = "LoadingRegion";
 
-        public readonly static string UserLoginRegion = "UserLoginRegion";
-        public readonly static string UserRegisterRegion = "UserRegisterRegion";
-
         //UI
         public readonly static string SidebarRegion = "SidebarRegion";
         public readonly static string ToolbarRegion = "ToolbarRegion";
@@ -42,12 +39,46 @@
         //Producer
         public readonly static string IpNetworkRegion = "IpNetworkRegion";
 
+        //User
+        public readonly static string UserLoginRegion = "UserLoginRegion";
+        public readonly static string UserRegisterRegion = "UserRegisterRegion";
+        public readonly static string UserInformationRegion = "UserInformationRegion";
+
     }
 
     public static class MZResourceNames
     {
+        private static string Key = "Lng";
+
         public readonly static string SavePDF = "SavePDF";
         public readonly static string SaveScreen = "SaveScreen";
+
+        public readonly static string XrayRealtimeRegion = "XrayRealtimeRegion";
+        public readonly static string XrayRealtimeRegion_AIOnOff = "XrayRealtimeRegion_AIOnOff";
+        public readonly static string XrayRealtimeRegion_BrightDown = "XrayRealtimeRegion_BrightDown";
+        public readonly static string XrayRealtimeRegion_BrighUp = "XrayRealtimeRegion_BrighUp";
+        public readonly static string XrayRealtimeRegion_Color = "XrayRealtimeRegion_Color";
+        public readonly static string XrayRealtimeRegion_ContrastDown = "XrayRealtimeRegion_ContrastDown";
+        public readonly static string XrayRealtimeRegion_ContrastUp = "XrayRealtimeRegion_ContrastUp";
+        public readonly static string XrayRealtimeRegion_FilterClear = "XrayRealtimeRegion_FilterClear";
+        public readonly static string XrayRealtimeRegion_Gray = "XrayRealtimeRegion_Gray";
+        public readonly static string XrayRealtimeRegion_Inorganic = "XrayRealtimeRegion_Inorganic";
+        public readonly static string XrayRealtimeRegion_Metal = "XrayRealtimeRegion_Metal";
+        public readonly static string XrayRealtimeRegion_Next = "XrayRealtimeRegion_Next";
+        public readonly static string XrayRealtimeRegion_Organic = "XrayRealtimeRegion_Organic";
+        public readonly static string XrayRealtimeRegion_Picker = "XrayRealtimeRegion_Picker";
+        public readonly static string XrayRealtimeRegion_PlayStop = "XrayRealtimeRegion_PlayStop";
+        public readonly static string XrayRealtimeRegion_Previous = "XrayRealtimeRegion_Previous";
+        public readonly static string XrayRealtimeRegion_SaveImage = "XrayRealtimeRegion_SaveImage";
+        public readonly static string XrayRealtimeRegion_Setting = "XrayRealtimeRegion_Setting";
+        public readonly static string XrayRealtimeRegion_Zeffect = "XrayRealtimeRegion_Zeffect";
+        public readonly static string XrayRealtimeRegion_ZoomIn = "XrayRealtimeRegion_ZoomIn";
+        public readonly static string XrayRealtimeRegion_ZoomOut = "XrayRealtimeRegion_ZoomOut";
+
+        public static string AddLng(string resourceName)
+        {
+            return $"{Key}{resourceName}";
+        }
     }
 
 }

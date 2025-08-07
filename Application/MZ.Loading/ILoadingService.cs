@@ -1,5 +1,4 @@
-﻿
-using MZ.Domain.Models;
+﻿using MZ.Model;
 
 namespace MZ.Loading
 {

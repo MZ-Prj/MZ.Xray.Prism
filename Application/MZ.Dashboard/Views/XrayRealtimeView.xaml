@@ -24,13 +24,13 @@
         <converters:MahappForegroundBrushConverter x:Key="MahappForegroundBrushConverter"/>
     </UserControl.Resources>
 
-        <Canvas x:Name="VideoCanvas" 
+    <Canvas x:Name="VideoCanvas" 
             ClipToBounds="True" 
             Background="{DynamicResource MahApps.Brushes.Control.Background}">
-            <i:Interaction.Behaviors>
-                <behaviors:XrayRealtimeBehavior />
-            </i:Interaction.Behaviors>
-            <Canvas x:Name="CanvasImageView" 
+        <i:Interaction.Behaviors>
+            <behaviors:XrayRealtimeBehavior />
+        </i:Interaction.Behaviors>
+        <Canvas x:Name="CanvasImageView" 
                     DataContext="{Binding Path=Media.Model}"
                     CacheMode="BitmapCache"
                     ClipToBounds="True" 
@@ -41,24 +41,25 @@
                     RenderOptions.BitmapScalingMode="HighQuality"
                     RenderOptions.EdgeMode="Aliased"
                     RenderTransformOrigin="0.5, 0.5">
-                <Canvas.Effect>
-                    <managers:XrayShaderManager Input="{Binding Path=ImageSource}"
+            <Canvas.Effect>
+                <managers:XrayShaderManager Input="{Binding Path=ImageSource}"
                                             TextureSize="{Binding Path=Filter.Size, Mode=TwoWay}"
                                             SharpnessLevel="{Binding Path=Filter.Sharpness, Mode=TwoWay}"
                                             BrightnessLevel="{Binding Path=Filter.Brightness, Mode=TwoWay}" 
                                             ContrastLevel="{Binding Path=Filter.Contrast, Mode=TwoWay}"
                                             ColorMode="{Binding Path=Filter.ColorMode, Mode=TwoWay, Converter={StaticResource NumericEnumConverter}}"/>
-                </Canvas.Effect>
+            </Canvas.Effect>
 
-                <Canvas.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding Path=Filter.Zoom}" ScaleY="{Binding Path=Filter.Zoom}"/>
-                </Canvas.RenderTransform>
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="{Binding Path=Filter.Zoom}" ScaleY="{Binding Path=Filter.Zoom}"/>
+            </Canvas.RenderTransform>
 
-                <Canvas.Background>
-                    <ImageBrush ImageSource="{Binding Path=ImageSource, Mode=OneWay}"/>
-                </Canvas.Background>
-            </Canvas>
-            <Canvas x:Name="CanvasZeffectView" 
+            <Canvas.Background>
+                <ImageBrush ImageSource="{Binding Path=ImageSource, Mode=OneWay}"/>
+            </Canvas.Background>
+        </Canvas>
+
+        <Canvas x:Name="CanvasZeffectView" 
                     CacheMode="BitmapCache"
                     ClipToBounds="True" 
                     IsManipulationEnabled="true" 
@@ -68,22 +69,22 @@
                     RenderOptions.BitmapScalingMode="HighQuality"
                     RenderOptions.EdgeMode="Aliased"
                     RenderTransformOrigin="0.5, 0.5">
-                <Canvas.Effect>
-                    <managers:ZeffShaderManager Input="{Binding Path=Zeffect.Model.ImageSource}"
+            <Canvas.Effect>
+                <managers:ZeffShaderManager Input="{Binding Path=Zeffect.Model.ImageSource}"
                                             Min="{Binding Path=Zeffect.Model.Control.Min}"
                                             Max="{Binding Path=Zeffect.Model.Control.Max}"
                                             Color="{Binding Path=Zeffect.Model.Control.Color}"/>
-                </Canvas.Effect>
-                <Canvas.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
-                </Canvas.RenderTransform>
+            </Canvas.Effect>
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
+            </Canvas.RenderTransform>
 
-                <Canvas.Background>
-                    <ImageBrush ImageSource="{Binding Path=Zeffect.Model.ImageSource, Mode=OneWay}"/>
-                </Canvas.Background>
-            </Canvas>
+            <Canvas.Background>
+                <ImageBrush ImageSource="{Binding Path=Zeffect.Model.ImageSource, Mode=OneWay}"/>
+            </Canvas.Background>
+        </Canvas>
 
-            <Canvas x:Name="CanvasAIPredictView"
+        <Canvas x:Name="CanvasAIPredictView"
                 Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                 CacheMode="BitmapCache"
                 ClipToBounds="True" 
@@ -95,94 +96,94 @@
                 RenderOptions.EdgeMode="Aliased"
                 RenderTransformOrigin="0.5, 0.5">
 
-                <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding Path=OffsetX}" />
-                            <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Canvas>
-                                <Canvas.Style>
-                                    <Style TargetType="Canvas">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=IsBlink, Mode=TwoWay}" Value="True">
-                                                <DataTrigger.EnterActions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard RepeatBehavior="0:0:5" AutoReverse="True">
-                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
-                                                <DataTrigger.ExitActions>
-                                                    <StopStoryboard />
-                                                </DataTrigger.ExitActions>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Canvas.Style>
+            <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Path=OffsetX}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Canvas>
+                            <Canvas.Style>
+                                <Style TargetType="Canvas">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=IsBlink, Mode=TwoWay}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard RepeatBehavior="0:0:5" AutoReverse="True">
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.5"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <StopStoryboard />
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Canvas.Style>
 
-                                <Border Background="{Binding Path=Color}" 
+                            <Border Background="{Binding Path=Color}" 
                                     CornerRadius="4" 
                                     Padding="4">
-                                    <TextBlock Text="{Binding Path=Name, Converter={StaticResource UppercaseConverter}}" 
+                                <TextBlock Text="{Binding Path=Name, Converter={StaticResource UppercaseConverter}}" 
                                            Foreground="{Binding Path=Color, Converter={StaticResource ContrastColorConverter}}"
                                            FontSize="10"
                                            FontWeight="Bold"/>
-                                </Border>
+                            </Border>
 
-                                <Rectangle Stroke="{Binding Path=Color}" 
+                            <Rectangle Stroke="{Binding Path=Color}" 
                                        StrokeThickness="2"
                                        Width="{Binding Path=Width}"
                                        Height="{Binding Path=Height}"
                                        RadiusX="4"
                                        RadiusY="4"/>
 
-                            </Canvas>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <Canvas.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
-                </Canvas.RenderTransform>
-            </Canvas>
+                        </Canvas>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
+            </Canvas.RenderTransform>
+        </Canvas>
 
-            <Canvas x:Name="OverlayGradient"
-                CacheMode="BitmapCache"
-                IsManipulationEnabled="true" 
-                Visibility="Collapsed"
-                DataContext="{Binding Path=Media}"
-                Width="{Binding Path=Filter.Size.Width}" 
-                Height="{Binding Path=Filter.Size.Height}"
-                SnapsToDevicePixels="True"
-                RenderOptions.BitmapScalingMode="HighQuality"
-                RenderOptions.EdgeMode="Aliased"
-                RenderTransformOrigin="0.5, 0.5">
-                <Rectangle Canvas.Left="0"
+        <Canvas x:Name="OverlayGradient"
+                    CacheMode="BitmapCache"
+                    IsManipulationEnabled="true" 
+                    Visibility="Collapsed"
+                    DataContext="{Binding Path=Media}"
+                    Width="{Binding Path=Filter.Size.Width}" 
+                    Height="{Binding Path=Filter.Size.Height}"
+                    SnapsToDevicePixels="True"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.EdgeMode="Aliased"
+                    RenderTransformOrigin="0.5, 0.5">
+            <Rectangle Canvas.Left="0"
                        Canvas.Top="0"
                        Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"
                        Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}"
                        RadiusX="8"
                        RadiusY="8"
                        Opacity="0.1">
-                    <Rectangle.Fill>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Color="#00000000" Offset="0.0"/>
-                            <GradientStop Color="#00000000" Offset="0.9"/>
-                            <GradientStop Color="{DynamicResource MahApps.Colors.Gray.MouseOver}" Offset="1.0"/>
-                        </LinearGradientBrush>
-                    </Rectangle.Fill>
-                </Rectangle>
-            </Canvas>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00000000" Offset="0.0"/>
+                        <GradientStop Color="#00000000" Offset="0.9"/>
+                        <GradientStop Color="{DynamicResource MahApps.Colors.Gray.MouseOver}" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Canvas>
 
-            <Rectangle x:Name="BorderRectangle"
+        <Rectangle x:Name="BorderRectangle"
                    Canvas.Left="0"
                    Canvas.Top="0"
                    Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"
@@ -192,120 +193,141 @@
                    Stroke="{DynamicResource MahApps.Brushes.Gray9}"
                    StrokeThickness="1"/>
 
-            <StackPanel x:Name="OverlayPredict"
+        <StackPanel x:Name="OverlayPredict"
                     Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Canvas.Left="0" Canvas.Top="0">
-                <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Margin="4"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ToggleButton Content="{Binding Path=Name, Converter={StaticResource UppercaseConverter}}" 
-                                      Background="{Binding Path=Color}" 
-                                      Foreground="{Binding Path=Color, Converter={StaticResource ContrastColorConverter}}"
-                                      IsChecked="{Binding Path=IsBlink, Mode=TwoWay}"
-                                      Margin="4"
-                                      BorderThickness="0"
-                                      Cursor="Hand"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Content="{Binding Path=Name, Converter={StaticResource UppercaseConverter}}" 
+                                          Background="{Binding Path=Color}" 
+                                          Foreground="{Binding Path=Color, Converter={StaticResource ContrastColorConverter}}"
+                                          IsChecked="{Binding Path=IsBlink, Mode=TwoWay}"
+                                          Margin="4"
+                                          BorderThickness="0"
+                                          Cursor="Hand"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
-            <StackPanel x:Name="OverlayBottomControls" 
+        <StackPanel x:Name="OverlayBottomControls" 
                 Visibility="Collapsed"
                 Canvas.Left="0" Canvas.Bottom="0"
                 Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}">
 
-                <Grid Grid.Row="0" Margin="4">
-                    <Slider Minimum="1" 
-                        Maximum="{Binding Path=Media.Model.Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                        Value="{Binding Path=Media.Model.Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TickFrequency="1"
-                        IsSnapToTickEnabled="True">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="ValueChanged">
-                                <i:InvokeCommandAction Command="{Binding Path=ChangedSliderCommand}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Slider>
-                </Grid>
+            <Grid Grid.Row="0" Margin="4">
+                <Slider Minimum="1" 
+                            Maximum="{Binding Path=Media.Model.Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Value="{Binding Path=Media.Model.Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ValueChanged">
+                            <i:InvokeCommandAction Command="{Binding Path=ChangedSliderCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>
+            </Grid>
 
-                <Grid Grid.Row="1" Margin="4" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" Margin="4" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <ItemsControl Grid.Column="0" ItemsSource="{Binding Path=VideoButtons}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel HorizontalAlignment="Stretch"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <RepeatButton Command="{Binding Path=Command}" 
-                                          CommandParameter="{Binding Path=UId}"
-                                          Background="{Binding Path=ColorBrush}"
-                                          IsEnabled="{Binding Path=IsVisibility}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
-                                          Margin="4">
-                                    <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
-                                                            Width="24" Height="24"/>
-                                </RepeatButton>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <ItemsControl Grid.Column="0" ItemsSource="{Binding Path=VideoButtons}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                              CommandParameter="{Binding Path=UId}"
+                                              Background="{Binding Path=ColorBrush}"
+                                              IsEnabled="{Binding Path=IsVisibility}"
+                                              ToolTipService.Placement="Top"
+                                              ToolTipService.PlacementTarget="{Binding RelativeSource={RelativeSource Self}}"
+                                              BorderThickness="0" Width="48" Height="48" Cursor="Hand" Margin="4">
+                                <RepeatButton.ToolTip>
+                                    <ToolTip Background="{DynamicResource MahApps.Brushes.Badged.Foreground}" 
+                                                 Foreground="{DynamicResource MahApps.Brushes.Badged.Background}" 
+                                                 FontSize="12"
+                                                 FontWeight="Bold"
+                                                 Content="{Binding Path=Tooltip}"/>
+                                </RepeatButton.ToolTip>
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
+                            </RepeatButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                    <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=ActionButtons}" HorizontalAlignment="Right">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel HorizontalAlignment="Stretch"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <RepeatButton Command="{Binding Path=Command}" 
-                                          CommandParameter="{Binding Path=UId}"
-                                          Background="{Binding Path=ColorBrush}"
-                                          Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
-                                          Margin="4">
-                                    <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
-                                                            Width="24" Height="24"/>
-                                </RepeatButton>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=ActionButtons}" HorizontalAlignment="Right">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                              CommandParameter="{Binding Path=UId}"
+                                              Background="{Binding Path=ColorBrush}"
+                                              Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              ToolTipService.Placement="Top"
+                                              ToolTipService.PlacementTarget="{Binding RelativeSource={RelativeSource Self}}"
+                                              BorderThickness="0" Width="48" Height="48" Cursor="Hand" Margin="4">
+                                <RepeatButton.ToolTip>
+                                    <ToolTip Background="{DynamicResource MahApps.Brushes.Badged.Foreground}" 
+                                             Foreground="{DynamicResource MahApps.Brushes.Badged.Background}" 
+                                             FontSize="12"
+                                             FontWeight="Bold"
+                                             Content="{Binding Path=Tooltip}"/>
+                                </RepeatButton.ToolTip>
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
+                            </RepeatButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                    <ItemsControl Grid.Column="2" ItemsSource="{Binding Path=EtcButtons}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel HorizontalAlignment="Stretch"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <RepeatButton Command="{Binding Path=Command}" 
-                                          CommandParameter="{Binding Path=UId}"
-                                          Background="{Binding Path=ColorBrush}"
-                                          BorderThickness="0" Width="48" Height="48" Cursor="Hand"
-                                          Margin="4">
-                                    <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
-                                                            Width="24" Height="24"/>
-                                </RepeatButton>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                <ItemsControl Grid.Column="2" ItemsSource="{Binding Path=EtcButtons}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Stretch"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RepeatButton Command="{Binding Path=Command}" 
+                                              CommandParameter="{Binding Path=UId}"
+                                              Background="{Binding Path=ColorBrush}"
+                                              ToolTipService.Placement="Top"
+                                              ToolTipService.PlacementTarget="{Binding RelativeSource={RelativeSource Self}}"
+                                              BorderThickness="0" Width="48" Height="48" Cursor="Hand" Margin="4">
+                                <RepeatButton.ToolTip>
+                                    <ToolTip Background="{DynamicResource MahApps.Brushes.Badged.Foreground}" 
+                                             Foreground="{DynamicResource MahApps.Brushes.Badged.Background}" 
+                                             FontSize="12"
+                                             FontWeight="Bold"
+                                             Content="{Binding Path=Tooltip}"/>
+                                </RepeatButton.ToolTip>
+                                <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
+                            </RepeatButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                </Grid>
-            </StackPanel>
+            </Grid>
+        </StackPanel>
 
-        </Canvas>
+    </Canvas>
 
 </UserControl>

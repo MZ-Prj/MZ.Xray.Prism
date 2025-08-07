@@ -1,6 +1,6 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Util;
 using MZ.Xray.Engine;
 using Prism.Commands;

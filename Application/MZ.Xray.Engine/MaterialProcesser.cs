@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using MZ.Vision;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;

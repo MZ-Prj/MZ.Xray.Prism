@@ -60,6 +60,11 @@ namespace MZ.Domain.Entities
         /// <summary>
         /// 계정 생성 일시
         /// </summary>
+        public TimeSpan UsingDate { get; set; } = TimeSpan.Zero;
+
+        /// <summary>
+        /// 계정 생성 일시
+        /// </summary>
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
         /// <summary>

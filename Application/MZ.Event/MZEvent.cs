@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using Prism.Events;
 using static MZ.Core.MZModel;
 
@@ -26,5 +26,4 @@ namespace MZ.Event
     {
         public class FileReceiveEvent : PubSubEvent<FileModel> { }
     }
-
 }

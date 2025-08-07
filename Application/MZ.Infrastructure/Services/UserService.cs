@@ -47,7 +47,7 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
-                UserEntity user = await userRepository.GetByUsernameAsync(requeset.Username);
+                UserEntity user = await userRepository.GetByUsernameAllRelationsAsync(requeset.Username);
 
                 if (user == null)
                 {
@@ -61,11 +61,13 @@ namespace MZ.Infrastructure.Services
 
                 await userRepository.UpdateLastLoginDateAsync(user.Id);
                 userSession.CurrentUser = user.Username;
-                return BaseResponseExtensions.Success<UserLoginRole, UserEntity>(UserLoginRole.Success);
+                userSession.LoginTime = DateTime.Now;
+
+                return BaseResponseExtensions.Success(UserLoginRole.Success, user);
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<UserLoginRole, UserEntity>(UserLoginRole.Fail, ex);
             }
         }
@@ -73,16 +75,21 @@ namespace MZ.Infrastructure.Services
         /// 사용자 로그아웃
         /// - 세션 정보 삭제
         /// </summary>
-        public BaseResponse<BaseRole, string> Logout()
+        public async Task<BaseResponse<BaseRole, string>> Logout()
         {
             try
             {
+                var usingTime = (DateTime.Now - userSession.LoginTime);
+                UserEntity user = await userRepository.GetByUsernameAsync(userSession.CurrentUser);
+                user.UsingDate += usingTime;
+                await userRepository.UpdateAsync(user);
+
                 userSession.ClearAll();
                 return BaseResponseExtensions.Success(BaseRole.Success, userSession.CurrentUser);
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
             }
         }
@@ -97,7 +104,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Fail, ex);
             }
         }
@@ -149,7 +156,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<UserRegisterRole, UserEntity>(UserRegisterRole.Fail, ex);
             }
         }
@@ -180,7 +187,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, LanguageRole>(BaseRole.Fail, ex);
             }
         }
@@ -210,7 +217,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, ThemeRole>(BaseRole.Fail, ex);
             }
         }
@@ -232,7 +239,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
             }
         }
@@ -254,7 +261,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, UserEntity>(BaseRole.Fail, ex);
             }
         }
@@ -281,7 +288,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, UserSettingEntity>(BaseRole.Fail, ex);
             }
         }
@@ -293,6 +300,10 @@ namespace MZ.Infrastructure.Services
             return !string.IsNullOrWhiteSpace(CurrentUser().Data);
         }
 
+        /// <summary>
+        /// 관리자 여부
+        /// </summary>
+        /// <returns></returns>
         public async Task<BaseResponse<BaseRole, bool>> IsAdmin()
         {
             try
@@ -313,9 +324,32 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, bool>(BaseRole.Fail, ex);
             }
         }
-    }
+
+        /// <summary>
+        /// 현제 접속중인 유저 정보
+        /// </summary>
+		public async Task<BaseResponse<BaseRole, UserEntity>> GetUser()
+		{
+
+			try
+			{
+				if (string.IsNullOrEmpty(userSession.CurrentUser))
+				{
+					return BaseResponseExtensions.Failure<BaseRole, UserEntity>(BaseRole.Valid);
+				}
+				UserEntity user = await userRepository.GetByUsernameAsync(userSession.CurrentUser);
+
+				return BaseResponseExtensions.Success(BaseRole.Success, user);
+			}
+			catch (Exception ex)
+			{
+				MZLogger.Error(ex.Message);
+				return BaseResponseExtensions.Failure<BaseRole, UserEntity>(BaseRole.Fail, ex);
+			}
+		}
+	}
 }

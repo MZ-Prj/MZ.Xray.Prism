@@ -2,7 +2,7 @@
 using Prism.Mvvm;
 using System;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
     /// <summary>
     /// 비동기 작업, 네트워크, 데이터 처리 등에서 전체/영역별 Loading 상태 및 메시지 바인딩용 ViewModel

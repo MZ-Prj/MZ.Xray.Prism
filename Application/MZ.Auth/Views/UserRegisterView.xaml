@@ -89,7 +89,7 @@
                         Content="{DynamicResource LngUserRegisterRegion_Back}"/>
             </StackPanel>
             <StackPanel Grid.Row="3" Margin="8" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                <Label Content="{Binding Path=MZService.BuildVersion}" Opacity="0.5"/>
+                <Label Content="{Binding Path=BuildVersion}" Opacity="0.5"/>
             </StackPanel>
         </Grid>
     </Border>

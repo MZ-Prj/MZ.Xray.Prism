@@ -2,7 +2,7 @@
 using System;
 using MZ.Core;
 using MZ.Util;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Loading;
 using Prism.Ioc;
 using Prism.Services.Dialogs;

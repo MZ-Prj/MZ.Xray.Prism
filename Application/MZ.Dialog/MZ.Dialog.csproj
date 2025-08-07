@@ -11,6 +11,7 @@
     <ProjectReference Include="..\MZ.Core\MZ.Core.csproj" />
     <ProjectReference Include="..\MZ.Domain\MZ.Domain.csproj" />
     <ProjectReference Include="..\MZ.Loading\MZ.Loading.csproj" />
+    <ProjectReference Include="..\MZ.Model\MZ.Model.csproj" />
     <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
   </ItemGroup>
 </Project>

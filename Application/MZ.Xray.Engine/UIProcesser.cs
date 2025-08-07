@@ -1,6 +1,8 @@
 ﻿using MZ.Domain.Entities;
-using MZ.Domain.Models;
+using MZ.Model;
+using MZ.Resource;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

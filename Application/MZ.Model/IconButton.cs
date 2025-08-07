@@ -1,15 +1,12 @@
 ﻿using MZ.Domain.Interfaces;
+using MZ.Resource;
 using Prism.Mvvm;
+using System;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
-    /// <summary>
-    /// 대시보드/컨트롤 영역에서 사용하는 아이콘 기반 버튼 모델 클래스
-    /// 
-    /// - ICommand, 아이콘, 컬러, 툴팁 등 UI 기능 통합
-    /// </summary>
     public class IconButtonModel : BindableBase, IUserButton
     {
         /// <summary>
@@ -43,6 +40,14 @@ namespace MZ.Domain.Models
         public string Name { get => _name; set => SetProperty(ref _name, value); }
 
         /// <summary>
+        /// 버튼 이름/식별용 키 
+        /// </summary>
+        private string _tooltipKey;
+        
+        private string _tooltip;
+        public string Tooltip { get => _tooltip; set => SetProperty(ref _tooltip, value); }
+
+        /// <summary>
         /// 버튼 클릭시 실행될 ICommand
         /// </summary>
         private ICommand _command;
@@ -72,7 +77,7 @@ namespace MZ.Domain.Models
         /// <param name="uid">추가 식별값</param>
         /// <param name="name">버튼명/Key</param>
         /// <param name="id">Id</param>
-        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null, string name = null, int id = 0)
+        public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null, string name = null, string tooltipKey = "", int id = 0)
         {
             Id = id;
             IsVisibility = isVisibility;
@@ -81,6 +86,8 @@ namespace MZ.Domain.Models
             ColorBrush = colorBrush;
             UId = uid ?? iconKind;
             Name = name;
+            _tooltipKey = tooltipKey;
         }
+
     }
 }

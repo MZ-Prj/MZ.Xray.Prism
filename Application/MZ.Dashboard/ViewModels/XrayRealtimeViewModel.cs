@@ -4,11 +4,12 @@ using MZ.Core;
 using MZ.Xray.Engine;
 using MZ.Util;
 using MZ.Domain.Enums;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Resource;
 using MZ.AI.Engine;
 using MZ.WindowDialog;
 using MZ.Dashboard.Views;
+using MZ.Infrastructure;
 using MahApps.Metro.IconPacks;
 using Prism.Ioc;
 using Prism.Events;
@@ -20,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -31,6 +33,7 @@ namespace MZ.Dashboard.ViewModels
         #region Service
         private readonly IXrayService _xrayService;
         private readonly IAIService _aiService;
+        private readonly IDatabaseService _databaseService;
         private readonly IWindowDialogService _windowDialogService;
 
         public MediaProcesser Media
@@ -131,41 +134,15 @@ namespace MZ.Dashboard.ViewModels
         public ICommand ChangedSliderCommand => _changedSliderCommand ??= new DelegateCommand(MZAction.Wrapper(ChangedSlider, false));
 
         #endregion
-        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService, IWindowDialogService windowDialogService) : base(container)
+        public XrayRealtimeViewModel(IContainerExtension container, IXrayService xrayService, IAIService aiService, IWindowDialogService windowDialogService, IDatabaseService databaseService) : base(container)
         {
             _xrayService = xrayService;
             _aiService = aiService;
             _windowDialogService = windowDialogService;
+            _databaseService = databaseService;
 
             base.Initialize();
         }
-
-        public override void InitializeModel()
-        {
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false));
-
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name:UserSettingButtonKeys.ZoomOutButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Gray), uid:ColorRole.Gray, name: UserSettingButtonKeys.GrayButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaC), ColorCommand, MZBrush.CreateHsvRadialGradientBrush(), uid: ColorRole.Color, name: UserSettingButtonKeys.ColorButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaR), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic, name: UserSettingButtonKeys.OrganicButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic, name: UserSettingButtonKeys.InorganicButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaB), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal, name: UserSettingButtonKeys.MetalButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand, name: UserSettingButtonKeys.BrightDownButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand, name: UserSettingButtonKeys.BrightUpButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand, name: UserSettingButtonKeys.ContrastDownButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand, name: UserSettingButtonKeys.ContrastUpButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand, name: UserSettingButtonKeys.FilterClearButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaZ), ZeffectCommand, new SolidColorBrush(Colors.YellowGreen), name: UserSettingButtonKeys.ZeffectButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton));
-
-            EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4")));
-        }
-
 
         public override void InitializeEvent()
         {
@@ -173,6 +150,7 @@ namespace MZ.Dashboard.ViewModels
             {
                 Load(model.View == MZViewNames.DashboardControlView);
             }, ThreadOption.UIThread, true);
+
         }
 
         #region Button
@@ -355,21 +333,65 @@ namespace MZ.Dashboard.ViewModels
         /// 뷰 로드 시 기본 상태 초기화
         /// </summary>
         /// <param name="check">bool</param>
-        private void Load(bool check)
+        private async void Load(bool check)
         {
             if (check)
             {
-                // logic
-                _xrayService.Stop();
-                _xrayService.Play();
-
                 // ui
+                CreateButtons();
                 ChangeFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Stop), VideoButtons);
 
                 VisibilityFooterButton(PreviousCommand, false, VideoButtons);
                 VisibilityFooterButton(NextCommand, false, VideoButtons);
+
+                // logic
+                _xrayService.Stop();
+                _xrayService.Play();
+
+                var userSetting = await _databaseService.User.GetUserSetting();
+                if (userSetting.Success)
+                {
+                    _xrayService.UI.LoadActionButton(userSetting.Data?.Buttons);
+                }
+
+
             }
         }
+
+        /// <summary>
+        /// 버튼 집합
+        /// </summary>
+        private void CreateButtons()
+        {
+            //ui
+            VideoButtons.Clear();
+            ActionButtons.Clear();
+            EtcButtons.Clear();
+
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Picker)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_PlayStop)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Previous)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Next)));
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_ZoomOut)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_ZoomIn)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Gray), uid: ColorRole.Gray, name: UserSettingButtonKeys.GrayButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Gray)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaC), ColorCommand, MZBrush.CreateHsvRadialGradientBrush(), uid: ColorRole.Color, name: UserSettingButtonKeys.ColorButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Color)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaR), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic, name: UserSettingButtonKeys.OrganicButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Organic)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic, name: UserSettingButtonKeys.InorganicButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Inorganic)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaB), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal, name: UserSettingButtonKeys.MetalButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Metal)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand, name: UserSettingButtonKeys.BrightDownButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_BrightDown)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand, name: UserSettingButtonKeys.BrightUpButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_BrighUp)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand, name: UserSettingButtonKeys.ContrastDownButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_ContrastDown)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand, name: UserSettingButtonKeys.ContrastUpButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_ContrastUp)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand, name: UserSettingButtonKeys.FilterClearButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_FilterClear)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaZ), ZeffectCommand, new SolidColorBrush(Colors.YellowGreen), name: UserSettingButtonKeys.ZeffectButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Zeffect)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_AIOnOff)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton, tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_SaveImage)));
+
+            EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4"), tooltip: MZResourceNames.AddLng(MZResourceNames.XrayRealtimeRegion_Setting)));
+        }
+
 
         /// <summary>
         /// 버튼 아이콘 변경
@@ -390,6 +412,8 @@ namespace MZ.Dashboard.ViewModels
                 }
             }
         }
+
+
 
         /// <summary>
         /// 버튼 아이콘 On/Off 토글
@@ -440,6 +464,7 @@ namespace MZ.Dashboard.ViewModels
         {
             _xrayService.PrevNextSliderBar(Media.Information.Slider);
         }
+
 
         #region Behavior
         /// <summary>
