@@ -1,11 +1,11 @@
-﻿using MZ.Domain.Models;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System.Net;
 using System;
+using System.Reflection;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MZ.Logger;
-using System.Reflection;
+using MZ.Model;
 
 namespace MZ.Producer.Engine
 {

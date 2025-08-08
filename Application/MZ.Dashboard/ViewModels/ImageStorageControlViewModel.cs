@@ -215,7 +215,7 @@ namespace MZ.Dashboard.ViewModels
         /// <returns></returns>
         private async Task LoadingWithImage()
         {
-            using (_loadingService[MZRegionNames.ImageStorageControl].Show())
+            using (LoadingModel.Show())
             {
                 Clear();
                 LoadImages();

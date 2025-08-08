@@ -168,10 +168,10 @@
   <data name="LngAIControlRegion" xml:space="preserve">
     <value>AI</value>
   </data>
-  <data name="LngSavePDF" xml:space="preserve">
+  <data name="LngSave_PDF" xml:space="preserve">
     <value>Save PDF</value>
   </data>
-  <data name="LngSaveScreen" xml:space="preserve">
+  <data name="LngSave_Screen" xml:space="preserve">
     <value>Save Screen</value>
   </data>
   <data name="LngDashboardFooterButtonControlRegion" xml:space="preserve">
@@ -330,19 +330,49 @@
   <data name="LngUserLogoutRegion" xml:space="preserve">
     <value>Logout</value>
   </data>
-  <data name="LngCommonSearch" xml:space="preserve">
+  <data name="LngCommon_Search" xml:space="preserve">
     <value>Search</value>
   </data>
-  <data name="LngCommonRefresh" xml:space="preserve">
+  <data name="LngCommon_Refresh" xml:space="preserve">
     <value>Refresh</value>
   </data>
-  <data name="LngCommonUndo" xml:space="preserve">
+  <data name="LngCommon_Undo" xml:space="preserve">
     <value>Undo</value>
   </data>
-  <data name="LngCommonDownload" xml:space="preserve">
+  <data name="LngCommon_Download" xml:space="preserve">
     <value>Download</value>
   </data>
-  <data name="LngCommonRedo" xml:space="preserve">
+  <data name="LngCommon_Redo" xml:space="preserve">
     <value>Redo</value>
+  </data>
+  <data name="LngSplashRegion_Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="LngSplashRegion_User_Initialize" xml:space="preserve">
+    <value>User Initialize</value>
+  </data>
+  <data name="LngSplashRegion_AI_DatabaseLoad" xml:space="preserve">
+    <value>AI Database Load</value>
+  </data>
+  <data name="LngSplashRegion_AI_DatabaseUpdate" xml:space="preserve">
+    <value>AI Database Update</value>
+  </data>
+  <data name="LngSplashRegion_AI_Load" xml:space="preserve">
+    <value>AI Load</value>
+  </data>
+  <data name="LngSplashRegion_AI_DownloadStart" xml:space="preserve">
+    <value>Model Download Start</value>
+  </data>
+  <data name="LngSplashRegion_AI_Initialize" xml:space="preserve">
+    <value>AI Initialize</value>
+  </data>
+  <data name="LngSplashRegion_Network_Initialize" xml:space="preserve">
+    <value>Network Initialize</value>
+  </data>
+  <data name="LngSplashRegion_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="LngSplashRegion_Fail" xml:space="preserve">
+    <value>Fail</value>
   </data>
 </root>

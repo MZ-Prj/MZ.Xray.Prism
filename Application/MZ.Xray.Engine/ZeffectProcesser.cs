@@ -149,7 +149,12 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void ChangeFrame(int index)
         {
-            ImageSource = VisionBase.CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
+            try
+            {
+                ImageSource = VisionBase.CanFreezeImageSource(Frames[index - 1].Image.ToBitmapSource());
+
+            }
+            catch { }
         }
         /// <summary>
         /// 켄버스(UI) 크기가 변경 되었을 경우 이미지 크기 갱신 (비동기)

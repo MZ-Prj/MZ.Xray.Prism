@@ -140,7 +140,7 @@ namespace MZ.Dashboard.ViewModels
         {
             Logs.Clear();
             
-            using (_loadingService[MZRegionNames.LogStorageControl].Show())
+            using (LoadingModel.Show())
             {
                 UpdateLogs("./logs");
             }

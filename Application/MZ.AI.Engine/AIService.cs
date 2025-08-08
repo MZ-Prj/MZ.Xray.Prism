@@ -14,8 +14,6 @@ using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
 using System;
-using HarfBuzzSharp;
-using MZ.Domain.Interfaces;
 
 namespace MZ.AI.Engine
 {
@@ -217,7 +215,11 @@ namespace MZ.AI.Engine
         /// </summary>
         public void ChangeObjectDetections(int index)
         {
-            Yolo.ObjectDetections = Yolo.ObjectDetectionsList[index-1];
+            try
+            {
+                Yolo.ObjectDetections = Yolo.ObjectDetectionsList[index - 1];
+            }
+            catch { }
         }
         /// <summary>
         /// 카테고리 색상 변경

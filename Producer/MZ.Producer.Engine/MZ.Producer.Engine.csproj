@@ -9,4 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Application\MZ.Domain\MZ.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MZ.Model">
+      <HintPath>..\..\Application\MZ.Model\obj\Debug\net8.0-windows7.0\ref\MZ.Model.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

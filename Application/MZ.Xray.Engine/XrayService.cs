@@ -16,6 +16,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
+using MZ.Core;
 
 namespace MZ.Xray.Engine
 {
@@ -32,6 +33,9 @@ namespace MZ.Xray.Engine
         /// </summary>
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// event aggregator
+        /// </summary>
         private readonly IEventAggregator _eventAggregator;
 
         /// <summary>
@@ -147,7 +151,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.Message);
+                    MZLogger.Error(ex.ToString());
                 }
             }, _videoCts.Token);
         }
@@ -182,7 +186,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.Message);
+                    MZLogger.Error(ex.ToString());
                 }
             }, _screenCts.Token);
         }
@@ -353,7 +357,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.Message);
+                    MZLogger.Error(ex.ToString());
                 }
             });
         }
@@ -436,7 +440,7 @@ namespace MZ.Xray.Engine
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
             }
             
         }
@@ -696,18 +700,25 @@ namespace MZ.Xray.Engine
 
             await _databaseService.AIOption.Delete();
 
+            UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAIDownloadStart);
             bool checkDownload = await download.RunAsync(link, path);
 
             if (checkDownload)
             {
+                UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAILoad);
+
                 _aiService.Create(path);
                 _aiService.Dispose();
 
+                UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAIDatabaseUpdate);
                 var aiOption = await _databaseService.AIOption.Create(_aiService.YoloToRequest());
                 if (aiOption.Success)
                 {
                     _aiService.Load(aiOption.Data);
+                    UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionSuccess);
                 }
+                UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionFail);
+
             }
         }
 
@@ -719,12 +730,14 @@ namespace MZ.Xray.Engine
         /// </summary>
         private async Task InitializeLoadAI(string path, string link)
         {
+            UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAILoad);
             var aiOption = await _databaseService.AIOption.Load();
             if (aiOption.Success)
             {
                 bool checkModel = _aiService.IsSavedModel(aiOption.Data.OnnxModel);
                 if (checkModel)
                 {
+                    UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAIDatabaseLoad);
                     _aiService.Load(aiOption.Data);
                 }
                 else
@@ -770,7 +783,7 @@ namespace MZ.Xray.Engine
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
             }
         }
     }

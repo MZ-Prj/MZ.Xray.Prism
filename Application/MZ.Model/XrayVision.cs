@@ -74,8 +74,8 @@ namespace MZ.Model
         /// <summary>
         /// 현재 슬라이더 번호
         /// </summary>
-        private int _slider = 0;
-        public int Slider { get => _slider; set => SetProperty(ref _slider, value); }
+        private int _slider = 1;
+        public int Slider { get => _slider; set => SetProperty(ref _slider, Math.Clamp(value, 1, MaxSlider)); }
 
         /// <summary>
         /// 마지막 조작된 슬라이더 위치

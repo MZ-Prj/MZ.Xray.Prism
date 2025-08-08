@@ -10,6 +10,7 @@ using MZ.Xray.Engine;
 using MZ.Infrastructure;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
+using System.Windows.Forms;
 
 namespace MZ.Splash.ViewModels
 {
@@ -21,6 +22,12 @@ namespace MZ.Splash.ViewModels
         #region Service
         private readonly IDatabaseService _databaseService;
         private readonly IXrayService _xrayService;
+
+        public UIProcesser UI 
+        { 
+            get => _xrayService.UI; 
+            set => _xrayService.UI = value; 
+        }
         #endregion
 
         #region Params
@@ -35,12 +42,12 @@ namespace MZ.Splash.ViewModels
         private string _message = string.Empty;
         public string Message { get => _message; set => SetProperty(ref _message, value); }
         #endregion
+
         public SplashWindowViewModel(IContainerExtension container, IXrayService xrayService, IDatabaseService databaseService) : base(container)
         {
             _databaseService = databaseService;
             _xrayService = xrayService;
             base.Initialize();
-
         }
 
         public override void InitializeCore()
@@ -51,25 +58,34 @@ namespace MZ.Splash.ViewModels
                 {
                     ("Loading...", async () =>
                     {
+                        UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionLoading);
                         await Task.CompletedTask;
                     }),
                     ("Initialize Database", async () =>
                     {
+                        UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionUserInitialize);
+
                         await _databaseService.MakeAdmin();
                         await Task.CompletedTask;
                     }),
                     ("Initialize Network", async () =>
                     {
+                        UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionNetworkInitialize);
+
                         _xrayService.InitializeSocket();
                         await Task.CompletedTask;
                     }),
                     ("Initialize AI", async () =>
                     {
+                        UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionAIInitialize);
+
                         await _xrayService.InitializeAI();
                         await Task.CompletedTask;
                     }),
                     ("Success!", async () =>
                     {
+                        UI.SplashMessage = MZRegionNames.GetLanguage(MZRegionNames.SplashRegionSuccess);
+
                         _eventAggregator.GetEvent<SplashCloseEvent>().Publish();
                         _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
                             new NavigationModel(
@@ -106,7 +122,6 @@ namespace MZ.Splash.ViewModels
             _dispatcher.Invoke(() =>
             {
                 Step = step;
-                Message = $"{message} [{step}/{MaxStep}]";
             });
             MZLogger.Information($"{message}");
             await Task.Delay(100);

@@ -1,5 +1,6 @@
 ﻿using OpenCvSharp;
 using Prism.Mvvm;
+using System.Windows.Media;
 
 namespace MZ.Model
 {
@@ -61,6 +62,12 @@ namespace MZ.Model
         /// </summary>
         private Mat _image;
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
+
+        /// <summary>
+        /// ImageSource 데이터
+        /// </summary>
+        private ImageSource _imageSource;
+        public ImageSource ImageSource { get => _imageSource; set => SetProperty(ref _imageSource, value); }
 
         /// <summary>
         /// 이미지 타입

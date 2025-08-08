@@ -172,7 +172,11 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void ChangeFrame(int index)
         {
-            ImageSource = VisionBase.CanFreezeImageSource(Frames[index-1].Image.ToBitmapSource());
+            try
+            {
+                ImageSource = VisionBase.CanFreezeImageSource(Frames[index - 1].Image.ToBitmapSource());
+            }
+            catch { }
         }
 
         /// <summary>

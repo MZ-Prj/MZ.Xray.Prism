@@ -54,7 +54,7 @@ namespace MZ.Util
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 MZIO.TryDeleteFile(destination);
                 return false;
             }
