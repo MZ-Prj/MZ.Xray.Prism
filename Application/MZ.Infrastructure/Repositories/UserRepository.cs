@@ -37,6 +37,8 @@ namespace MZ.Infrastructure.Repositories
                                  .Include(u => u.Calibration)
                                  .Include(u => u.Filter)
                                  .Include(u => u.Material)
+                                 .Include(u => u.Zeffect)
+                                 .Include(u => u.Curve)
                                  .FirstOrDefaultAsync(u => u.Username == username);
         }
 

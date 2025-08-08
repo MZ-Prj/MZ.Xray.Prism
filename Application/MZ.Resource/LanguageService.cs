@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MZ.Resource
@@ -14,6 +15,7 @@ namespace MZ.Resource
     /// </summary>
     public static class LanguageService
     {
+        public readonly static string Key = "Lng";
         /// <summary>
         /// 언어 정보 
         /// </summary>
@@ -26,9 +28,19 @@ namespace MZ.Resource
             resourceManager = new ResourceManager("MZ.Resource.Languages.Resources", typeof(LanguageService).Assembly);
         }
 
+        public static void Load()
+        {
+            Load(MZEnum.GetName(CurrentLanguage));
+        }
+
         public static void Load(string culture)
         {
             Load(new CultureInfo(culture));
+        }
+
+        public static async Task LoadAsync(string culture)
+        {
+            await Task.Run(() => Load(culture)); 
         }
 
         public static void Load(CultureInfo culture)
@@ -44,27 +56,50 @@ namespace MZ.Resource
             {
                 Application.Current.Resources[entry.Key.ToString()] = entry.Value;
             }
-            LanguageChanged?.Invoke(null, EventArgs.Empty);
 
+            LanguageChanged?.Invoke(null, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// 전체 리소스 로드 후 갱신
+        /// </summary>
         public static string GetString(string key)
         {
-            Load(MZEnum.GetName(CurrentLanguage));
+            if (CultureInfo.CurrentUICulture.Name != MZEnum.GetName(CurrentLanguage))
+            {
+                Load(MZEnum.GetName(CurrentLanguage));
+            }
             return resourceManager.GetString(key);
         }
 
+        /// <summary>
+        /// 현제 키에대한 부분만 갱신
+        /// </summary>
+        public static string GetStringOnlyKey(string key)
+        {
+            return resourceManager.GetString(key);
+        }
+
+        /// <summary>
+        /// 현제 언어 반환
+        /// </summary>
         public static string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.Name;
         }
 
+        /// <summary>
+        /// 현제 언어 반환 (enum)
+        /// </summary>
         public static LanguageRole? GetCurrentLanguageRole()
         {
             string code = GetCurrentLanguage();
             return MZEnum.Get<LanguageRole>(code);
         }
 
+        /// <summary>
+        /// 시스템 언어 반환
+        /// </summary>
         public static string GetSystemLanguage()
         {
             CultureInfo systemCulture = CultureInfo.InstalledUICulture;

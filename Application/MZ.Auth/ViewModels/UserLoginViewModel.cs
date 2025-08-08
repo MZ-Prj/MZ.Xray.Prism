@@ -7,12 +7,12 @@ using MZ.DTO;
 using MZ.Core;
 using MZ.Auth.Views;
 using MZ.Auth.Models;
-using MZ.Infrastructure;
 using MZ.Util;
 using MZ.Logger;
+using MZ.Resource;
+using MZ.Infrastructure;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using MZ.Resource;
 
 namespace MZ.Auth.ViewModels
 {
@@ -67,7 +67,7 @@ namespace MZ.Auth.ViewModels
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
             }
         }
 
@@ -80,13 +80,22 @@ namespace MZ.Auth.ViewModels
 
             if (response.Success)
             {
+                var setting = response.Data.UserSetting;
+
+                LanguageService.Load(MZEnum.GetName(setting.Language));
+                ThemeService.Load(setting.Theme);
+
+                //db
                 await _databaseService.AppSetting.Register(
                     new AppSettingRegisterRequest(User.Username, User.IsUsernameSave)
                 );
+
+                //event
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
-                            new NavigationModel(
-                                MZRegionNames.DashboardRegion,
-                                MZViewNames.DashboardControlView));
+                    new NavigationModel(
+                        MZRegionNames.DashboardRegion,
+                        MZViewNames.DashboardControlView));
+
             }
         }
 

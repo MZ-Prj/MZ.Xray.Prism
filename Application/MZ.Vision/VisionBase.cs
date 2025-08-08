@@ -119,29 +119,37 @@ namespace MZ.Vision
         /// </summary>
         public static void Save(List<Mat> input, string root, double fps = 2.0)
         {
-            Size frameSize = new(input[0].Width, input[0].Height);
-            FourCC fourCC = FourCC.XVID;
-
-            using var writer = new VideoWriter(root, fourCC, fps, frameSize, true);
-            if (!writer.IsOpened())
+            try
             {
-                throw new Exception("VideoWriter Open Error");
-            }
+                Size frameSize = new(input[0].Width, input[0].Height);
+                FourCC fourCC = FourCC.XVID;
 
-            for (int i = 0; i < input.Count; i++)
-            {
-                Mat resizedImage = input[i].Clone();
-                if (resizedImage.Size() != frameSize)
+                using var writer = new VideoWriter(root, fourCC, fps, frameSize, true);
+                if (!writer.IsOpened())
                 {
-                    Cv2.Resize(resizedImage, resizedImage, frameSize);
-                }
-                else
-                {
-                    resizedImage = BlendWithBackground(resizedImage);
+                    throw new Exception("VideoWriter Open Error");
                 }
 
-                writer.Write(resizedImage);
+                for (int i = 0; i < input.Count; i++)
+                {
+                    Mat resizedImage = input[i].Clone();
+                    if (resizedImage.Size() != frameSize)
+                    {
+                        Cv2.Resize(resizedImage, resizedImage, frameSize);
+                    }
+                    else
+                    {
+                        resizedImage = BlendWithBackground(resizedImage);
+                    }
+
+                    writer.Write(resizedImage);
+                }
             }
+            catch (Exception e)
+            {
+                throw new Exception($"Exception :{e}");
+            }
+            
         }
 
         /// <summary>

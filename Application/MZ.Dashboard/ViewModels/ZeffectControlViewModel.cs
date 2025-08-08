@@ -2,12 +2,13 @@
 using MZ.Core;
 using MZ.Util;
 using MZ.Xray.Engine;
-using MZ.Domain.Models;
+using MZ.Model;
 using Prism.Ioc;
 using Prism.Commands;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -69,6 +70,7 @@ namespace MZ.Dashboard.ViewModels
             _undoRedoManager = new UndoRedoManager<ZeffectControlModel>(model =>
                 new ZeffectControlModel()
                 {
+                    Id = model.Id,
                     Content = model.Content,
                     Check = model.Check,
                     Min = model.Min,
@@ -86,8 +88,8 @@ namespace MZ.Dashboard.ViewModels
             Controls = Zeffect.Controls ?? [];
             SetControls.Add(new());
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonUndo)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonRedo)));
 
             _undoRedoManager.SaveState(Controls);
 
@@ -103,6 +105,7 @@ namespace MZ.Dashboard.ViewModels
 
             Controls.Add(new ZeffectControlModel()
             {
+                Id = model.Id,
                 Content = model.Content,
                 Check = model.Check,
                 Min = model.Min,
@@ -138,6 +141,7 @@ namespace MZ.Dashboard.ViewModels
             {
                 Controls = [.. state.Select(model => new ZeffectControlModel()
                     {
+                        Id = model.Id,
                         Content = model.Content,
                         Check = model.Check,
                         Min = model.Min,
@@ -162,6 +166,7 @@ namespace MZ.Dashboard.ViewModels
             {
                 Controls = [.. state.Select(model => new ZeffectControlModel()
                     {
+                        Id = model.Id,
                         Content = model.Content,
                         Check = model.Check,
                         Min = model.Min,

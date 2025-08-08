@@ -14,7 +14,7 @@ namespace MZ.Dashboard.Bahaviors
     /// <summary>
     /// Canvas에 실시간 Xray 화면 동작 Behavior 클래스
     /// </summary>
-    public partial class XrayRealtimeBehavior : Behavior<Canvas>
+    public partial class DashboardControlBehavior : Behavior<Canvas>
     {
         /// <summary>
         /// Behavior OnAttached
@@ -44,7 +44,7 @@ namespace MZ.Dashboard.Bahaviors
     /// <summary>
     /// Canvas의 Zoom In/Out 기능 담당
     /// </summary>
-    public partial class XrayRealtimeBehavior : Behavior<Canvas>
+    public partial class DashboardControlBehavior : Behavior<Canvas>
     {
         /// <summary>
         /// ScaleTransform 
@@ -70,7 +70,7 @@ namespace MZ.Dashboard.Bahaviors
     /// <summary>
     /// 마우스가 Canvas Layout In/Out에 따라 Overlay Control 조절
     /// </summary>
-    public partial class XrayRealtimeBehavior : Behavior<Canvas>
+    public partial class DashboardControlBehavior : Behavior<Canvas>
     {
         /// <summary>
         /// OnAttached : 마우스 이밴트 
@@ -121,7 +121,7 @@ namespace MZ.Dashboard.Bahaviors
         /// <param name="e">MouseEventArgs</param>
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
-            var viewModel = this.AssociatedObject.DataContext as XrayRealtimeViewModel;
+            var viewModel = this.AssociatedObject.DataContext as DashboardControlViewModel;
             
             var pickerButton = viewModel.VideoButtons.FirstOrDefault(vb => vb.Command == viewModel.PickerCommand);
             bool isPinned = pickerButton?.IconKind == nameof(PackIconMaterialKind.Pin);
@@ -146,7 +146,7 @@ namespace MZ.Dashboard.Bahaviors
     /// <summary>
     /// Canvas Load/UnLoad 초기 동작 수행
     /// </summary>
-    public partial class XrayRealtimeBehavior : Behavior<Canvas>
+    public partial class DashboardControlBehavior : Behavior<Canvas>
     {
         /// <summary>
         /// Attached : Loaded 
@@ -169,7 +169,7 @@ namespace MZ.Dashboard.Bahaviors
         /// <param name="e">RoutedEventArgs</param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (this.AssociatedObject.DataContext is XrayRealtimeViewModel viewModel)
+            if (this.AssociatedObject.DataContext is DashboardControlViewModel viewModel)
             {
                 int width = (int)Math.Max(this.AssociatedObject.ActualWidth, 1.0);
                 int height = (int)Math.Max(this.AssociatedObject.ActualHeight, 1.0);

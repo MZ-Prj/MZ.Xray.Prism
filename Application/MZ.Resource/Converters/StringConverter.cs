@@ -29,6 +29,10 @@ namespace MZ.Resource.Converters
             return string.Empty;
         }
     }
+
+    /// <summary>
+    /// 모든 영문 대문자로 반환
+    /// </summary>
     public class UppercaseConverter : IValueConverter
     {
         private static readonly Regex _regex = new("[-_]", RegexOptions.Compiled);
@@ -50,4 +54,24 @@ namespace MZ.Resource.Converters
         }
     }
 
+    /// <summary>
+    /// 첫번째 글자만 반환
+    /// </summary>
+    public class FirstCharConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var s = value as string;
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+            return s.Substring(0, 1);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.Empty;
+        }
+    }
 }

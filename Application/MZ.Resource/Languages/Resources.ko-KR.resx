@@ -255,4 +255,94 @@
   <data name="LngLanguageRegion" xml:space="preserve">
     <value>언어</value>
   </data>
+  <data name="LngUserRegisterRegion_UsingData" xml:space="preserve">
+    <value>사용 일자</value>
+  </data>
+  <data name="LngUserInformationRegion" xml:space="preserve">
+    <value>사용자 정보</value>
+  </data>
+  <data name="LngXrayRealtimeRegion" xml:space="preserve">
+    <value>Xray 실시간 뷰</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Picker" xml:space="preserve">
+    <value>고정/해제</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_BrighUp" xml:space="preserve">
+    <value>밝기 증가</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_BrightDown" xml:space="preserve">
+    <value>밝기 감소</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Metal" xml:space="preserve">
+    <value>철</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Inorganic" xml:space="preserve">
+    <value>무기물</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Organic" xml:space="preserve">
+    <value>유기물</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Gray" xml:space="preserve">
+    <value>회색</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Color" xml:space="preserve">
+    <value>색상</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ZoomOut" xml:space="preserve">
+    <value>축소</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ZoomIn" xml:space="preserve">
+    <value>확대</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Next" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Previous" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_PlayStop" xml:space="preserve">
+    <value>시작/정지</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ContrastUp" xml:space="preserve">
+    <value>대조 증가</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_AIOnOff" xml:space="preserve">
+    <value>인공지능 보이기/숨기기</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Setting" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_SaveImage" xml:space="preserve">
+    <value>화면 저장</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Zeffect" xml:space="preserve">
+    <value>Zeffect</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_FilterClear" xml:space="preserve">
+    <value>필터 초기화</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ContrastDown" xml:space="preserve">
+    <value>대조 감소</value>
+  </data>
+  <data name="LngThemeRegion" xml:space="preserve">
+    <value>태마</value>
+  </data>
+  <data name="LngUserLogoutRegion" xml:space="preserve">
+    <value>로그아웃</value>
+  </data>
+  <data name="LngCommonSearch" xml:space="preserve">
+    <value>검색</value>
+  </data>
+  <data name="LngCommonRefresh" xml:space="preserve">
+    <value>새로고침</value>
+  </data>
+  <data name="LngCommonUndo" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="LngCommonDownload" xml:space="preserve">
+    <value>다운로드</value>
+  </data>
+  <data name="LngCommonRedo" xml:space="preserve">
+    <value>다음</value>
+  </data>
 </root>

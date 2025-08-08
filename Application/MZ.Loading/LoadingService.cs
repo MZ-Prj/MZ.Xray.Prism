@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using Prism.Mvvm;
 using System.Collections.Generic;
 

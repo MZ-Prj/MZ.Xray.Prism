@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using MZ.Util;
+using MZ.Domain.Interfaces;
+using System.Windows.Media.Media3D;
 
 namespace MZ.Infrastructure.Services
 {
@@ -105,7 +107,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, ImageEntity>(BaseRole.Fail, ex);
             }
         }
@@ -150,7 +152,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, CalibrationEntity>(BaseRole.Fail, ex);
             }
         }
@@ -204,7 +206,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, CalibrationEntity>(BaseRole.Fail, ex);
             }
         }
@@ -248,7 +250,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail, ex);
             }
         }
@@ -296,7 +298,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail, ex);
             }
         }
@@ -312,14 +314,17 @@ namespace MZ.Infrastructure.Services
         protected readonly IUserSession userSession;
         protected readonly IUserRepository userRepository;
         protected readonly IXrayVisionMaterialRepository xrayVisionMaterialRepository;
+        protected readonly IXrayVisionMaterialControlRepository xrayVisionMaterialControlRepository;
 
         public XrayVisionMaterialService(IUserRepository userRepository,
                                          IUserSession userSession,
-                                         IXrayVisionMaterialRepository xrayVisionMaterialRepository)
+                                         IXrayVisionMaterialRepository xrayVisionMaterialRepository,
+                                         IXrayVisionMaterialControlRepository xrayVisionMaterialControlRepository)
         {
             this.userSession = userSession;
             this.userRepository = userRepository;
             this.xrayVisionMaterialRepository = xrayVisionMaterialRepository;
+            this.xrayVisionMaterialControlRepository = xrayVisionMaterialControlRepository;
         }
         /// <summary>
         /// 지정 사용자명에 해당하는 Material 조회
@@ -340,10 +345,11 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
+
         /// <summary>
         /// 현재 로그인 사용자 Material 저장/수정
         /// - MaterialControl의 추가/수정/삭제까지 반영
@@ -383,14 +389,13 @@ namespace MZ.Infrastructure.Services
                     material.EdgeBinary = request.EdgeBinary;
                     material.Transparency = request.Transparency;
 
-                    var materialControls = material.MaterialControls.ToList();
+                    var materialControls = material.MaterialControls
+                        .Where(mc => !request.MaterialControls.Any(req => req.Id == mc.Id))
+                        .ToList();
 
-                    foreach (var materialControl in materialControls)
+                    foreach (var control in materialControls)
                     {
-                        if (!request.MaterialControls.Any(m => m.Id == materialControl.Id))
-                        {
-                            material.MaterialControls.Remove(materialControl);
-                        }
+                        await xrayVisionMaterialControlRepository.DeleteAsync(control);
                     }
 
                     foreach (var materialControl in request.MaterialControls)
@@ -398,13 +403,17 @@ namespace MZ.Infrastructure.Services
                         var exist = material.MaterialControls.FirstOrDefault(m => m.Id == materialControl.Id);
                         if (exist == null)
                         {
-                            material.MaterialControls.Add(new MaterialControlEntity
+                            var newControl = new MaterialControlEntity
                             {
                                 Y = materialControl.Y,
                                 XMin = materialControl.XMin,
                                 XMax = materialControl.XMax,
-                                Color = materialControl.Color
-                            });
+                                Color = materialControl.Color,
+                                MaterialId = material.Id 
+                            };
+
+                            await xrayVisionMaterialControlRepository.AddAsync(newControl);
+                            material.MaterialControls.Add(newControl);
                         }
                         else
                         {
@@ -412,17 +421,17 @@ namespace MZ.Infrastructure.Services
                             exist.XMin = materialControl.XMin;
                             exist.XMax = materialControl.XMax;
                             exist.Color = materialControl.Color;
+
+                            await xrayVisionMaterialControlRepository.UpdateAsync(exist);
                         }
                     }
-
-                    await xrayVisionMaterialRepository.UpdateAsync(material);
                 }
 
                 return BaseResponseExtensions.Success<BaseRole, MaterialEntity>(BaseRole.Success);
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
@@ -473,13 +482,13 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail, ex);
             }
         }
 
         /// <summary>
-        /// 현재 로그인 사용자 Zeffect 컨트롤 저장/수정(존재하면 수정, 없으면 신규)
+        /// 현재 로그인 사용자 Zeffect 컨트롤 삭제/저장/수정(존재하면 수정, 없으면 신규)
         /// </summary>
         public async Task<BaseResponse<BaseRole, ICollection<ZeffectControlEntity>>> Save(ZeffectControlSaveRequest request)
         {
@@ -491,7 +500,16 @@ namespace MZ.Infrastructure.Services
                     return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail);
                 }
 
-                var exists = await xrayVisionZeffectControlRepository.GetByUserIdAsync(user.Id);
+                var zeffectControls = await xrayVisionZeffectControlRepository.GetByUserIdAsync(user.Id);
+
+                var controls = zeffectControls
+                    .Where(z => !request.ZeffectControls.Any(m => m.Id == z.Id))
+                    .ToList();
+
+                foreach (var control in controls)
+                {
+                    await xrayVisionZeffectControlRepository.DeleteAsync(control);
+                }
 
                 foreach (var control in request.ZeffectControls)
                 {
@@ -503,16 +521,16 @@ namespace MZ.Infrastructure.Services
                     }
                     else
                     {
-                        var exist = exists?.FirstOrDefault(e => e.Id == control.Id);
-                        if (exist != null)
+                        var zeffectControl = zeffectControls?.FirstOrDefault(e => e.Id == control.Id);
+                        if (zeffectControl != null)
                         {
-                            exist.Check = control.Check;
-                            exist.Content = control.Content;
-                            exist.Min = control.Min;
-                            exist.Max = control.Max;
-                            exist.Color = control.Color;
+                            zeffectControl.Check = control.Check;
+                            zeffectControl.Content = control.Content;
+                            zeffectControl.Min = control.Min;
+                            zeffectControl.Max = control.Max;
+                            zeffectControl.Color = control.Color;
 
-                            await xrayVisionZeffectControlRepository.UpdateAsync(exist);
+                            await xrayVisionZeffectControlRepository.UpdateAsync(zeffectControl);
                         }
                         else
                         {
@@ -577,7 +595,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
             }
         }
@@ -608,7 +626,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
             }
         }

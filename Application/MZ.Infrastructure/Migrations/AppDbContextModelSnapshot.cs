@@ -374,11 +374,6 @@ namespace MZ.Infrastructure.Migrations
                         .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("LastLoginDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
@@ -396,6 +391,9 @@ namespace MZ.Infrastructure.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(4)
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeSpan>("UsingDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

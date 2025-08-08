@@ -13,5 +13,6 @@
     <ProjectReference Include="..\MZ.Infrastructure\MZ.Infrastructure.csproj" />
     <ProjectReference Include="..\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\MZ.Util\MZ.Util.csproj" />
+    <ProjectReference Include="..\MZ.Xray.Engine\MZ.Xray.Engine.csproj" />
   </ItemGroup>
 </Project>

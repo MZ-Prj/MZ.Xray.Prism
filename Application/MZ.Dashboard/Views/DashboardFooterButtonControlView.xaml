@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:converters="clr-namespace:MZ.Resource.Converters;assembly=MZ.Resource"
              xmlns:prism="http://prismlibrary.com/" 
              xmlns:viewmodels="clr-namespace:MZ.Dashboard.ViewModels" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
@@ -10,14 +11,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
-    <prism:Dialog.WindowStyle>
-        <Style TargetType="Window">
-            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
-            <Setter Property="ResizeMode" Value="NoResize"/>
-            <Setter Property="ShowInTaskbar" Value="False"/>
-            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-        </Style>
-    </prism:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <converters:LanguageConverter x:Key="LanguageConverter"/>
+        <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
+    </UserControl.Resources>
     
     <Grid Margin="4">
         <Grid.RowDefinitions>
@@ -37,14 +35,19 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <CheckBox IsChecked="{Binding Path=IsVisibility}"
-                              ToolTip="{Binding Path=ToolTip}"
-                              Cursor="Hand">
-                        <CheckBox.LayoutTransform>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
-                        </CheckBox.LayoutTransform>
-                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" />
-                    </CheckBox>
+                    <RepeatButton Style="{StaticResource IconRepeatButtonBaseStyle}"
+                                  Command="{Binding Path=DataContext.VisibilityCommand, RelativeSource={RelativeSource AncestorType=Grid}}"
+                                  CommandParameter="{Binding}"
+                                  Background="{Binding Path=IsVisibility, Converter={StaticResource BooleanToBrushConverter}}"
+                                  ToolTipService.ToolTip="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}">
+                        <RepeatButton.ToolTip>
+                            <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                                     Content="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}" />
+                        </RepeatButton.ToolTip>
+                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"
+                                                    />
+                    </RepeatButton>
+
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

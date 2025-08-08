@@ -1,7 +1,7 @@
 ﻿using OpenCvSharp;
 using Prism.Mvvm;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
     /// <summary>
     /// IP 네트워크(소켓/TCP 등) 연결 정보 바인딩용 모델
@@ -88,5 +88,4 @@ namespace MZ.Domain.Models
         public string Message { get => _message; set => SetProperty(ref _message, value); }
 
     }
-
 }

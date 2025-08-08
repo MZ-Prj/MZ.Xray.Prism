@@ -1,6 +1,6 @@
 ﻿using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Util;
 using MZ.Xray.Engine;
 using Prism.Commands;
@@ -8,9 +8,6 @@ using Prism.Ioc;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-using System;
-using MZ.Resource;
-using MZ.Infrastructure;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -87,9 +84,9 @@ namespace MZ.Dashboard.ViewModels
             Controls = Material.Controls ?? [];
             SetControls.Add(new(Material.UpdateAllMaterialGraph));
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Undo), UndoCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonUndo)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Redo), RedoCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonRedo)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonRefresh)));
 
             _undoRedoManager.SaveState(Controls);
 
@@ -146,6 +143,7 @@ namespace MZ.Dashboard.ViewModels
             {
                 Controls = [.. state.Select(model => new MaterialControlModel(Material.UpdateAllMaterialGraph)
                     {
+                        Id = model.Id,
                         Y = model.Y,
                         XMin = model.XMin,
                         XMax = model.XMax,
@@ -170,6 +168,7 @@ namespace MZ.Dashboard.ViewModels
             {
                 Controls = [.. state.Select(model => new MaterialControlModel(Material.UpdateAllMaterialGraph)
                     {
+                        Id = model.Id,
                         Y = model.Y,
                         XMin = model.XMin,
                         XMax = model.XMax,

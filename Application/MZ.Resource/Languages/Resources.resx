@@ -255,4 +255,94 @@
   <data name="LngLanguageRegion" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="LngUserRegisterRegion_UsingData" xml:space="preserve">
+    <value>Using Date</value>
+  </data>
+  <data name="LngUserInformationRegion" xml:space="preserve">
+    <value>User Information</value>
+  </data>
+  <data name="LngXrayRealtimeRegion" xml:space="preserve">
+    <value>Xray Realtime View</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Picker" xml:space="preserve">
+    <value>Picker</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_BrighUp" xml:space="preserve">
+    <value>BrighUp</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_BrightDown" xml:space="preserve">
+    <value>BrightDown</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Metal" xml:space="preserve">
+    <value>Metal</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Inorganic" xml:space="preserve">
+    <value>Inorganic</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Organic" xml:space="preserve">
+    <value>Organic</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Gray" xml:space="preserve">
+    <value>Gray</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ZoomOut" xml:space="preserve">
+    <value>ZoomOut</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ZoomIn" xml:space="preserve">
+    <value>ZoomIn</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_PlayStop" xml:space="preserve">
+    <value>PlayStop</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ContrastUp" xml:space="preserve">
+    <value>ContrastUp</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_AIOnOff" xml:space="preserve">
+    <value>AIOnOff</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Setting" xml:space="preserve">
+    <value>Setting</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_SaveImage" xml:space="preserve">
+    <value>SaveImage</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_Zeffect" xml:space="preserve">
+    <value>Zeffect</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_FilterClear" xml:space="preserve">
+    <value>FilterClear</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_ContrastDown" xml:space="preserve">
+    <value>ContrastDown</value>
+  </data>
+  <data name="LngThemeRegion" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="LngUserLogoutRegion" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LngCommonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="LngCommonRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="LngCommonUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="LngCommonDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="LngCommonRedo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
 </root>

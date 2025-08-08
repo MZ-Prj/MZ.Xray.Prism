@@ -1,8 +1,11 @@
 ﻿using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
+using MZ.Util;
+using Prism.Commands;
 using Prism.Ioc;
 using Prism.Regions;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -11,11 +14,18 @@ namespace MZ.Dashboard.ViewModels
     /// </summary>
     public class DashboardFooterButtonControlViewModel : MZBindableBase
     {
-
         #region Params
-        private ObservableCollection<IconButtonModel> _actionButtons;
+        private ObservableCollection<IconButtonModel> _actionButtons = [];
         public ObservableCollection<IconButtonModel> ActionButtons { get => _actionButtons; set => SetProperty(ref _actionButtons, value); }
         #endregion
+
+        #region Commands
+
+        private DelegateCommand<object> _visibilityCommand;
+        public ICommand VisibilityCommand => _visibilityCommand ??= new(MZAction.Wrapper<object>(VisibilityButton));
+
+        #endregion
+
 
         public DashboardFooterButtonControlViewModel(IContainerExtension container) : base(container)
         {
@@ -32,6 +42,16 @@ namespace MZ.Dashboard.ViewModels
                 ActionButtons = navigationContext.Parameters["ActionButtons"] as ObservableCollection<IconButtonModel>;
             }
         }
+
+
+        private void VisibilityButton(object obj)
+        {
+            if (obj is IconButtonModel button)
+            {
+                button.IsVisibility = !button.IsVisibility;
+            }
+        }
+
 
     }
 }

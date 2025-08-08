@@ -1,5 +1,5 @@
 ﻿using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Util;
 using MZ.Xray.Engine;
 using Prism.Commands;
@@ -37,7 +37,6 @@ namespace MZ.Dashboard.ViewModels
         #region Event
         public event Action<Point> ClearPoints;
         public event Action UpdatePoints;
-
         #endregion
 
 

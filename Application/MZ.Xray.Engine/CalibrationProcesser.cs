@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MZ.Vision;
-using MZ.Domain.Models;
+using MZ.Model;
 using OpenCvSharp;
 using Prism.Mvvm;
 

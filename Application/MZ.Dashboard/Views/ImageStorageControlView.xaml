@@ -31,9 +31,17 @@
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=StartSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <DatePicker Margin="0,0,4,0" FontSize="12" SelectedDate="{Binding Path=EndSelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
-                <iconPacks:PackIconMaterial Kind="TableSearch"  Width="16" Height="16"/>
+                <Button.ToolTip>
+                    <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                             Content="{DynamicResource LngCommonSearch}" />
+                </Button.ToolTip>
+                <iconPacks:PackIconMaterial Kind="TableSearch" Width="16" Height="16"/>
             </Button>
             <Button Margin="0,0,4,0" Command="{Binding Path=RefreshCommand}">
+                <Button.ToolTip>
+                    <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                             Content="{DynamicResource LngCommonRefresh}" />
+                </Button.ToolTip>
                 <iconPacks:PackIconMaterial Kind="Refresh" Width="16" Height="16"/>
             </Button>
             <Border CornerRadius="4"

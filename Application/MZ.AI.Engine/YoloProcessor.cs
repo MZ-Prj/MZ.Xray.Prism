@@ -1,6 +1,6 @@
 ﻿using MZ.Util;
 using MZ.Logger;
-using MZ.Domain.Models;
+using MZ.Model;
 using Prism.Mvvm;
 using SkiaSharp;
 using System;
@@ -158,7 +158,7 @@ namespace MZ.AI.Engine
             }
             catch (Exception ex) 
             {
-                MZLogger.Warning(ex.ToString());
+                MZLogger.Warning(ex.Message);
             }
         }
 

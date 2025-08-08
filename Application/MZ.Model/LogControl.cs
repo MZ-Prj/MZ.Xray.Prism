@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 
-namespace MZ.Domain.Models
+namespace MZ.Model
 {
     /// <summary>
     /// 로그 레벨(Info/Warning/Error) 선택 콤보박스용 모델 클래스

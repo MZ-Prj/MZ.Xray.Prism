@@ -3,6 +3,7 @@ using MZ.WindowDialog.ViewModels;
 using MZ.WindowDialog.Views;
 using Prism.Ioc;
 using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,6 +58,7 @@ namespace MZ.WindowDialog
                 _windows[regionName] = [];
             }
 
+
             window.ResizeMode = resizeMode;
             window.Width = width;
             window.Height = height;
@@ -71,6 +73,15 @@ namespace MZ.WindowDialog
                     _windows.Remove(regionName);
                 }
             };
+
+            var screenWidth = SystemParameters.WorkArea.Width;
+            var screenHeight = SystemParameters.WorkArea.Height;
+
+            var windowWidth = width;
+            var windowHeight = height;
+
+            window.Left = (screenWidth - windowWidth) / 2 + SystemParameters.WorkArea.Left;
+            window.Top = (screenHeight - windowHeight) / 2 + SystemParameters.WorkArea.Top;
 
             window.Show();
             return Task.CompletedTask;

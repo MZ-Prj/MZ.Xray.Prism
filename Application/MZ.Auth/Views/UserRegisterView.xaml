@@ -48,20 +48,15 @@
                            Foreground="{DynamicResource MahApps.Brushes.Accent}"
                            Margin="0,0,0,4"/>
                     <TextBox FontSize="16"
+                             MaxLength="20"
                              Text="{Binding Path=User.Username}" />
-                </StackPanel>
-                <StackPanel Margin="8" >
-                    <TextBlock Text="{DynamicResource LngUserRegisterRegion_Email}"
-                               Foreground="{DynamicResource MahApps.Brushes.Accent}"
-                               Margin="0,0,0,4"/>
-                    <TextBox FontSize="16"
-                             Text="{Binding Path=User.Email}" />
                 </StackPanel>
                 <StackPanel Margin="8" >
                     <TextBlock Text="{DynamicResource LngUserRegisterRegion_Password}"
                            Foreground="{DynamicResource MahApps.Brushes.Accent}"
                            Margin="0,0,0,4"/>
                     <PasswordBox FontSize="16"
+                                 MaxLength="20"
                                  managers:PasswordManager.Attach="True"
                                  managers:PasswordManager.Password="{Binding Path=User.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource PasswordConverter} }"/>
                 </StackPanel>
@@ -70,6 +65,7 @@
                                Foreground="{DynamicResource MahApps.Brushes.Accent}"
                                Margin="0,0,0,4"/>
                     <PasswordBox FontSize="16"
+                                 MaxLength="20"
                                  managers:PasswordManager.Attach="True"
                                  managers:PasswordManager.Password="{Binding Path=User.Repassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource PasswordConverter} }"/>
                 </StackPanel>
@@ -89,7 +85,7 @@
                         Content="{DynamicResource LngUserRegisterRegion_Back}"/>
             </StackPanel>
             <StackPanel Grid.Row="3" Margin="8" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                <Label Content="{Binding Path=MZService.BuildVersion}" Opacity="0.5"/>
+                <Label Content="{Binding Path=BuildVersion}" Opacity="0.5"/>
             </StackPanel>
         </Grid>
     </Border>

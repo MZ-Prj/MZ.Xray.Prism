@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using MZ.DTO;
 using MZ.Util;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Domain.Entities;
 using YoloDotNet;
 using YoloDotNet.Enums;

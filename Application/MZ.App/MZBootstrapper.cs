@@ -73,7 +73,8 @@ namespace MZ.App
             LanguageService.Load(LanguageService.GetSystemLanguage());
 
             // Build Version
-            BuildVersionService.Load(Assembly.GetExecutingAssembly());
+            var configuration = Container.Resolve<IConfiguration>();
+            BuildVersionService.Load(Assembly.GetExecutingAssembly(), configuration["Build:Version"]);
         }
 
         private void RegisterConfigurations(IContainerRegistry containerRegistry)
@@ -130,7 +131,6 @@ namespace MZ.App
 
             containerRegistry.RegisterInstance<IDialogCoordinator>(DialogCoordinator.Instance);
         }
-
 
         public void Exit()
         {

@@ -1,10 +1,11 @@
 ﻿using LiveChartsCore;
-using System;
-using Prism.Mvvm;
-using System.Collections.ObjectModel;
 using LiveChartsCore.SkiaSharpView;
+using Prism.Mvvm;
+using System;
+using System.Collections.ObjectModel;
 
-namespace MZ.Domain.Models
+
+namespace MZ.Model
 {
     /// <summary>
     /// 리포트(통계) - 날짜별 이미지 파일 수 집계 모델
@@ -93,5 +94,4 @@ namespace MZ.Domain.Models
         }
 
     }
-
 }

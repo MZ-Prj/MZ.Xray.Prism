@@ -1,5 +1,5 @@
 ﻿using MZ.Domain.Entities;
-using MZ.Domain.Models;
+using MZ.Model;
 using System.Collections.Generic;
 using System.Linq;
 

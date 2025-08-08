@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System;
 
+#nullable enable
 namespace MZ.Resource
 {
     /// <summary>
@@ -12,11 +13,11 @@ namespace MZ.Resource
         /// <summary>
         /// 빌드 버전 문자열 저장 프로퍼티
         /// </summary>
-        public static string BuildVersion { get; set; }
+        public static string? BuildVersion { get; set; }
 
-        public static void Load(this Assembly assembly)
+        public static void Load(this Assembly assembly, string? time = null)
         {
-            BuildVersion = GetBuildInformation(assembly);
+            BuildVersion = GetBuildInformationAndTime(assembly, time);
         }
 
         /// <summary>
@@ -63,7 +64,16 @@ namespace MZ.Resource
             string version = GetBuildVersion(assembly);
             string config = GetBuildConfiguration();
             string architecture = GetProcessArchitecture();
-            return $"Version : {version}-{config}-{architecture}";
+            return string.Concat("Version : ", version, "-", config, "-", architecture);
+        }
+
+        public static string GetBuildInformationAndTime(Assembly assembly, string? time)
+        {
+            string version = GetBuildVersion(assembly);
+            string config = GetBuildConfiguration();
+            string architecture = GetProcessArchitecture();
+
+            return string.Concat("Version : ", version, "-", config, "-", architecture, time != null ? $"-{time}" : "");
         }
     }
 }

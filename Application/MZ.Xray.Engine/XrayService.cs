@@ -7,7 +7,7 @@ using Prism.Mvvm;
 using Prism.Events;
 using MZ.Logger;
 using MZ.Vision;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Infrastructure;
 using MZ.AI.Engine;
 using MZ.DTO;
@@ -16,7 +16,6 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using System.Collections.Generic;
 
 namespace MZ.Xray.Engine
 {
@@ -148,7 +147,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.ToString());
+                    MZLogger.Error(ex.Message);
                 }
             }, _videoCts.Token);
         }
@@ -183,7 +182,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.ToString());
+                    MZLogger.Error(ex.Message);
                 }
             }, _screenCts.Token);
         }
@@ -280,15 +279,15 @@ namespace MZ.Xray.Engine
             await Task.WhenAll(
                  Media.FreezeImageSourceAsync(),
                  Zeffect.FreezeImageSourceAsync());
-           
-            if (Media.IsFrameUpdateRequired())
+
+            if (Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
             {
                 Media.AddFrame();
                 Zeffect.AddFrame();
 
                 _aiService.AddObjectDetection();
 
-                if (Media.Information.Slider >= Media.Information.MaxSlider)
+                if (Media.CompareSlider())
                 {
                     Media.RemoveFrame();
                     Zeffect.RemoveFrame();
@@ -300,7 +299,6 @@ namespace MZ.Xray.Engine
                 Media.IncrementSlider();
             }
             Media.IncreaseInterval();
-
         }
 
         /// <summary>
@@ -355,7 +353,7 @@ namespace MZ.Xray.Engine
                 }
                 catch (Exception ex)
                 {
-                    MZLogger.Error(ex.ToString());
+                    MZLogger.Error(ex.Message);
                 }
             });
         }
@@ -438,7 +436,7 @@ namespace MZ.Xray.Engine
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
             }
             
         }
@@ -772,7 +770,7 @@ namespace MZ.Xray.Engine
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.ToString());
+                MZLogger.Error(ex.Message);
             }
         }
     }

@@ -3,7 +3,7 @@ using MZ.Core;
 using MZ.Util;
 using MZ.Resource;
 using MZ.Xray.Engine;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Infrastructure;
 using MZ.Domain.Entities;
 using System;
@@ -75,7 +75,6 @@ namespace MZ.Dashboard.ViewModels
         public ObservableCollection<ReportImageFileModel> ImageFileData { get => _imageFileData; set => SetProperty(ref _imageFileData, value); }
         #endregion
 
-
         #region Commands
 
         private DelegateCommand _searchCommand;
@@ -116,7 +115,7 @@ namespace MZ.Dashboard.ViewModels
         {
             SaveFileDialog saveFileDialog = new()
             {
-                Title = LanguageService.GetString($"Lng{MZResourceNames.SavePDF}"),
+                Title = LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.SavePDF)),
                 Filter = "PDF  (*.pdf)|*.pdf",
                 DefaultExt = ".pdf"
             };

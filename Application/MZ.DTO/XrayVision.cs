@@ -1,6 +1,6 @@
 ﻿using MZ.Domain.Entities;
 using MZ.Domain.Enums;
-using MZ.Domain.Models;
+using MZ.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,7 @@
 ﻿using MZ.Core;
 using MZ.Dashboard.Views;
 using MZ.Domain.Entities;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.DTO;
 using MZ.Infrastructure;
 using MZ.Loading;

@@ -30,10 +30,6 @@ namespace MZ.Domain.Interfaces
         /// </summary>
         public string PasswordHash { get; set; }
         /// <summary>
-        /// 사용자 이메일  
-        /// </summary>
-        public string Email { get; set; }
-        /// <summary>
         /// 사용자 권한/역할  
         /// - User, Admin 등 Enum  
         /// </summary>
