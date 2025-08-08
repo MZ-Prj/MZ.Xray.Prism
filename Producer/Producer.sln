@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Toolbar", "MZ.Toolbar\MZ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Event", "..\Application\MZ.Event\MZ.Event.csproj", "{6172F86F-CDF9-DEBB-5871-C28EADB71A66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MZ.Model", "..\Application\MZ.Model\MZ.Model.csproj", "{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{6172F86F-CDF9-DEBB-5871-C28EADB71A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6172F86F-CDF9-DEBB-5871-C28EADB71A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6172F86F-CDF9-DEBB-5871-C28EADB71A66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{0A6D035E-82FD-46F9-A1C2-1348B4225E7E} = {9C8A4FB5-B688-4FA6-85B8-7D78C52FDA5A}
 		{F278038C-1E68-48CD-A992-DC5EB308F9CF} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 		{14A5F710-5C3D-4AA5-801D-345288ECE59A} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
+		{F6C4B651-D3EC-7A93-A13D-C3C025BD4A71} = {3D830DC5-E090-453F-82AF-5C4E3E1CEC75}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8AF1AA92-BBF7-445C-9A6E-F63140AB82CA}

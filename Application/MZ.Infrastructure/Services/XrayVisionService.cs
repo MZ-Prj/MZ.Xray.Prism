@@ -107,7 +107,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, ImageEntity>(BaseRole.Fail, ex);
             }
         }
@@ -152,7 +152,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, CalibrationEntity>(BaseRole.Fail, ex);
             }
         }
@@ -206,7 +206,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, CalibrationEntity>(BaseRole.Fail, ex);
             }
         }
@@ -250,7 +250,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail, ex);
             }
         }
@@ -298,7 +298,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, FilterEntity>(BaseRole.Fail, ex);
             }
         }
@@ -345,7 +345,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
@@ -431,7 +431,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, MaterialEntity>(BaseRole.Fail, ex);
             }
         }
@@ -482,7 +482,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<ZeffectControlEntity>>(BaseRole.Fail, ex);
             }
         }
@@ -595,7 +595,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
             }
         }
@@ -626,7 +626,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<BaseRole, ICollection<CurveControlEntity>>(BaseRole.Fail, ex);
             }
         }

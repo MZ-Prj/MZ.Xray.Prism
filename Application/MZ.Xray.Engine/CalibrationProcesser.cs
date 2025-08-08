@@ -106,6 +106,11 @@ namespace MZ.Xray.Engine
                 Model.Gain = line;
                 check = false;
             }
+
+            if (Model.Offset == null || Model.Gain == null)
+            {
+                check = false;
+            }
             return check;
         }
 

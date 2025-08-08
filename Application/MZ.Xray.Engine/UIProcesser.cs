@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Timers;
 using System.Windows.Threading;
 
 namespace MZ.Xray.Engine
@@ -18,9 +17,7 @@ namespace MZ.Xray.Engine
 
         private ObservableCollection<IconButtonModel> _actionButtons = [];
         public ObservableCollection<IconButtonModel> ActionButtons { get => _actionButtons; set => SetProperty(ref _actionButtons, value); }
-
-
-
+        
         /// <summary>
         /// DB에서 불러온 버튼 설정값을 UI용 버튼 모델에 매핑/반영
         /// </summary>
@@ -42,7 +39,7 @@ namespace MZ.Xray.Engine
     }
 
     /// <summary>
-    /// 실시간 사용자 시간 조회
+    /// 실시간 사용자 프로그램 사용 시간 조회
     /// </summary>
     public partial class UIProcesser : BindableBase
     {
@@ -77,6 +74,11 @@ namespace MZ.Xray.Engine
                 _usingDateTimer = null;
             }
         }
+    }
 
+    public partial class UIProcesser : BindableBase
+    {
+        private string _splashMessage = string.Empty;
+        public string SplashMessage { get => _splashMessage; set => SetProperty(ref _splashMessage, value); }
     }
 }

@@ -67,10 +67,21 @@
                             Width="Auto" />
                 <DataGridTextColumn Header="Path" 
                             Binding="{Binding Path=Path}" 
-                            Width="*" />
+                            Width="Auto" />
                 <DataGridTextColumn Header="Name" 
                             Binding="{Binding Path=Name}" 
                             Width="Auto" />
+                <DataGridTemplateColumn Header="Image" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Path=ImageSource}" Stretch="Uniform">
+                                <Image.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </Image.LayoutTransform>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Width" 
                             Binding="{Binding Path=Width}" 
                             Width="Auto" />
@@ -82,7 +93,7 @@
                             Width="Auto" />
                 <DataGridTextColumn Header="Message" 
                             Binding="{Binding Path=Message}" 
-                            Width="*"/>
+                            Width="Auto"/>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="4">

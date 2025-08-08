@@ -30,14 +30,14 @@
                 <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
                     <Button.ToolTip>
                         <ToolTip Style="{StaticResource CustomToolTipStyle}"
-                                 Content="{DynamicResource LngCommonSearch}" />
+                                 Content="{DynamicResource LngCommon_Search}" />
                     </Button.ToolTip>
                     <iconPacks:PackIconMaterial Kind="TableSearch"  Width="16" Height="16"/>
                 </Button>
                 <Button Margin="0,0,4,0" Command="{Binding Path=SaveCommand}" >
                     <Button.ToolTip>
                         <ToolTip Style="{StaticResource CustomToolTipStyle}"
-                                 Content="{DynamicResource LngCommonDownload}" />
+                                 Content="{DynamicResource LngCommon_Download}" />
                     </Button.ToolTip>
                     <Button.CommandParameter>
                         <Binding ElementName="ChartsContainer"/>

@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Application\MZ.Language\MZ.Language.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Loading\MZ.Loading.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Logger\MZ.Logger.csproj" />
+    <ProjectReference Include="..\..\Application\MZ.Model\MZ.Model.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Resource\MZ.Resource.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Util\MZ.Util.csproj" />
     <ProjectReference Include="..\MZ.Producer.Engine\MZ.Producer.Engine.csproj" />

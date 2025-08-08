@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using System.Threading.Tasks;
 
 namespace MZ.Producer.Engine

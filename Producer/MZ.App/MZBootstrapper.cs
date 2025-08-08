@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Windows;
+using Microsoft.Extensions.Configuration;
 using MZ.Core;
 using MZ.Dashboard;
 using MZ.Dialog;
@@ -33,11 +35,8 @@ namespace MZ.App
         /// <param name="containerRegistry"></param>
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            // Initialize Database
-            RegisterDatabaseServices(containerRegistry);
-
-            // Repository
-            RegisterRepositories(containerRegistry);
+            // Config
+            RegisterConfigurations(containerRegistry);
 
             // Service
             RegisterApplicationServices(containerRegistry);
@@ -74,17 +73,18 @@ namespace MZ.App
             LanguageService.Load(LanguageService.GetSystemLanguage());
 
             // Build Version
-            BuildVersionService.Load(Assembly.GetExecutingAssembly());
+            var configuration = Container.Resolve<IConfiguration>();
+            BuildVersionService.Load(Assembly.GetExecutingAssembly(), configuration["Build:Version"]);
         }
 
-        private void RegisterDatabaseServices(IContainerRegistry containerRegistry)
+        private void RegisterConfigurations(IContainerRegistry containerRegistry)
         {
-            var appConfig = MZAppSettings.Configuration;
+            var configuration = new ConfigurationBuilder()
+                                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                .Build();
 
-        }
-
-        private void RegisterRepositories(IContainerRegistry containerRegistry)
-        {
+            containerRegistry.RegisterInstance<IConfiguration>(configuration);
         }
 
         private void RegisterApplicationServices(IContainerRegistry containerRegistry)

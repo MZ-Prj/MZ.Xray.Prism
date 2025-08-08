@@ -168,10 +168,10 @@
   <data name="LngAIControlRegion" xml:space="preserve">
     <value>인공지능</value>
   </data>
-  <data name="LngSavePDF" xml:space="preserve">
+  <data name="LngSave_PDF" xml:space="preserve">
     <value>보고서 저장</value>
   </data>
-  <data name="LngSaveScreen" xml:space="preserve">
+  <data name="LngSave_Screen" xml:space="preserve">
     <value>화면 저장</value>
   </data>
   <data name="LngDashboardFooterButtonControlRegion" xml:space="preserve">
@@ -190,7 +190,7 @@
     <value>추가</value>
   </data>
   <data name="LngZeffectControlRegion" xml:space="preserve">
-    <value>유효 핵전하</value>
+    <value>Zeffect</value>
   </data>
   <data name="LngCurveControlRegion" xml:space="preserve">
     <value>LUT 곡선</value>
@@ -330,19 +330,49 @@
   <data name="LngUserLogoutRegion" xml:space="preserve">
     <value>로그아웃</value>
   </data>
-  <data name="LngCommonSearch" xml:space="preserve">
+  <data name="LngCommon_Search" xml:space="preserve">
     <value>검색</value>
   </data>
-  <data name="LngCommonRefresh" xml:space="preserve">
+  <data name="LngCommon_Refresh" xml:space="preserve">
     <value>새로고침</value>
   </data>
-  <data name="LngCommonUndo" xml:space="preserve">
+  <data name="LngCommon_Undo" xml:space="preserve">
     <value>이전</value>
   </data>
-  <data name="LngCommonDownload" xml:space="preserve">
+  <data name="LngCommon_Download" xml:space="preserve">
     <value>다운로드</value>
   </data>
-  <data name="LngCommonRedo" xml:space="preserve">
+  <data name="LngCommon_Redo" xml:space="preserve">
     <value>다음</value>
+  </data>
+  <data name="LngSplashRegion_Loading" xml:space="preserve">
+    <value>로딩</value>
+  </data>
+  <data name="LngSplashRegion_User_Initialize" xml:space="preserve">
+    <value>사용자 초기화</value>
+  </data>
+  <data name="LngSplashRegion_AI_DatabaseLoad" xml:space="preserve">
+    <value>인공지능 데이터베이스 로드</value>
+  </data>
+  <data name="LngSplashRegion_AI_DatabaseUpdate" xml:space="preserve">
+    <value>인공지능 데이터베이스 갱신</value>
+  </data>
+  <data name="LngSplashRegion_AI_Load" xml:space="preserve">
+    <value>모델 로드</value>
+  </data>
+  <data name="LngSplashRegion_AI_DownloadStart" xml:space="preserve">
+    <value>모델 다운로드 시작</value>
+  </data>
+  <data name="LngSplashRegion_AI_Initialize" xml:space="preserve">
+    <value>인공지능 초기화</value>
+  </data>
+  <data name="LngSplashRegion_Network_Initialize" xml:space="preserve">
+    <value>네트워크 초기화</value>
+  </data>
+  <data name="LngSplashRegion_Success" xml:space="preserve">
+    <value>성공</value>
+  </data>
+  <data name="LngSplashRegion_Fail" xml:space="preserve">
+    <value>실패</value>
   </data>
 </root>

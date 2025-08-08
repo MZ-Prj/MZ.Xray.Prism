@@ -11,12 +11,6 @@
              mc:Ignorable="d"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-
-        <ContentControl prism:RegionManager.RegionName="SidebarRegion" Grid.Column="0" />
         <ContentControl prism:RegionManager.RegionName="ImageDataTransmissionRegion" Grid.Column="1"/>
     </Grid>
 </UserControl>

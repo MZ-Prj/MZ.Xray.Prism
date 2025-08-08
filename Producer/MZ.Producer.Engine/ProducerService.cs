@@ -1,5 +1,5 @@
 ﻿using MZ.Logger;
-using MZ.Domain.Models;
+using MZ.Model;
 using Prism.Mvvm;
 using System;
 using System.Threading.Tasks;

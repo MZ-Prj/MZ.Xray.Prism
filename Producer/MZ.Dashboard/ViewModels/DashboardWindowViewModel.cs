@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using MahApps.Metro.IconPacks;
 using MZ.Core;
-using MZ.Domain.Models;
+using MZ.Model;
 using MZ.Loading;
 using MZ.Resource;
 using MZ.Util;
@@ -14,9 +14,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using Microsoft.Extensions.Configuration;
 using static MZ.Core.MZModel;
 using static MZ.Sidebar.MZEvents;
 using static MZ.Event.MZEvent;
+using System;
+using System.Threading.Tasks;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -25,6 +28,7 @@ namespace MZ.Dashboard.ViewModels
         #region Services
         private readonly ILoadingService _loadingService;
         private readonly IProducerService _producerService;
+        private readonly IConfiguration _configuration;
         #endregion
 
         #region Params
@@ -43,7 +47,10 @@ namespace MZ.Dashboard.ViewModels
         
         private DelegateCommand _folderOpenCommand;
         public ICommand FolderOpenCommand => _folderOpenCommand ??= new(MZAction.Wrapper(FolderOpenButton));
-        
+
+        private DelegateCommand _fileDownloadCommand;
+        public ICommand FileDownloadCommand => _fileDownloadCommand ??= new(MZAction.Wrapper(FileDownloadButton));
+
         private DelegateCommand _themeCommand;
         public ICommand ThemeCommand => _themeCommand ??= new(MZAction.Wrapper(ThemeButton));
 
@@ -51,10 +58,11 @@ namespace MZ.Dashboard.ViewModels
         public ICommand LanguageCommand => _languageCommand ??= new(MZAction.Wrapper(LanguageButton));
         #endregion
 
-        public DashboardWindowViewModel(IContainerExtension container, ILoadingService loadingService, IProducerService producerService) : base(container)
+        public DashboardWindowViewModel(IContainerExtension container, ILoadingService loadingService, IProducerService producerService, IConfiguration configuration) : base(container)
         {
             _loadingService = loadingService;
             _producerService = producerService;
+            _configuration = configuration;
 
             base.Initialize();
         }
@@ -62,9 +70,10 @@ namespace MZ.Dashboard.ViewModels
         #region Initialize
         public override void InitializeModel()
         {
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FolderOpen), FolderOpenCommand));
+            //WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FolderOpen), FolderOpenCommand));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Download), FileDownloadCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.IpNetwork), IpNetworkCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
+            //WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
         }
         
@@ -110,6 +119,49 @@ namespace MZ.Dashboard.ViewModels
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        private async void FileDownloadButton()
+        {
+            MZWebDownload download = new();
+            
+            string path = _configuration["Data:Path"];
+            string link = _configuration["Data:DownloadLink"];
+
+            MZIO.TryDeleteFile(path);
+            MZIO.TryMakeDirectoryRemoveFile(path);
+
+            using (LoadingModel.Show())
+            {
+                LoadingModel.Message = "Downloading...";
+                bool checkDownload = await download.RunAsync(link, path);
+
+                if (checkDownload)
+                {
+                    string extractPath = Path.GetDirectoryName(path);
+
+                    LoadingModel.Message = "Unzip Dataset...";
+                    bool isUnzip = await MZZip.UnzipAsync(path, extractPath);
+                    if (isUnzip)
+                    {
+                        LoadingModel.Message = "Success!";
+                        MZIO.TryDeleteFile(path);
+
+                        LoadingModel.Message = "Read Dataset...";
+                        _producerService.Stop();
+                        await _producerService.LoadFilesAsync(extractPath);
+                    }
+                    else
+                    {
+                        LoadingModel.Message = "Fail!";
+                    }
+                    await Task.Delay(1000);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Select Images Folder
         /// </summary>
         private async void FolderOpenButton()
@@ -125,7 +177,7 @@ namespace MZ.Dashboard.ViewModels
 
             if (result == true)
             {
-                using (_loadingService[MZRegionNames.DashboardRegion].Show())
+                using (LoadingModel.Show())
                 {
                     string directory = Path.GetDirectoryName(dialog.FileName);
                     _producerService.Stop();

@@ -19,7 +19,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
 using Microsoft.Win32;
-using Prism.Services.Dialogs;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -52,6 +51,13 @@ namespace MZ.Dashboard.ViewModels
             set => _aiService.Yolo = value;
         }
 
+        public ObservableCollection<IconButtonModel> ActionButtons
+        {
+            get => _xrayService.UI.ActionButtons;
+            set => _xrayService.UI.ActionButtons = value;
+        }
+
+
         #endregion
 
         #region Params
@@ -80,12 +86,8 @@ namespace MZ.Dashboard.ViewModels
         private ObservableCollection<IconButtonModel> _etcButtons = [];
         public ObservableCollection<IconButtonModel> EtcButtons { get => _etcButtons; set => SetProperty(ref _etcButtons, value); }
 
-        public ObservableCollection<IconButtonModel> ActionButtons
-        {
-            get => _xrayService.UI.ActionButtons;
-            set => _xrayService.UI.ActionButtons = value;
-        }
-
+        private bool _isRunning;
+        public bool IsRunning { get => _isRunning; set => SetProperty(ref _isRunning, value); }
         #endregion
 
         #region Command
@@ -193,11 +195,14 @@ namespace MZ.Dashboard.ViewModels
         /// </summary>
         private void PlayStopButton()
         {
+
             // ui
+            IsRunning = _xrayService.IsPlaying();
+
             ToggleFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
 
-            VisibilityFooterButton(PreviousCommand, _xrayService.IsPlaying(), VideoButtons);
-            VisibilityFooterButton(NextCommand, _xrayService.IsPlaying(), VideoButtons);
+            VisibilityFooterButton(PreviousCommand, IsRunning, VideoButtons);
+            VisibilityFooterButton(NextCommand, IsRunning, VideoButtons);
 
             // logic
             _xrayService.PlayStop();
@@ -351,7 +356,7 @@ namespace MZ.Dashboard.ViewModels
             // logic
             _xrayService.Stop();
             _xrayService.Play();
-
+            
             // db
             var userSetting = await _databaseService.User.GetUserSetting();
             if (userSetting.Success)
@@ -370,28 +375,28 @@ namespace MZ.Dashboard.ViewModels
             EtcButtons.DisposeAndClear();
 
             //ui
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Picker)));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_PlayStop)));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Previous)));
-            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Next)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.Pin), PickerCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionPicker)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionPlayStop)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionPrevious)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionNext)));
 
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ZoomOut)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ZoomIn)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Gray), uid: ColorRole.Gray, name: UserSettingButtonKeys.GrayButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Gray)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaC), ColorCommand, MZBrush.CreateHsvRadialGradientBrush(), uid: ColorRole.Color, name: UserSettingButtonKeys.ColorButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Color)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaR), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic, name: UserSettingButtonKeys.OrganicButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Organic)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic, name: UserSettingButtonKeys.InorganicButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Inorganic)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaB), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal, name: UserSettingButtonKeys.MetalButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Metal)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand, name: UserSettingButtonKeys.BrightDownButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_BrightDown)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand, name: UserSettingButtonKeys.BrightUpButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_BrighUp)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand, name: UserSettingButtonKeys.ContrastDownButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ContrastDown)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand, name: UserSettingButtonKeys.ContrastUpButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ContrastUp)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand, name: UserSettingButtonKeys.FilterClearButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_FilterClear)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaZ), ZeffectCommand, new SolidColorBrush(Colors.YellowGreen), name: UserSettingButtonKeys.ZeffectButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Zeffect)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_AIOnOff)));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_SaveImage)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZoomOut)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZoomIn)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Gray), uid: ColorRole.Gray, name: UserSettingButtonKeys.GrayButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionGray)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaC), ColorCommand, MZBrush.CreateHsvRadialGradientBrush(), uid: ColorRole.Color, name: UserSettingButtonKeys.ColorButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionColor)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaR), ColorCommand, new SolidColorBrush(Colors.Orange), uid: ColorRole.Organic, name: UserSettingButtonKeys.OrganicButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionOrganic)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaG), ColorCommand, new SolidColorBrush(Colors.Green), uid: ColorRole.Inorganic, name: UserSettingButtonKeys.InorganicButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionInorganic)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaB), ColorCommand, new SolidColorBrush(Colors.DodgerBlue), uid: ColorRole.Metal, name: UserSettingButtonKeys.MetalButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionMetal)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness4), BrightDownCommand, name: UserSettingButtonKeys.BrightDownButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionBrightDown)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Brightness5), BrightUpCommand, name: UserSettingButtonKeys.BrightUpButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionBrighUp)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleOpacity), ContrastDownCommand, name: UserSettingButtonKeys.ContrastDownButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionContrastDown)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand, name: UserSettingButtonKeys.ContrastUpButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionContrastUp)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand, name: UserSettingButtonKeys.FilterClearButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionFilterClear)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaZ), ZeffectCommand, new SolidColorBrush(Colors.YellowGreen), name: UserSettingButtonKeys.ZeffectButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZeffect)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionAIOnOff)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionSaveImage)));
 
-            EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4"), tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_Setting)));
+            EtcButtons.Add(new(nameof(PackIconMaterialKind.Cog), SettingCommand, ThemeService.GetResource("MahApps.Brushes.Accent4"), tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionSetting)));
         }
 
 

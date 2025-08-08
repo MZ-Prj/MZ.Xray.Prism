@@ -33,7 +33,7 @@
             <ProgressBar Value="{Binding Path=Step}"
                          Minimum="0"
                          Maximum="{Binding Path=MaxStep}"/>
-            <Label Content="{Binding Path=Message}"/>
+            <Label Content="{Binding Path=UI.SplashMessage}" FontSize="12" FontWeight="Bold"/>
         </Grid>
 
     </Grid>

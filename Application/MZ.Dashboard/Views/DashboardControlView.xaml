@@ -228,6 +228,7 @@
                                 Maximum="{Binding Path=Media.Model.Information.MaxSlider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                 Value="{Binding Path=Media.Model.Information.Slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 TickFrequency="1"
+                                IsEnabled="{Binding Path=IsRunning}"
                                 IsSnapToTickEnabled="True">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="ValueChanged">

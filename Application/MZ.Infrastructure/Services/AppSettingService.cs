@@ -49,7 +49,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<AppSettingRole, AppSettingEntity>(AppSettingRole.Fail, ex);
             }
         }
@@ -73,7 +73,7 @@ namespace MZ.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                MZLogger.Error(ex.Message);
+                MZLogger.Error(ex.ToString());
                 return BaseResponseExtensions.Failure<AppSettingRole, AppSettingEntity>(AppSettingRole.Fail, ex);
             }
         }

@@ -1,4 +1,4 @@
-﻿using MZ.Domain.Models;
+﻿using MZ.Model;
 using MZ.Logger;
 using MZ.Util;
 using MZ.Vision;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using OpenCvSharp.WpfExtensions;
 
 namespace MZ.Producer.Engine
 {
@@ -28,7 +29,9 @@ namespace MZ.Producer.Engine
         {
             CurrentIndex = 0;
 
-            List<FileModel> files = [.. MZIO.GetFilesWithExtension(path, ".png")
+            _dispatcher.Invoke(() =>
+            {
+                List<FileModel> files = [.. MZIO.GetFilesWithExtension(path, ".png")
                     .OrderBy(file =>
                     {
                         var filename = Path.GetFileNameWithoutExtension(file);
@@ -42,14 +45,13 @@ namespace MZ.Producer.Engine
                             Index = index,
                             Path = Path.GetDirectoryName(file),
                             Name = Path.GetFileName(file),
+                            ImageSource = image.ToBitmapSource(),
                             Width = image.Width,
                             Height = image.Height,
                             Type = image.Type()
                         };
                     })];
 
-            _dispatcher.Invoke(() =>
-            {
                 Models.Clear();
                 foreach (var file in files)
                 {

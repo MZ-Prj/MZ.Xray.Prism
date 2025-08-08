@@ -2,8 +2,8 @@
 using MZ.Core;
 using MZ.Producer.Engine;
 using MZ.Sidebar.Models;
-using MZ.Domain.Models;
 using MZ.Util;
+using MZ.Model;
 using MZ.Loading;
 using Prism.Commands;
 using Prism.Ioc;
@@ -71,15 +71,15 @@ namespace MZ.Dashboard.ViewModels
         private async void LoadButton()
         {
             // logic
-            using (_loadingService[MZRegionNames.DashboardRegion].Show())
+            using (LoadingModel.Show())
             {
                 await _producerService.LoadAsync();
-            }
 
-            // ui
-            foreach (var button in ActionButtons)
-            {
-                button.IsVisibility = Socket.Model.IsConnected;
+                // ui
+                foreach (var button in ActionButtons)
+                {
+                    button.IsVisibility = Socket.Model.IsConnected;
+                }
             }
 
             // logic 

@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Application\MZ.Core\MZ.Core.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Event\MZ.Event.csproj" />
+    <ProjectReference Include="..\..\Application\MZ.Model\MZ.Model.csproj" />
     <ProjectReference Include="..\..\Application\MZ.Resource\MZ.Resource.csproj" />
   </ItemGroup>
 </Project>
