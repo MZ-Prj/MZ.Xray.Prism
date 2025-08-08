@@ -34,6 +34,10 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <Button Margin="0,0,4,0" Command="{Binding Path=SearchCommand}">
+                <Button.ToolTip>
+                    <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                             Content="{DynamicResource LngCommonSearch}" />
+                </Button.ToolTip>
                 <iconPacks:PackIconMaterial Kind="TableSearch"  Width="16" Height="16"/>
             </Button>
             <Border CornerRadius="4"

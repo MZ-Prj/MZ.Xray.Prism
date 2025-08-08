@@ -16,6 +16,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
+        <converters:LanguageConverter x:Key="LanguageConverter" />
         <converters:ImagePathToBrushConverter x:Key="ImagePathToBrushConverter" />
         <converters:ContrastColorConverter  x:Key="ContrastColorConverter"/>
         <converters:UppercaseConverter x:Key="UppercaseConverter"/>
@@ -165,14 +166,17 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <RepeatButton Command="{Binding Path=Command}" 
+                                    <RepeatButton Style="{StaticResource IconRepeatButtonBaseStyle}"
+                                                  Command="{Binding Path=Command}"
                                                   CommandParameter="{Binding Path=UId}"
                                                   Background="{Binding Path=ColorBrush}"
-                                                  Visibility="{Binding Path=IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                  BorderThickness="0" Width="48" Height="48" Cursor="Hand"
-                                                  Margin="4">
-                                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" 
-                                                            Width="24" Height="24"/>
+                                                  IsEnabled="{Binding Path=IsVisibility}"
+                                                  ToolTipService.ToolTip="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}">
+                                        <RepeatButton.ToolTip>
+                                            <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                                                     Content="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}" />
+                                        </RepeatButton.ToolTip>
+                                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
                                     </RepeatButton>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

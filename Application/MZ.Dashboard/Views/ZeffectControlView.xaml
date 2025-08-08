@@ -15,6 +15,7 @@
     
     <UserControl.Resources>
         <converters:NumericDecimalConverter x:Key="NumericDecimalConverter"/>
+        <converters:LanguageConverter x:Key="LanguageConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -38,6 +39,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding Path=Command}" >
+                        <Button.ToolTip>
+                            <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                                         Content="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}" />
+                        </Button.ToolTip>
                         <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="16" Height="16" ToolTip="{Binding Path=ToolTip}"/>
                     </Button>
                 </DataTemplate>
@@ -95,6 +100,7 @@
                   HorizontalContentAlignment="Center"
                   Margin="4"
                   Width="Auto"
+                  MaxHeight="500"
                   HorizontalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{DynamicResource LngZeffectControlRegion_Content}" Width="1*" Binding="{Binding Path=Content, Mode=TwoWay}"/>

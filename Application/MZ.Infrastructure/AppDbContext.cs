@@ -59,9 +59,6 @@ namespace MZ.Infrastructure
                     .IsRequired()
                     .HasMaxLength(4);
                 entity.Property(u => u.PasswordHash).IsRequired();
-                entity.Property(u => u.Email)
-                    .IsRequired()
-                    .HasMaxLength(255);
                 entity.Property(u => u.Role).HasDefaultValue(UserRole.User);
                 entity.Property(u => u.CreateDate).HasDefaultValueSql("GETDATE()");
                 entity.Property(u => u.LastLoginDate).HasDefaultValueSql("GETDATE()");

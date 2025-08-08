@@ -7,10 +7,18 @@
     public static class MZViewNames
     {
         public readonly static string DashboardControlView = "DashboardControlView";
-        public readonly static string AnalysisControlView = "AnalysisControlView";
     }
 
-    public static class MZRegionNames
+    public static partial class MZRegionNames
+    {
+        private static string Key = "Lng";
+        public static string AddLng(string resourceName)
+        {
+            return $"{Key}{resourceName}";
+        }
+    }
+
+    public static partial class MZRegionNames
     {
         //Common
         public readonly static string DashboardRegion = "DashboardRegion";
@@ -21,6 +29,7 @@
         public readonly static string WindowDialogRegion = "WindowDialogRegion";
         public readonly static string LanguageRegion = "LanguageRegion";
         public readonly static string LoadingRegion = "LoadingRegion";
+        public readonly static string ThemeRegion = "ThemeRegion";
 
         //UI
         public readonly static string SidebarRegion = "SidebarRegion";
@@ -43,16 +52,22 @@
         public readonly static string UserLoginRegion = "UserLoginRegion";
         public readonly static string UserRegisterRegion = "UserRegisterRegion";
         public readonly static string UserInformationRegion = "UserInformationRegion";
-
+        public readonly static string UserLogout = "UserLogoutRegion";
     }
 
-    public static class MZResourceNames
+    public static partial class MZRegionNames
     {
-        private static string Key = "Lng";
-
+        //Save (File Dialog)
         public readonly static string SavePDF = "SavePDF";
         public readonly static string SaveScreen = "SaveScreen";
 
+        //Common Button
+        public readonly static string CommonRefresh = "CommonRefresh";
+        public readonly static string CommonSearch = "CommonSearch";
+        public readonly static string CommonRedo = "CommonRedo";
+        public readonly static string CommonUndo = "CommonUndo";
+
+        //Footer Button
         public readonly static string XrayRealtimeRegion = "XrayRealtimeRegion";
         public readonly static string XrayRealtimeRegion_AIOnOff = "XrayRealtimeRegion_AIOnOff";
         public readonly static string XrayRealtimeRegion_BrightDown = "XrayRealtimeRegion_BrightDown";
@@ -75,10 +90,6 @@
         public readonly static string XrayRealtimeRegion_ZoomIn = "XrayRealtimeRegion_ZoomIn";
         public readonly static string XrayRealtimeRegion_ZoomOut = "XrayRealtimeRegion_ZoomOut";
 
-        public static string AddLng(string resourceName)
-        {
-            return $"{Key}{resourceName}";
-        }
     }
 
 }

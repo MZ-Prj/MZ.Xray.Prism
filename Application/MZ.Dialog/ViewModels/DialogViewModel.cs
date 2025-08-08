@@ -8,6 +8,7 @@ using Prism.Ioc;
 using Prism.Services.Dialogs;
 using System.Windows.Input;
 using Prism.Regions;
+using System.Linq;
 
 namespace MZ.Dialog.ViewModels
 {
@@ -63,6 +64,7 @@ namespace MZ.Dialog.ViewModels
             {
                 Title = parameters.GetValue<string>("Title");
             }
+
         }
 
         private void ClosingButton()

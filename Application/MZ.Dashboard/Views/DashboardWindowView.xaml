@@ -16,10 +16,10 @@
                  Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
                  WindowState="Maximized"
                  Title="MZ.Application">
-
     <Window.Resources>
         <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
         <converters:VisibilityConverter x:Key="VisibilityConverter"/>
+        <converters:LanguageConverter x:Key="LanguageConverter"/>
     </Window.Resources>
 
     <i:Interaction.Triggers>
@@ -54,6 +54,10 @@
                     <DataTemplate>
                         <Button Command="{Binding Path=Command}" 
                                 Visibility="{Binding Path=IsVisibility, Converter={StaticResource VisibilityConverter}}">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource CustomToolTipStyle}"
+                                         Content="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}" />
+                            </Button.ToolTip>
                             <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="20" Height="20"/>
                         </Button>
                     </DataTemplate>

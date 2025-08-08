@@ -13,8 +13,6 @@ using MZ.Resource;
 using MZ.Infrastructure;
 using static MZ.Core.MZModel;
 using static MZ.Event.MZEvent;
-using MZ.Domain.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MZ.Auth.ViewModels
 {
@@ -94,9 +92,9 @@ namespace MZ.Auth.ViewModels
 
                 //event
                 _eventAggregator.GetEvent<DashboardNavigationEvent>().Publish(
-                            new NavigationModel(
-                                MZRegionNames.DashboardRegion,
-                                MZViewNames.DashboardControlView));
+                    new NavigationModel(
+                        MZRegionNames.DashboardRegion,
+                        MZViewNames.DashboardControlView));
 
             }
         }

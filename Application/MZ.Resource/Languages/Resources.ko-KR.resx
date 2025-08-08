@@ -324,4 +324,25 @@
   <data name="LngXrayRealtimeRegion_ContrastDown" xml:space="preserve">
     <value>대조 감소</value>
   </data>
+  <data name="LngThemeRegion" xml:space="preserve">
+    <value>태마</value>
+  </data>
+  <data name="LngUserLogoutRegion" xml:space="preserve">
+    <value>로그아웃</value>
+  </data>
+  <data name="LngCommonSearch" xml:space="preserve">
+    <value>검색</value>
+  </data>
+  <data name="LngCommonRefresh" xml:space="preserve">
+    <value>새로고침</value>
+  </data>
+  <data name="LngCommonUndo" xml:space="preserve">
+    <value>이전</value>
+  </data>
+  <data name="LngCommonDownload" xml:space="preserve">
+    <value>다운로드</value>
+  </data>
+  <data name="LngCommonRedo" xml:space="preserve">
+    <value>다음</value>
+  </data>
 </root>

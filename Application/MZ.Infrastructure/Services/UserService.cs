@@ -79,6 +79,10 @@ namespace MZ.Infrastructure.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(userSession.CurrentUser) )
+                {
+                    return BaseResponseExtensions.Failure<BaseRole, string>(BaseRole.Valid);
+                }
                 var usingTime = (DateTime.Now - userSession.LoginTime);
                 UserEntity user = await userRepository.GetByUsernameAsync(userSession.CurrentUser);
                 user.UsingDate += usingTime;
@@ -133,7 +137,6 @@ namespace MZ.Infrastructure.Services
                 UserEntity user = new ()
                 {
                     Username = request.Username,
-                    Email = request.Email,
                     Password = request.Password,
                     CreateDate = DateTime.Now,
                     LastLoginDate = DateTime.Now,

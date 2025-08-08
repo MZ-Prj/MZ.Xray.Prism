@@ -1,5 +1,4 @@
 ﻿using MZ.Domain.Enums;
-using MZ.Domain.Interfaces;
 using MZ.DTO;
 using MZ.Infrastructure.Interfaces;
 using System.Threading;
@@ -74,7 +73,7 @@ namespace MZ.Infrastructure
         public async Task<bool> MakeUserAsync(string username, string password)
         {
             var response = await User.Register(
-                new UserRegisterRequest(username, password, password, $"{username}@test.com", UserRole.Admin)
+                new UserRegisterRequest(username, password, password, UserRole.Admin)
             );
             return response.Success;
         }

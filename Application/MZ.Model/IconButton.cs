@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace MZ.Model
 {
-    public class IconButtonModel : BindableBase, IUserButton
+    public class IconButtonModel : BindableBase, IUserButton, IDisposable
     {
         /// <summary>
         /// 버튼 고유 Id (DB, 세팅 저장 등 활용)
@@ -42,9 +42,7 @@ namespace MZ.Model
         /// <summary>
         /// 버튼 이름/식별용 키 
         /// </summary>
-        private string _tooltipKey;
-        
-        private string _tooltip;
+        public string _tooltip;
         public string Tooltip { get => _tooltip; set => SetProperty(ref _tooltip, value); }
 
         /// <summary>
@@ -75,7 +73,8 @@ namespace MZ.Model
         /// <param name="colorBrush">아이콘 색상</param>
         /// <param name="isVisibility">표시 여부</param>
         /// <param name="uid">추가 식별값</param>
-        /// <param name="name">버튼명/Key</param>
+        /// <param name="name">버튼명</param>
+        /// <param name="tooltipKey">툴팁 Key</param>
         /// <param name="id">Id</param>
         public IconButtonModel(string iconKind, ICommand command, Brush colorBrush = null, bool isVisibility = true, object uid = null, string name = null, string tooltipKey = "", int id = 0)
         {
@@ -86,7 +85,24 @@ namespace MZ.Model
             ColorBrush = colorBrush;
             UId = uid ?? iconKind;
             Name = name;
-            _tooltipKey = tooltipKey;
+            Tooltip = tooltipKey;
+
+            LanguageService.LanguageChanged += LanguageChanged;
+        }
+
+        private void LanguageChanged(object sender, EventArgs e)
+        {
+            UpdateTooltip();
+        }
+
+        public void UpdateTooltip()
+        {
+            RaisePropertyChanged(nameof(Tooltip));
+        }
+
+        public void Dispose()
+        {
+            LanguageService.LanguageChanged -= LanguageChanged;
         }
 
     }

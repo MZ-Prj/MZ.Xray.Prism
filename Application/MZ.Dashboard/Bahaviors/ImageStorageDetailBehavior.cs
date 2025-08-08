@@ -168,8 +168,15 @@ namespace MZ.Dashboard.Bahaviors
             {
                 if (AssociatedObject is FrameworkElement fe && fe.ActualWidth > 0)
                 {
-                    double offsetX = (_parentCanvas.ActualWidth - fe.ActualWidth) / 2;
+                    double scale = _scaleTransform.ScaleX; 
+                    double scaledWidth = fe.ActualWidth * scale;
+                    double scaledHeight = fe.ActualHeight * scale;
+
+                    double offsetX = (_parentCanvas.ActualWidth - scaledWidth) / 2;
+                    double offsetY = (_parentCanvas.ActualHeight - scaledHeight) / 2;
+
                     _translateTransform.X = offsetX;
+                    _translateTransform.Y = offsetY;
                 }
             }
         }
@@ -189,10 +196,8 @@ namespace MZ.Dashboard.Bahaviors
             _scaleTransform.ScaleX = MinZoom;
             _scaleTransform.ScaleY = MinZoom;
 
-            _translateTransform.X = 0;
-            _translateTransform.Y = 0;
-
-            CenterCanvas(); 
+            CenterCanvas();
+            OnEventCursor(Cursors.Arrow);
         }
 
         private void OnEventUpdateZoom(int delta)

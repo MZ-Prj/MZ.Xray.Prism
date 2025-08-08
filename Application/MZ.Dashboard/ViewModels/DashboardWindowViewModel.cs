@@ -37,7 +37,8 @@ namespace MZ.Dashboard.ViewModels
         private LoadingModel _loadingModel;
         public LoadingModel LoadingModel { get => _loadingModel ??= _loadingService[MZRegionNames.DashboardRegion]; set => SetProperty(ref _loadingModel, value); }
 
-        public ObservableCollection<IconButtonModel> WindowCommandButtons { get; } = [];
+        private ObservableCollection<IconButtonModel> _windowCommandButtons = [];
+        public ObservableCollection<IconButtonModel> WindowCommandButtons { get => _windowCommandButtons; set => SetProperty(ref _windowCommandButtons, value); }
         #endregion
 
         #region Commands
@@ -89,19 +90,17 @@ namespace MZ.Dashboard.ViewModels
 
         public override void InitializeModel()
         {
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ChartHistogram), CurveCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), ReportCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FormatColorFill), MaterialCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.MaterialControl)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ChartHistogram), CurveCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CurveControl)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Robot), AICommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.AIControl)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FilePdfBox), ReportCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.ReportControl)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ImageSearch), ImageStorageCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.ImageStorageControl)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FileSearch), LogStorageCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.LogStorageControl)));
 
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Account), UserInformationCommand, isVisibility: false));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand, isVisibility: false));
-
-            
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.LanguageRegion)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.ThemeRegion)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Account), UserInformationCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.UserInformationRegion)));
+            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Logout), LogoutCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.UserLogout)));
         }
 
         public override void InitializeEvent()
@@ -133,7 +132,7 @@ namespace MZ.Dashboard.ViewModels
                 "DialogView",
                 new DialogParameters
                 {
-                    {"Title",  LanguageService.GetString($"Lng{MZRegionNames.UserInformationRegion}") },
+                    {"Title",  LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.UserInformationRegion)) },
                     {"RegionName", MZRegionNames.UserInformationRegion}
                 },
                 (IDialogResult result) => {
@@ -157,7 +156,7 @@ namespace MZ.Dashboard.ViewModels
                 "DialogView",
                 new DialogParameters
                 {
-                    {"Title",  LanguageService.GetString($"Lng{MZRegionNames.LanguageRegion}") },
+                    {"Title",  LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.LanguageRegion)) },
                     {"RegionName", MZRegionNames.LanguageRegion}
                 },
                 (IDialogResult result) => {
@@ -184,7 +183,7 @@ namespace MZ.Dashboard.ViewModels
         private async void ImageStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.ImageStorageControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.ImageStorageControl)),
                 regionName: nameof(ImageStorageControlView),
                 isMultiple: false);
         }
@@ -195,7 +194,7 @@ namespace MZ.Dashboard.ViewModels
         private async void LogStorageButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.LogStorageControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.LogStorageControl)),
                 regionName: nameof(LogStorageControlView),
                 isMultiple:false);
         }
@@ -206,7 +205,7 @@ namespace MZ.Dashboard.ViewModels
         private async void MaterialButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.MaterialControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.MaterialControl)),
                 regionName: nameof(MaterialControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -220,7 +219,7 @@ namespace MZ.Dashboard.ViewModels
         private async void AIButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.AIControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.AIControl)),
                 regionName: nameof(AIControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -229,12 +228,12 @@ namespace MZ.Dashboard.ViewModels
         }
 
         /// <summary>
-        /// 
+        /// LUT 곡선 제어 창
         /// </summary>
         private async void CurveButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.CurveControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.CurveControl)),
                 regionName: nameof(CurveControlView),
                 isMultiple: false,
                 resizeMode: ResizeMode.NoResize,
@@ -248,7 +247,7 @@ namespace MZ.Dashboard.ViewModels
         private async void ReportButton()
         {
             await _windowDialogService.ShowWindow(
-                title: LanguageService.GetString($"Lng{MZRegionNames.ReportControl}"),
+                title: LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.ReportControl)),
                 regionName: nameof(ReportControlView),
                 isMultiple: false);
         }
@@ -272,6 +271,7 @@ namespace MZ.Dashboard.ViewModels
                     _ => check,
                 };
             }
+
         }
 
         /// <summary>
@@ -291,8 +291,8 @@ namespace MZ.Dashboard.ViewModels
             if (check)
             {
                 _xrayService.LoadDatabase();
-
             }
         }
+
     }
 }

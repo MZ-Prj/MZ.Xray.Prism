@@ -26,13 +26,11 @@ namespace MZ.DTO
     /// <param name="Username">회원가입할 사용자 ID(필수, 4자 고정)</param>
     /// <param name="Password">비밀번호(PlainText, 필수)</param>
     /// <param name="RePassword">비밀번호 확인(PlainText, 필수)</param>
-    /// <param name="Email">이메일 주소(필수)</param>
     /// <param name="UserRole">사용자 권한(일반/관리자)</param>
     public record UserRegisterRequest(
         string Username,
         string Password,
         string RePassword,
-        string Email,
         UserRole UserRole
     );
     /// <summary>

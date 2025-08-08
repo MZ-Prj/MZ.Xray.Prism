@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:converters="clr-namespace:MZ.Resource.Converters" 
+                    InvalidatesImplicitDataTemplateResources="False">
+    <converters:CenterToolTipConverter x:Key="CenterToolTipConverter" />
+    
+    <!-- Footer Icon Button-->
+    <Style x:Key="IconRepeatButtonBaseStyle" TargetType="RepeatButton" BasedOn="{StaticResource {x:Type RepeatButton}}">
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="ToolTipService.Placement" Value="Top"/>
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0"/>
+        <Setter Property="ToolTipService.VerticalOffset" Value="-8"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                             To="1.1" Duration="0:0:0.1" />
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                             To="1.1" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                             To="1.0" Duration="0:0:0.1" />
+                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                             To="1.0" Duration="0:0:0.1" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- Button ToolTip -->
+    <Style x:Key="CustomToolTipStyle" TargetType="ToolTip" BasedOn="{StaticResource {x:Type ToolTip}}">
+        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Badged.Background}" />
+        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Badged.Foreground}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HasDropShadow" Value="True" />
+        <Setter Property="ToolTipService.HorizontalOffset">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource CenterToolTipConverter}">
+                    <Binding Path="PlacementTarget.ActualWidth" RelativeSource="{RelativeSource Self}" />
+                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Background="{TemplateBinding Background}"
+                        CornerRadius="4"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

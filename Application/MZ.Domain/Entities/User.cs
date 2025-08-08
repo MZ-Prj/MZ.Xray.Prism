@@ -46,13 +46,6 @@ namespace MZ.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         /// <summary>
-        /// 사용자 이메일
-        /// </summary>
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
-        /// <summary>
         /// 사용자 역할(권한) 정보
         /// </summary>
         public UserRole Role { get; set; } = UserRole.User;

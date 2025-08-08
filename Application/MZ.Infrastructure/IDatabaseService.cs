@@ -57,7 +57,6 @@ namespace MZ.Infrastructure
         /// </summary>
         IXrayAIOptionService AIOption { get; }
 
-
         Task MakeAdmin();
         Task<bool> MakeUserAsync(string username, string password);
         Task MakeAppSettingAsync(string username);

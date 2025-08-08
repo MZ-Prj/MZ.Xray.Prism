@@ -113,6 +113,21 @@ namespace MZ.Infrastructure.Repositories
                                  .Include(m => m.MaterialControls) 
                                  .FirstOrDefaultAsync(m => m.UserId == userId);
         }
+
+    }
+
+    /// <summary>
+    /// XrayVision MaterialControl 저장소
+    /// 
+    /// - MaterialControlEntity 관련 DB 접근 담당
+    /// - Material별 Material 컨트롤 조회 제공
+    /// </summary>
+    [Repository]
+    public class XrayVisionMaterialControlRepository : RepositoryBase<MaterialControlEntity>, IXrayVisionMaterialControlRepository
+    {
+        public XrayVisionMaterialControlRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 
     /// <summary>

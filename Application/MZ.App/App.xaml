@@ -11,6 +11,9 @@
 
                 <ResourceDictionary Source="pack://application:,,,/MZ.Resource;component/Styles/Default.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MZ.Resource;component/Styles/EditorTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MZ.Resource;component/Styles/IconButtonTemplate.xaml" />
+
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

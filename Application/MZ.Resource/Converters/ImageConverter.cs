@@ -37,6 +37,9 @@ namespace MZ.Resource.Converters
         }
     }
 
+    /// <summary>
+    /// 이미지 경로 멀티 브러쉬 fullpathname = path + name
+    /// </summary>
 
     public class ImagePathToBrushMultiConverter : IMultiValueConverter
     {

@@ -324,4 +324,25 @@
   <data name="LngXrayRealtimeRegion_ContrastDown" xml:space="preserve">
     <value>ContrastDown</value>
   </data>
+  <data name="LngThemeRegion" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="LngUserLogoutRegion" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LngCommonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="LngCommonRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="LngCommonUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="LngCommonDownload" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="LngCommonRedo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
 </root>

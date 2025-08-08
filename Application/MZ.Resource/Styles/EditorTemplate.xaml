@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                    xmlns:converters="clr-namespace:MZ.Resource.Converters" InvalidatesImplicitDataTemplateResources="False">
+                    xmlns:converters="clr-namespace:MZ.Resource.Converters" 
+                    InvalidatesImplicitDataTemplateResources="False">
     
     <!-- 동적 처리 하거나 중복사용 많을 때 (ui관점)-->
     <converters:NumericDecimalConverter x:Key="NumericDecimalConverter" />

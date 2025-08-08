@@ -13,7 +13,7 @@ namespace MZ.Resource.Converters
         {
             if (value is string resourceKey)
             {
-                string translated = LanguageService.GetStringOnlyKey(resourceKey);
+                string translated = LanguageService.GetString(resourceKey);
                 return string.IsNullOrEmpty(translated) ? resourceKey : translated;
             }
             return value;

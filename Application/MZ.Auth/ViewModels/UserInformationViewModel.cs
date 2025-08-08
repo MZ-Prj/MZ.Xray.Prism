@@ -2,11 +2,9 @@
 using MZ.Domain.Entities;
 using MZ.Infrastructure;
 using MZ.Infrastructure.Interfaces;
-using MZ.Infrastructure.Sessions;
 using MZ.Resource;
+using MZ.Xray.Engine;
 using Prism.Ioc;
-using System;
-using System.Timers;
 
 namespace MZ.Auth.ViewModels
 {
@@ -14,6 +12,7 @@ namespace MZ.Auth.ViewModels
     {
 
         #region Services
+        private readonly IXrayService _xrayService;
         private readonly IDatabaseService _databaseService;
         private readonly IUserSession _userSession;
         #endregion
@@ -25,15 +24,18 @@ namespace MZ.Auth.ViewModels
         private string buildVersion;
         public string BuildVersion { get => buildVersion; set => SetProperty(ref buildVersion, value); }
 
-        private TimeSpan _usingDate;
-        public TimeSpan UsingDate { get => _usingDate; set => SetProperty(ref _usingDate, value); }
+        public UIProcesser UI
+        {
+            get => _xrayService.UI;
+            set => _xrayService.UI = value;
+        }
 
-        private Timer _usingDateTimer;
         #endregion
-        public UserInformationViewModel(IContainerExtension container, IDatabaseService databaseService, IUserSession userSession) : base(container)
+        public UserInformationViewModel(IContainerExtension container, IDatabaseService databaseService, IUserSession userSession, IXrayService xrayService) : base(container)
         {
             _databaseService = databaseService;
             _userSession = userSession;
+            _xrayService = xrayService;
 
             base.Initialize();
         }
@@ -46,26 +48,8 @@ namespace MZ.Auth.ViewModels
             if (user.Success)
             {
                 User = user.Data;
-                UsingDate = User.UsingDate;
-
-                StartUsingDateTimer();
+                _xrayService.UI.StartUsingDate(User.UsingDate, _userSession.LoginTime);
             }
-        }
-
-        /// <summary>
-        /// 실제 사용시간 누계 표시를 위함
-        /// </summary>
-        private void StartUsingDateTimer()
-        {
-            UsingDate += (DateTime.Now - _userSession.LoginTime);
-
-            _usingDateTimer = new Timer(1000);
-            _usingDateTimer.Elapsed += (s, e) =>
-            {
-                UsingDate += TimeSpan.FromSeconds(1);
-            };
-            _usingDateTimer.AutoReset = true;
-            _usingDateTimer.Start();
         }
     }
 }

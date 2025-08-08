@@ -40,7 +40,10 @@
     <ProjectReference Include="..\MZ.Xray.Engine\MZ.Xray.Engine.csproj" />
   </ItemGroup>
 
-	<Target Name="UpdateBuildVersion" BeforeTargets="BeforeBuild">
-		<Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)UpdateBuildVersion.ps1&quot;" />
-	</Target>
+  <Target Name="UpdateBuildVersion" BeforeTargets="BeforeBuild">
+    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)UpdateBuildVersion.ps1&quot;" />
+  </Target>
+  <Target Name="RemoveLogAndSave" BeforeTargets="BeforeBuild">
+  	<Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)RemoveLogAndSave.ps1&quot;" />
+  </Target>
 </Project>

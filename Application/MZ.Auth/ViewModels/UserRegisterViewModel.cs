@@ -51,7 +51,7 @@ namespace MZ.Auth.ViewModels
 
         private async void RegisterButton()
         {
-            var response = await _databaseService.User.Register(new(User.Username, User.Password, User.Repassword, User.Email,  User.IsAdmin ? UserRole.Admin : UserRole.User ));
+            var response = await _databaseService.User.Register(new(User.Username, User.Password, User.Repassword,  User.IsAdmin ? UserRole.Admin : UserRole.User ));
 
             User.MessageVisibility = !response.Success;
             User.Message = MZEnum.GetDescription(response.Code);

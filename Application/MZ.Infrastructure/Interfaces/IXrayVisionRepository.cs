@@ -55,6 +55,9 @@ namespace MZ.Infrastructure.Interfaces
         /// </summary>
         Task<MaterialEntity?> GetByUserIdAsync(int userId);
     }
+    public interface IXrayVisionMaterialControlRepository : IRepositoryBase<MaterialControlEntity>
+    {
+    }
     /// <summary>
     /// XrayVision ZeffectControl 저장소 인터페이스
     /// </summary>

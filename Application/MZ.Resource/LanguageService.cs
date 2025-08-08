@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace MZ.Resource
@@ -14,6 +15,7 @@ namespace MZ.Resource
     /// </summary>
     public static class LanguageService
     {
+        public readonly static string Key = "Lng";
         /// <summary>
         /// 언어 정보 
         /// </summary>
@@ -34,6 +36,11 @@ namespace MZ.Resource
         public static void Load(string culture)
         {
             Load(new CultureInfo(culture));
+        }
+
+        public static async Task LoadAsync(string culture)
+        {
+            await Task.Run(() => Load(culture)); 
         }
 
         public static void Load(CultureInfo culture)
@@ -58,7 +65,10 @@ namespace MZ.Resource
         /// </summary>
         public static string GetString(string key)
         {
-            Load(MZEnum.GetName(CurrentLanguage));
+            if (CultureInfo.CurrentUICulture.Name != MZEnum.GetName(CurrentLanguage))
+            {
+                Load(MZEnum.GetName(CurrentLanguage));
+            }
             return resourceManager.GetString(key);
         }
 

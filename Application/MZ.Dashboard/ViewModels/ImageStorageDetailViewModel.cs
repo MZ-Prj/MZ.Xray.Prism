@@ -59,10 +59,10 @@ namespace MZ.Dashboard.ViewModels
 
         public override void InitializeModel()
         {
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, name: UserSettingButtonKeys.AIOnOffButton));
-            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ZoomOut)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_ZoomIn)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Refresh), RefreshCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.CommonRefresh)));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegion_AIOnOff)));
 
         }
 
