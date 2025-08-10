@@ -26,7 +26,7 @@ namespace MZ.Resource
         public static string GetBuildVersion(this Assembly assembly)
         {
             ArgumentNullException.ThrowIfNull(assembly);
-            Version version = assembly.GetName().Version;
+            Version? version = assembly.GetName().Version;
             return version != null ? version.ToString() : "Unknown Version";
         }
 
