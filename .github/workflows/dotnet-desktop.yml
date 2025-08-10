@@ -1,0 +1,60 @@
+name: .NET Tests (Modules)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - MZ.Xray.Prism/UnitTest/MZ.AI.Engine.Test/MZ.AI.Engine.Test.csproj
+          - MZ.Xray.Prism/UnitTest/MZ.Infrastructure.Test/MZ.Infrastructure.Test.csproj
+          - MZ.Xray.Prism/UnitTest/MZ.Vision.Test/MZ.Vision.Test.csproj
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: NuGet cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # 솔루션 기준 restore
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --configuration Release --no-restore
+
+      # 모듈별 테스트
+      - name: Test ${{ matrix.project }}
+        run: >
+          dotnet test ${{ matrix.project }}
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=${{ github.job }}_${{ strategy.job-index }}.trx"
+          --results-directory ./TestResults/${{ strategy.job-index }}
+
+      # TRX 업로드(모듈별)
+      - name: Upload test results (${{ matrix.project }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ strategy.job-index }}
+          path: ./TestResults/${{ strategy.job-index }}
