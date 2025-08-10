@@ -20,6 +20,7 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Kernel.Events;
 using Axis = LiveChartsCore.SkiaSharpView.Axis;
+using LiveChartsCore.Drawing;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -189,6 +190,7 @@ namespace MZ.Dashboard.ViewModels
             var series = new RowSeries<int>
             {
                 Values = values,
+                DataPadding = new (0, 0),
                 DataLabelsPaint = new SolidColorPaint(SKColors.White),
                 DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Middle,
                 DataLabelsFormatter = (point) =>
@@ -226,7 +228,8 @@ namespace MZ.Dashboard.ViewModels
                 {
                     Name = "Object Name",
                     Labels = labels,
-                    IsVisible = false
+                    LabelsPaint = null,      // ← 범주 라벨 숨김
+                    NameTextSize = 12
                 }
             ];
         }
@@ -296,6 +299,9 @@ namespace MZ.Dashboard.ViewModels
                 new LineSeries<double>
                 {
                     Values = values,
+                    DataPadding = new (0, 0),
+                    GeometrySize = 12, 
+                    GeometryStroke = new SolidColorPaint(SKColors.Gray) { StrokeThickness = 2 } 
                 }
             ];
 
@@ -304,6 +310,7 @@ namespace MZ.Dashboard.ViewModels
                 new Axis
                 {
                     Labels = labels,
+                    NameTextSize = 12
                 }
             ];
 
@@ -311,9 +318,9 @@ namespace MZ.Dashboard.ViewModels
             [
                 new Axis
                 {
+                    NameTextSize = 12
                 }
             ];
-
         }
 
         /// <summary>

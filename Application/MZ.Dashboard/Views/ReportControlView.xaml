@@ -99,8 +99,7 @@
                                        YAxes="{Binding Path=YAxes}" 
                                        VerticalAlignment="Stretch" 
                                        HorizontalAlignment="Stretch"
-                                       ZoomMode="X"
-                                       TooltipPosition="Hidden" >
+                                       ZoomMode="X" >
             </liveCharts:CartesianChart>
 
             <DataGrid Grid.Row="1" 

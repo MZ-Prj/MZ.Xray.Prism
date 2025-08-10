@@ -74,12 +74,6 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-        private Canvas _canvasZeffectView;
-        public Canvas CanvasZeffectView { get => _canvasZeffectView; set => SetProperty(ref _canvasZeffectView, value); }
-
-        private Canvas _canvasPredictView;
-        public Canvas CanvasPredictView { get => _canvasPredictView; set => SetProperty(ref _canvasPredictView, value); }
-
         private ObservableCollection<IconButtonModel> _videoButtons = [];
         public ObservableCollection<IconButtonModel> VideoButtons { get => _videoButtons; set => SetProperty(ref _videoButtons, value); }
 
@@ -326,7 +320,7 @@ namespace MZ.Dashboard.ViewModels
         {
             SaveFileDialog saveFileDialog = new()
             {
-                Title = LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.SavePDF)),
+                Title = LanguageService.GetString(MZRegionNames.AddLng(MZRegionNames.SaveScreen)),
                 Filter = "PNG  (*.png)|*.png",
                 DefaultExt = ".png"
             };

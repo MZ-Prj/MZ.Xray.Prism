@@ -3,12 +3,14 @@ using Microsoft.Xaml.Behaviors;
 using MZ.Dashboard.ViewModels;
 using MZ.Util;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
+#nullable enable
 namespace MZ.Dashboard.Bahaviors
 {
     /// <summary>
@@ -26,6 +28,7 @@ namespace MZ.Dashboard.Bahaviors
             OnAttachedLoaded();
             OnAttachedMouse();
             OnAttachedScale();
+            OnAttachedFps();
         }
 
         /// <summary>
@@ -38,6 +41,7 @@ namespace MZ.Dashboard.Bahaviors
             OnDetachingLoaded();
             OnDetachingMouse();
             OnDetachingScale();
+            OnDetachingFps();
         }
     }
 
@@ -49,7 +53,7 @@ namespace MZ.Dashboard.Bahaviors
         /// <summary>
         /// ScaleTransform 
         /// </summary>
-        private ScaleTransform _scaleTransform;
+        private ScaleTransform? _scaleTransform;
 
         /// <summary>
         /// OnAttached : ScaleTransform 생성 및 RenderTransform 설정
@@ -123,7 +127,7 @@ namespace MZ.Dashboard.Bahaviors
         {
             var viewModel = this.AssociatedObject.DataContext as DashboardControlViewModel;
             
-            var pickerButton = viewModel.VideoButtons.FirstOrDefault(vb => vb.Command == viewModel.PickerCommand);
+            var pickerButton = viewModel?.VideoButtons.FirstOrDefault(vb => vb.Command == viewModel.PickerCommand);
             bool isPinned = pickerButton?.IconKind == nameof(PackIconMaterialKind.Pin);
 
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayTopControls"), isPinned);
@@ -148,6 +152,14 @@ namespace MZ.Dashboard.Bahaviors
     /// </summary>
     public partial class DashboardControlBehavior : Behavior<Canvas>
     {
+        public static readonly DependencyProperty ScreenProperty = DependencyProperty.Register(nameof(Screen), typeof(Canvas), typeof(DashboardControlBehavior), new PropertyMetadata(null));
+
+        public Canvas Screen
+        {
+            get => (Canvas)GetValue(ScreenProperty);
+            set => SetValue(ScreenProperty, value);
+        }
+
         /// <summary>
         /// Attached : Loaded 
         /// </summary>
@@ -177,16 +189,111 @@ namespace MZ.Dashboard.Bahaviors
                 viewModel.CreateMedia(width, height);
 
                 var canvas = MZFramework.FindChildByName(this.AssociatedObject, "CanvasImageView") as Canvas;
-                var predict = MZFramework.FindChildByName(this.AssociatedObject, "CanvasAIPredictView") as Canvas;
-                var zeffect = MZFramework.FindChildByName(this.AssociatedObject, "CanvasZeffectView") as Canvas;
 
                 if (canvas != null)
                 {
-                    viewModel.CanvasImageView = canvas;
-                    viewModel.CanvasPredictView = predict;
-                    viewModel.CanvasZeffectView = zeffect;
+                    Screen = canvas;
                 }
             }
         }
     }
+
+    /// <summary>
+    /// Canvas 하위의 Usercontrol 처리 속도 시간 측정
+    /// </summary>
+    /// <summary>
+    /// Canvas 하위의 Usercontrol 처리 속도 시간 측정
+    /// </summary>
+    public partial class DashboardControlBehavior
+    {
+        public static readonly DependencyProperty GenerationProperty = DependencyProperty.Register(nameof(Generation), typeof(int), typeof(DashboardControlBehavior), new PropertyMetadata(0));
+
+        public static readonly DependencyProperty FpsProperty = DependencyProperty.Register(nameof(Fps), typeof(double), typeof(DashboardControlBehavior), new PropertyMetadata(0.0));
+
+        /// <summary>
+        /// 새 프레임이 준비됨을 표시, 생산 카운터를 Behavior가 읽음
+        /// </summary>
+        public int Generation
+        {
+            get => (int)GetValue(GenerationProperty);
+            set => SetValue(GenerationProperty, value);
+        }
+
+        /// <summary>
+        /// UI 표시 FPS
+        /// </summary>
+        public double Fps
+        {
+            get => (double)GetValue(FpsProperty);
+            set => SetValue(FpsProperty, value);
+        }
+
+        private TimeSpan _lastTimeSpan;
+        private readonly Stopwatch _stopwatch = new();
+        private int _second;
+
+        /// <summary>
+        /// 마지막 렌더에서 본 gen
+        /// </summary>
+        private int _lastSeenGen;
+
+        /// <summary>
+        /// FPS 측정 초기화 & 구독
+        /// </summary>
+        private void OnAttachedFps()
+        {
+            _lastTimeSpan = default;
+            _second = 0;
+            _lastSeenGen = Generation;
+            _stopwatch.Restart();
+
+            CompositionTarget.Rendering += OnRenderingFps;
+        }
+
+        /// <summary>
+        /// FPS 측정 해제
+        /// </summary>
+        private void OnDetachingFps()
+        {
+            CompositionTarget.Rendering -= OnRenderingFps;
+            _stopwatch.Reset();
+        }
+
+        /// <summary>
+        /// WPF 렌더 루프 기준으로 UI FPS표시
+        /// </summary>
+        private void OnRenderingFps(object? sender, EventArgs e)
+        {
+            // 컨트롤이 화면에 없거나 숨김이면 스킵
+            if (this.AssociatedObject == null || !this.AssociatedObject.IsVisible)
+            {
+                return;
+            }
+
+            var args = (RenderingEventArgs)e;
+            if (_lastTimeSpan == default)
+            {
+                _lastTimeSpan = args.RenderingTime;
+                return;
+            }
+
+            // 이번 렌더와 비교해서 다르면 프래임간주
+            int gen = Generation;
+            if (gen != _lastSeenGen)
+            {
+                _lastSeenGen = gen;
+                _second++;
+            }
+
+            // 1초마다 스냅샷
+            if (_stopwatch.ElapsedMilliseconds >= 1000)
+            {
+                Fps = _second;
+
+                _second = 0;
+                _stopwatch.Restart();
+            }
+        }
+    }
+
 }
