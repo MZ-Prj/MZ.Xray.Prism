@@ -114,12 +114,6 @@ namespace MZ.Model
         public int VideoCaptureCount { get => _videoCaptureCount; set => SetProperty(ref _videoCaptureCount, value); }
 
         /// <summary>
-        /// 초당 프레임수(1000 / FPS)
-        /// </summary>
-        private int _fps = 120;
-        public int FPS { get => _fps; set => SetProperty(ref _fps, value); }
-
-        /// <summary>
         /// 비디오 재생 딜레이(1000 * VideoDelay)
         /// </summary>
         private int _videoDelay = 30;
@@ -136,7 +130,17 @@ namespace MZ.Model
         /// </summary>
         private double _height = 0;
         public double Height { get => _height; set => SetProperty(ref _height, value); }
+        /// <summary>
+        /// 새 프레임이 준비
+        /// </summary>
+        private int _generation = 0;
+        public int Generation { get => _generation; set => SetProperty(ref _generation, value); }
 
+        /// <summary>
+        /// FPS
+        /// </summary>
+        private double _fps = 0;
+        public double Fps { get => _fps; set => SetProperty(ref _fps, value); }
     }
 
     /// <summary>
@@ -149,31 +153,7 @@ namespace MZ.Model
         /// 값을 설정하면 <see cref="ImageBrush"/>도 자동 변경됨
         /// </summary>
         private ImageSource _imageSource = null;
-        public ImageSource ImageSource
-        {
-            get => _imageSource;
-            set
-            {
-                if (SetProperty(ref _imageSource, value))
-                {
-                    ImageBrush = new ImageBrush(ImageSource);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 현재 이미지에 적용되는 Brush (UI에서 이미지 Fill 등 용도)
-        /// <see cref="ImageSource"/>가 변경될 때 자동 변경됨
-        /// </summary>
-        private Brush _imageBrush;
-        public Brush ImageBrush { get => _imageBrush; set => SetProperty(ref _imageBrush, value); }
-
-        /// <summary>
-        /// 이미지에 적용되는 필터 정보 (Zoom, Brightness, Contrast 등)
-        /// </summary>
-        private FilterModel _filter = new();
-        public FilterModel Filter { get => _filter; set => SetProperty(ref _filter, value); }
-
+        public ImageSource ImageSource { get => _imageSource; set => SetProperty(ref _imageSource, value); }
     }
 
     /// <summary>
@@ -206,6 +186,12 @@ namespace MZ.Model
         /// </summary>
         private FrameInformationModel _information = new();
         public FrameInformationModel Information { get => _information; set => SetProperty(ref _information, value); }
+
+        /// <summary>
+        /// 이미지에 적용되는 필터 정보 (Zoom, Brightness, Contrast 등)
+        /// </summary>
+        private FilterModel _filter = new();
+        public FilterModel Filter { get => _filter; set => SetProperty(ref _filter, value); }
 
     }
 
@@ -416,7 +402,7 @@ namespace MZ.Model
     /// <summary>
     /// Zeffect 영상 데이터 및 제어 포인트 집합을 관리하는 바인딩용 모델
     /// </summary>
-    public class ZeffectModel : BindableBase
+    public class ZeffectModel : ImageModel
     {
         /// <summary>
         /// 영상 데이터
@@ -424,28 +410,6 @@ namespace MZ.Model
         private Mat _image = new(1024, 1024, MatType.CV_8UC1, Scalar.White);
         public Mat Image { get => _image; set => SetProperty(ref _image, value); }
 
-        /// <summary>
-        /// WPF UI 표시용 이미지 (ImageSource)
-        /// - ImageSource 설정 시, ImageBrush 자동 동기화
-        /// </summary>
-        private ImageSource _imageSource = null;
-        public ImageSource ImageSource
-        {
-            get => _imageSource;
-            set
-            {
-                if (SetProperty(ref _imageSource, value))
-                {
-                    ImageBrush = new ImageBrush(ImageSource);
-                }
-            }
-        }
-        /// <summary>
-        /// 이미지 표현용 WPF 브러시  
-        /// - ImageSource가 변경될 때 동기화
-        /// </summary>
-        private Brush _imageBrush;
-        public Brush ImageBrush { get => _imageBrush; set => SetProperty(ref _imageBrush, value); }
         /// <summary>
         /// 영상 프레임 시퀀스
         /// </summary>

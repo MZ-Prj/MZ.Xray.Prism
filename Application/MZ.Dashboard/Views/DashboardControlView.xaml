@@ -32,7 +32,9 @@
                     ClipToBounds="True" 
                     Background="{DynamicResource MahApps.Brushes.Control.Background}">
                 <i:Interaction.Behaviors>
-                    <behaviors:DashboardControlBehavior />
+                    <behaviors:DashboardControlBehavior Screen="{Binding Path=Media.Model.Screen, Mode=OneWayToSource}"
+                                                        Generation="{Binding Path=Media.Information.Generation}"
+                                                        Fps="{Binding Path=Media.Information.Fps, Mode=OneWayToSource}"/>
                 </i:Interaction.Behaviors>
                 <Canvas x:Name="CanvasImageView" 
                         DataContext="{Binding Path=Media.Model}"
@@ -217,7 +219,10 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-
+                <WrapPanel x:Name="OverlayFpsControls" 
+                           Canvas.Right="0" Canvas.Top="0">
+                    <Label Content="{Binding Path=Media.Information.Fps}" Margin="4" Foreground="{DynamicResource MahApps.Brushes.Accent2}"/>
+                </WrapPanel>
                 <StackPanel x:Name="OverlayBottomControls" 
                             Visibility="Collapsed"
                             Canvas.Left="0" Canvas.Bottom="0"

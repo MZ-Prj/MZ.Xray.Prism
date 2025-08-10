@@ -345,6 +345,7 @@ namespace MZ.Xray.Engine
         public void IncreaseInterval()
         {
             Information.Interval++;
+            Information.Generation++;
         }
 
         /// <summary>

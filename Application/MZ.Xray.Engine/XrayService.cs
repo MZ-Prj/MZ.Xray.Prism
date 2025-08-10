@@ -17,6 +17,8 @@ using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
 using MZ.Core;
+using System.Windows.Media.Effects;
+using Microsoft.VisualBasic;
 
 namespace MZ.Xray.Engine
 {
@@ -178,7 +180,7 @@ namespace MZ.Xray.Engine
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
                         await UpdateScreen();
-                        await Task.Delay(1000 / Media.Information.FPS, _screenCts.Token);
+                        await Task.Delay(1, _screenCts.Token);
                     }
                 }
                 catch (OperationCanceledException)
@@ -278,6 +280,7 @@ namespace MZ.Xray.Engine
         /// - 슬라이더가 끝까지 도달하면 프레임 삭제 및 슬라이더 초기화
         /// - 슬라이더 증분, 프레임 수 증가 등 갱신
         /// </summary>
+        
         public async Task UpdateScreen()
         {
             await Task.WhenAll(
@@ -368,7 +371,6 @@ namespace MZ.Xray.Engine
     /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
-
         #region Processer (모델 및 알고리즘 처리)
         private MediaProcesser _media = new();
         public MediaProcesser Media { get => _media; set => SetProperty(ref _media, value); }
@@ -442,7 +444,6 @@ namespace MZ.Xray.Engine
             {
                 MZLogger.Error(ex.ToString());
             }
-            
         }
 
         /// <summary>

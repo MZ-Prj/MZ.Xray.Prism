@@ -28,11 +28,6 @@ namespace MZ.Xray.Engine
             set => Model.Controls = value;
         }
 
-        public Brush ImageBrush
-        {
-            get => Model.ImageBrush;
-            set => Model.ImageBrush = value;
-        }
 
         public ImageSource ImageSource
         {
