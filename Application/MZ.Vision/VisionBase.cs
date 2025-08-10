@@ -24,7 +24,7 @@ namespace MZ.Vision
         /// </summary>
         public static Scalar Make(MatType type)
         {
-            Scalar scalar = new Scalar(0);
+            Scalar scalar = new (0);
 
             if (type == MatType.CV_16UC1)
             {
@@ -47,10 +47,11 @@ namespace MZ.Vision
 
         /// <summary>
         /// 타입에 맞는 0값 스칼라 반환
+        
         /// </summary>
         public static Scalar MakeZeros(MatType type)
         {
-            Scalar scalar = new Scalar(0);
+            Scalar scalar = new (0);
 
             if (type == MatType.CV_16UC1)
             {
@@ -72,20 +73,22 @@ namespace MZ.Vision
         }
 
         /// <summary>
-        /// 0으로 채운 Mat 생성
+        /// 0으로 채운 Mat 생성 
+        
         /// </summary>
         public static Mat CreateZeros(int height, int width, MatType type)
         {
-            Mat result = new Mat(height, width, type, MakeZeros(type));
+            Mat result = new (height, width, type, MakeZeros(type));
             return result;
         }
 
         /// <summary>
         /// 타입에 맞는 최대값으로 채운 Mat 생성
+        
         /// </summary>
         public static Mat Create(int height, int width, MatType type)
         {
-            Mat result = new Mat(height, width, type, Make(type));
+            Mat result = new (height, width, type, Make(type));
             return result;
         }
 
@@ -94,7 +97,7 @@ namespace MZ.Vision
         /// </summary>
         public static Mat Create(int height, int width, MatType type, Scalar value)
         {
-            Mat result = new Mat(height, width, type, value);
+            Mat result = new (height, width, type, value);
             return result;
         }
 
@@ -116,6 +119,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 영상 목록을 영상 파일로 저장
+        
         /// </summary>
         public static void Save(List<Mat> input, string root, double fps = 2.0)
         {
@@ -154,6 +158,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 영상 목록+시간 리스트 영상 파일로 저장(시간 워터마크 추가)
+        
         /// </summary>
         public static void Save(List<Mat> input, List<DateTime> time, string root, double fps = 2.0)
         {
@@ -193,31 +198,31 @@ namespace MZ.Vision
 
         /// <summary>
         /// 알파 채널을 흰 배경으로 블렌딩
+        
         /// </summary>
         public static Mat BlendWithBackground(Mat input)
         {
-            var start = DateTime.Now;
 
             Mat[] channels = new Mat[4];
             Cv2.Split(input, out channels);
 
-            Mat alpha = new Mat();
+            Mat alpha = new ();
             channels[3].ConvertTo(alpha, MatType.CV_32F, 1.0 / byte.MaxValue);
 
-            Mat background = new Mat(input.Size(), MatType.CV_32FC3, Scalar.White);
+            Mat background = new (input.Size(), MatType.CV_32FC3, Scalar.White);
 
-            Mat foreground = new Mat();
-            Cv2.Merge(new[] { channels[0], channels[1], channels[2] }, foreground);
+            Mat foreground = new ();
+            Cv2.Merge([channels[0], channels[1], channels[2]], foreground);
             foreground.ConvertTo(foreground, MatType.CV_32FC3);
 
-            Mat result = new Mat();
+            Mat result = new ();
 
             for (int c = 0; c < 3; c++)
             {
-                using (Mat fore = new Mat())
-                using (Mat back = new Mat())
+                using (Mat fore = new ())
+                using (Mat back = new ())
                 {
-                    Mat oneMinusAlpha = new Mat();
+                    Mat oneMinusAlpha = new ();
 
                     Cv2.Multiply(foreground.ExtractChannel(c), alpha, fore);
                     Cv2.Subtract(Mat.Ones(alpha.Size(), alpha.Type()), alpha, oneMinusAlpha);
@@ -230,7 +235,7 @@ namespace MZ.Vision
                     }
                     else
                     {
-                        Cv2.Merge(new[] { result, fore }, result);
+                        Cv2.Merge([result, fore], result);
                     }
                 }
             }
@@ -241,6 +246,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 컬러 변환 (ex: BGRA -> BGR 등)
+        
         /// </summary>
         public static Mat CvtColor(Mat input, ColorConversionCodes code)
         {
@@ -328,6 +334,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 다각형 채우기
+        
         /// </summary>
         public static Mat FillPoly(Mat image, List<Point> polygonPoints, Scalar color)
         {
@@ -338,6 +345,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 두 영상의 히스토그램 비교
+        
         /// </summary>
         public static double CompareHistogram(Mat input1, Mat input2, HistCompMethods histCompMethods = HistCompMethods.Chisqr)
         {
@@ -353,6 +361,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 히스토그램 평활화 결과 반환
+        
         /// </summary>
         public static Mat Histogram(Mat input)
         {
@@ -365,7 +374,7 @@ namespace MZ.Vision
             Mat[] srcChannels = { input };
             int[] srcChannelsIdx = { 0 };
             int[] histSize = { 256 };
-            Rangef[] ranges = { new Rangef((int)minValue, (int)maxValue) };
+            Rangef[] ranges = { new((int)minValue, (int)maxValue) };
             Cv2.CalcHist(srcChannels, srcChannelsIdx, null, srcHist, 1, histSize, ranges);
 
             Mat dstHist = new();
@@ -378,6 +387,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 히스토그램 이미지(Mat) 생성 
+        
         /// </summary>
         public static Mat PlotFilledHistogram(Mat input, double lower = 0, double upper = byte.MaxValue)
         {
@@ -393,8 +403,8 @@ namespace MZ.Vision
             for (int i = 0; i < channels; i++)
             {
                 Mat hist = new();
-                Cv2.CalcHist([input], [i], null, hist, 1, histSizes, ranges);
 
+                Cv2.CalcHist([input], [i], null, hist, 1, histSizes, ranges);
                 Cv2.MinMaxLoc(hist, out _, out double maxVal);
 
                 Scalar color = new(0, 0, 0, 128);
@@ -453,6 +463,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 샤프닝(선명도) 조정 (레벨 적용)
+        
         /// </summary>
         public static Mat Sharp(Mat input, int level)
         {
@@ -544,7 +555,7 @@ namespace MZ.Vision
             int xOffset = (size - newWidth) / 2;
             int yOffset = (size - newHeight) / 2;
 
-            Rect roi = new Rect(xOffset, yOffset, newWidth, newHeight);
+            Rect roi = new (xOffset, yOffset, newWidth, newHeight);
             resized.CopyTo(result[roi]);
 
             return result;
@@ -562,6 +573,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 주어진 위치에 컬럼 삽입
+        
         /// </summary>
         public static Mat CenterCol(Mat input, int width, int height, Scalar scalar, int start, int end)
         {
@@ -572,6 +584,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 마지막 컬럼에 선(Line) 삽입
+        
         /// </summary>
         public static Mat OverlapCol(Mat input, Mat line)
         {
@@ -651,6 +664,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 컬럼 범위만 추출
+        
         /// </summary>
         public static Mat SplitCol(Mat input, int start, int end)
         {
@@ -663,6 +677,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 행 범위만 추출
+        
         /// </summary>
         public static Mat SplitRow(Mat input, int start, int end)
         {
@@ -675,6 +690,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 전체 평균값 반환
+        
         /// </summary>
         public static double Mean(Mat input)
         {
@@ -683,6 +699,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// Flip(상하좌우 뒤집기)
+        
         /// </summary>
         public static Mat Flip(Mat input, FlipMode mode)
         {
@@ -711,10 +728,11 @@ namespace MZ.Vision
 
         /// <summary>
         /// 지정 영역(Crop)
+        
         /// </summary>
         public static Mat Crop(Mat input, int x, int y, int width, int height)
         {
-            Rect rect = new Rect(x, y, width, height);
+            Rect rect = new (x, y, width, height);
             Mat result = new(input, rect);
 
             return result;
@@ -726,7 +744,7 @@ namespace MZ.Vision
         public static Mat CropPaste(Mat input, Mat cropped, int x, int y)
         {
             Mat result = input.Clone();
-            Rect roi = new Rect(x, y, cropped.Width, cropped.Height);
+            Rect roi = new (x, y, cropped.Width, cropped.Height);
             cropped.CopyTo(result[roi]);
 
             return result;
@@ -829,6 +847,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// ImageSource -> Mat 변환
+        
         /// </summary>
         public static Mat ImageSourceToMat(ImageSource imageSource)
         {
@@ -836,11 +855,12 @@ namespace MZ.Vision
             {
                 return BitmapSourceConverter.ToMat(bitmapSource);
             }
-            return new Mat();
+            return new ();
         }
 
         /// <summary>
         /// BitmapSource -> Mat 변환
+        
         /// </summary>
         public static Mat BitmapSourceToMat(BitmapSource bitmapSource)
         {
@@ -859,6 +879,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 임계값 처리 (채널별)
+        
         /// </summary>
         public static Mat Threshold(Mat mat, double lower, double upper)
         {
@@ -882,6 +903,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 컬러 밸런스(RGB)
+        
         /// </summary>
         public static Mat ColorBalance(Mat mat, double red, double green, double blue)
         {
@@ -898,6 +920,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 컬러 채널 분리 및 선택
+        
         /// </summary>
         public static Mat SelectColor(Mat mat, ColorEnum color)
         {
@@ -999,6 +1022,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 노출, 오프셋, 감마 보정
+        
         /// </summary>
         public static Mat Exposure(Mat mat, double exposure, double offset, double gammaCorrection)
         {
@@ -1042,10 +1066,10 @@ namespace MZ.Vision
 
         /// <summary>
         /// 커브(LUT) 적용 (포인트 지정)
+        
         /// </summary>
         public static Mat Curve(Mat mat, Point[] points)
         {
-            DateTime start = DateTime.Now;
             if (points.Length == 0)
             {
                 return mat;
@@ -1067,9 +1091,8 @@ namespace MZ.Vision
 
         /// <summary>
         /// 선형 LUT 생성
+        
         /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
         public static byte[] GenerateLinearLUT(Point[] points)
         {
             byte[] lut = new byte[256];
@@ -1082,7 +1105,7 @@ namespace MZ.Vision
             {
                 sortedPoints.Insert(0, new Point(0, 0));
             }
-            if (sortedPoints[sortedPoints.Count - 1].X != 255)
+            if (sortedPoints[^1].X != 255)
             {
                 sortedPoints.Add(new Point(255, 255));
             }
@@ -1100,10 +1123,8 @@ namespace MZ.Vision
 
         /// <summary>
         /// 선형 보간
+        
         /// </summary>
-        /// <param name="points"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
         private static double LinearInterpolate(List<Point> points, double input)
         {
             if (points.Count == 0)
@@ -1116,9 +1137,9 @@ namespace MZ.Vision
                 return points[0].Y; // 첫 점보다 작으면 첫 점의 Y 값 반환
             }
 
-            if (input >= points[points.Count - 1].X)
+            if (input >= points[^1].X)
             {
-                return points[points.Count - 1].Y; // 끝 점보다 크면 끝 점의 Y 값 반환
+                return points[^1].Y; // 끝 점보다 크면 끝 점의 Y 값 반환
             }
 
             // 선형 보간
@@ -1136,9 +1157,8 @@ namespace MZ.Vision
 
         /// <summary>
         /// 스플라인 곡선 LUT 생성
+        
         /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
         private static byte[] GenerateSplineLUT(Point[] points)
         {
             byte[] lut = new byte[256];
@@ -1158,7 +1178,7 @@ namespace MZ.Vision
                 {
                     splinePoints.Insert(0, new Point(0, 0));
                 }
-                if (splinePoints[splinePoints.Count - 1].X != 255 || splinePoints[splinePoints.Count - 1].Y != 255)
+                if (splinePoints[^1].X != 255 || splinePoints[^1].Y != 255)
                 {
                     splinePoints.Add(new Point(255, 255));
                 }
@@ -1175,6 +1195,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 주어진 점 목록을 바탕으로 스플라인 곡선 포인트 목록을 생성
+        
         /// </summary>
         public static List<Point> GenerateSpline(List<Point> points)
         {
@@ -1204,6 +1225,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// Catmull-Rom 스플라인 공식에 따라 주어진 t에서 좌표값 계산
+        
         /// </summary>
         public static double CalculateSplineValue(double t, double p0, double p1, double p2, double p3)
         {
@@ -1217,10 +1239,8 @@ namespace MZ.Vision
 
         /// <summary>
         /// 스플라인 곡선 보간법
+        
         /// </summary>
-        /// <param name="splinePoints"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
         private static double InterpolateFromSpline(List<Point> splinePoints, double input)
         {
             if (splinePoints.Count == 0)
@@ -1233,9 +1253,9 @@ namespace MZ.Vision
                 return splinePoints[0].Y;
             }
 
-            if (input >= splinePoints[splinePoints.Count - 1].X)
+            if (input >= splinePoints[^1].X)
             {
-                return splinePoints[splinePoints.Count - 1].Y;
+                return splinePoints[^1].Y;
             }
 
             for (int i = 0; i < splinePoints.Count - 1; i++)
@@ -1262,12 +1282,13 @@ namespace MZ.Vision
 
         /// <summary>
         /// 컨투어(윤곽선) 사각형 추출
+        
         /// </summary>
-        public static List<Rect> ContourRectangles(Mat mat, int minArea)
+        public static List<Rect> ContourRectangles(Mat mat, int minArea, HierarchyIndex[] hierarchy)
         {
             double maxArea = mat.Width * mat.Height * 0.9;
             // Contour 탐지
-            Cv2.FindContours(mat, out Point[][] contours, out HierarchyIndex[] hierarchy, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+            Cv2.FindContours(mat, out Point[][] contours, out hierarchy, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
             //계산
             List<Rect> rectangles = [];
@@ -1319,7 +1340,6 @@ namespace MZ.Vision
             return rectangles;
         }
 
-        
         /// <summary>
         /// 랜덤 컬러 반환
         /// </summary>
@@ -1352,7 +1372,7 @@ namespace MZ.Vision
             byte v = 255;
 
             byte[] hsv = [h, s, v];
-            var hsvMat = new Mat(1, 1, MatType.CV_8UC3);
+            Mat hsvMat = new (1, 1, MatType.CV_8UC3);
             Marshal.Copy(hsv, 0, hsvMat.Data, hsv.Length);
 
             Mat bgrMat = new ();
@@ -1365,6 +1385,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// Mat 배열 수평 합치기
+        
         /// </summary>
         public static Mat HConcat(params Mat[] mats)
         {
@@ -1375,6 +1396,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 밝기/명암 동시 조정
+        
         /// </summary>
         public static Mat BrightnessAndContrast(Mat mat, double brightness, double contrast)
         {
@@ -1389,6 +1411,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// MatType에 맞는 타입 반환
+        
         /// </summary>
         public static Type GetTypeFromMatType(MatType matType)
         {
@@ -1414,6 +1437,7 @@ namespace MZ.Vision
 
         /// <summary>
         /// 비었는지 확인
+        
         /// </summary>
         public static bool IsEmpty(Mat mat)
         {
@@ -1424,6 +1448,9 @@ namespace MZ.Vision
             return false;
         }
 
+        /// <summary>
+        /// Window.Point 좌표 -> Opencv 좌표
+        /// </summary>
         public static Point ToOpenCvPoint(System.Windows.Point point)
         {
             return new Point((int)point.X, (int)point.Y);

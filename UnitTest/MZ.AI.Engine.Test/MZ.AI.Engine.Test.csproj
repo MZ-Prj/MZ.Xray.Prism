@@ -1,0 +1,32 @@
+﻿<Project Sdk="MSTest.Sdk/3.6.4">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseVSTest>true</UseVSTest>
+		<BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="Model\sample.onnx" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="Model\sample.png"  CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Moq" Version="4.20.72" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Application\MZ.AI.Engine\MZ.AI.Engine.csproj" />
+		<None Include="Model\sample.png" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+</Project>
