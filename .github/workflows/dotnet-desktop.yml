@@ -1,0 +1,67 @@
+name: .NET Tests (Modules)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  run-tests:
+    # net8.0-windows 타겟이 있으니 Windows 러너 사용
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module_name: AI.Engine
+            project: MZ.AI.Engine.Test/MZ.AI.Engine.Test.csproj
+          - module_name: Infrastructure
+            project: MZ.Infrastructure.Test/MZ.Infrastructure.Test.csproj
+          - module_name: Vision
+            project: MZ.Vision.Test/MZ.Vision.Test.csproj
+
+    name: Run Tests (${{ matrix.module_name }})
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: NuGet cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # 솔루션이 UnitTest 폴더에 있으므로, 그 디렉터리에서 실행
+      - name: Restore (solution)
+        run: dotnet restore UnitTest.sln
+        working-directory: ./UnitTest
+
+      - name: Build (solution, Release)
+        run: dotnet build UnitTest.sln --configuration Release --no-restore
+        working-directory: ./UnitTest
+
+      # 모듈별 테스트 (csproj 경로는 UnitTest를 기준으로)
+      - name: Test (${{ matrix.module_name }})
+        run: >
+          dotnet test ${{ matrix.project }}
+          --configuration Release
+          --logger "trx;LogFileName=${{ matrix.module_name }}.trx"
+          --results-directory ../TestResults/${{ matrix.module_name }}
+        working-directory: ./UnitTest
+
+      - name: Upload test results (${{ matrix.module_name }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.module_name }}
+          path: ./TestResults/${{ matrix.module_name }}
