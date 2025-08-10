@@ -7,16 +7,22 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
+  run-tests:
+    # net8.0-windows 타겟이 있으니 Windows 러너 사용
     runs-on: windows-latest
 
     strategy:
       fail-fast: false
       matrix:
-        project:
-          - MZ.Xray.Prism/UnitTest/MZ.AI.Engine.Test/MZ.AI.Engine.Test.csproj
-          - MZ.Xray.Prism/UnitTest/MZ.Infrastructure.Test/MZ.Infrastructure.Test.csproj
-          - MZ.Xray.Prism/UnitTest/MZ.Vision.Test/MZ.Vision.Test.csproj
+        include:
+          - module_name: AI.Engine
+            project: MZ.AI.Engine.Test/MZ.AI.Engine.Test.csproj
+          - module_name: Infrastructure
+            project: MZ.Infrastructure.Test/MZ.Infrastructure.Test.csproj
+          - module_name: Vision
+            project: MZ.Vision.Test/MZ.Vision.Test.csproj
+
+    name: Run Tests (${{ matrix.module_name }})
 
     steps:
       - name: Checkout
@@ -35,26 +41,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      # 솔루션 기준 restore
-      - name: Restore
-        run: dotnet restore
+      # 솔루션이 UnitTest 폴더에 있으므로, 그 디렉터리에서 실행
+      - name: Restore (solution)
+        run: dotnet restore UnitTest.sln
+        working-directory: ./UnitTest
 
-      - name: Build (Release)
-        run: dotnet build --configuration Release --no-restore
+      - name: Build (solution, Release)
+        run: dotnet build UnitTest.sln --configuration Release --no-restore
+        working-directory: ./UnitTest
 
-      # 모듈별 테스트
-      - name: Test ${{ matrix.project }}
+      # 모듈별 테스트 (csproj 경로는 UnitTest를 기준으로)
+      - name: Test (${{ matrix.module_name }})
         run: >
           dotnet test ${{ matrix.project }}
           --configuration Release
           --no-build
-          --logger "trx;LogFileName=${{ github.job }}_${{ strategy.job-index }}.trx"
-          --results-directory ./TestResults/${{ strategy.job-index }}
+          --logger "trx;LogFileName=${{ matrix.module_name }}.trx"
+          --results-directory ../TestResults/${{ matrix.module_name }}
+        working-directory: ./UnitTest
 
-      # TRX 업로드(모듈별)
-      - name: Upload test results (${{ matrix.project }})
+      - name: Upload test results (${{ matrix.module_name }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ strategy.job-index }}
-          path: ./TestResults/${{ strategy.job-index }}
+          name: test-results-${{ matrix.module_name }}
+          path: ./TestResults/${{ matrix.module_name }}
