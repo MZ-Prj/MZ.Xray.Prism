@@ -39,6 +39,12 @@ namespace MZ.Dashboard.ViewModels
             set => _xrayService.Media = value;
         }
 
+        public CalibrationProcesser Calibration
+        {
+            get => _xrayService.Calibration;
+            set => _xrayService.Calibration = value;
+        }
+
         public ZeffectProcesser Zeffect
         {
             get => _xrayService.Zeffect;
@@ -136,6 +142,13 @@ namespace MZ.Dashboard.ViewModels
         private DelegateCommand _changedSliderCommand;
         public ICommand ChangedSliderCommand => _changedSliderCommand ??= new DelegateCommand(MZAction.Wrapper(ChangedSlider, false));
 
+        private DelegateCommand _relativeWidthRatioUpCommand;
+        public ICommand RelativeWidthRatioUpCommand => _relativeWidthRatioUpCommand ??= new(MZAction.Wrapper(RelativeWidthRatioUpButton));
+
+        private DelegateCommand _relativeWidthRatioDownCommand;
+        public ICommand RelativeWidthRatioDownCommand => _relativeWidthRatioDownCommand ??= new(MZAction.Wrapper(RelativeWidthRatioDownButton));
+
+
         #endregion
 
 
@@ -169,6 +182,7 @@ namespace MZ.Dashboard.ViewModels
                 parameters: new NavigationParameters{
                     { "ActionButtons", ActionButtons }
                 },
+                resizeMode: ResizeMode.NoResize,
                 isMultiple: false,
                 width: 228,
                 height: 364);
@@ -195,8 +209,8 @@ namespace MZ.Dashboard.ViewModels
 
             ToggleFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
 
-            VisibilityFooterButton(PreviousCommand, IsRunning, VideoButtons);
-            VisibilityFooterButton(NextCommand, IsRunning, VideoButtons);
+            ChangedVisibility(IsRunning);
+
 
             // logic
             _xrayService.PlayStop();
@@ -222,7 +236,7 @@ namespace MZ.Dashboard.ViewModels
         /// <summary>
         /// 축소
         /// </summary>
-        private void ZoomOutButton()
+        public void ZoomOutButton()
         {
             Media.ChangedFilterZoom(-0.1f);
         }
@@ -230,7 +244,7 @@ namespace MZ.Dashboard.ViewModels
         /// <summary>
         /// 확대
         /// </summary>
-        private void ZoomInButton()
+        public void ZoomInButton()
         {
             Media.ChangedFilterZoom(+0.1f);
         }
@@ -332,6 +346,17 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
+
+        private void RelativeWidthRatioUpButton()
+        {
+            Calibration.ChangedRelativeWidthRatio(-0.1);
+        }
+
+        private void RelativeWidthRatioDownButton()
+        {
+            Calibration.ChangedRelativeWidthRatio(+0.1);
+        }
+
         #endregion
 
         /// <summary>
@@ -344,8 +369,7 @@ namespace MZ.Dashboard.ViewModels
             CreateButtons();
             ChangeFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Stop), VideoButtons);
 
-            VisibilityFooterButton(PreviousCommand, false, VideoButtons);
-            VisibilityFooterButton(NextCommand, false, VideoButtons);
+            ChangedVisibility(false);
 
             // logic
             _xrayService.Stop();
@@ -373,6 +397,9 @@ namespace MZ.Dashboard.ViewModels
             VideoButtons.Add(new(nameof(PackIconMaterialKind.Stop), PlayStopCommand, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionPlayStop)));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronLeft), PreviousCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionPrevious)));
             VideoButtons.Add(new(nameof(PackIconMaterialKind.ChevronRight), NextCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionNext)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ArrowCollapseHorizontal), RelativeWidthRatioDownCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionRelativeWidthRatioDown)));
+            VideoButtons.Add(new(nameof(PackIconMaterialKind.ArrowExpandHorizontal), RelativeWidthRatioUpCommand, isVisibility: false, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionRelativeWidthRatioUp)));
+
 
             ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyMinus), ZoomOutCommand, name: UserSettingButtonKeys.ZoomOutButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZoomOut)));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.MagnifyPlus), ZoomInCommand, name: UserSettingButtonKeys.ZoomInButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZoomIn)));
@@ -387,6 +414,8 @@ namespace MZ.Dashboard.ViewModels
             ActionButtons.Add(new(nameof(PackIconMaterialKind.CircleHalfFull), ContrastUpCommand, name: UserSettingButtonKeys.ContrastUpButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionContrastUp)));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.FilterRemove), FilterClearCommand, name: UserSettingButtonKeys.FilterClearButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionFilterClear)));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.AlphaZ), ZeffectCommand, new SolidColorBrush(Colors.YellowGreen), name: UserSettingButtonKeys.ZeffectButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionZeffect)));
+
+
             ActionButtons.Add(new(nameof(PackIconMaterialKind.HeadRemoveOutline), AIOnOffCommand, name: UserSettingButtonKeys.AIOnOffButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionAIOnOff)));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.MonitorScreenshot), SaveImageCommand, name: UserSettingButtonKeys.SaveImageButton, tooltipKey: MZRegionNames.AddLng(MZRegionNames.XrayRealtimeRegionSaveImage)));
 
@@ -464,6 +493,21 @@ namespace MZ.Dashboard.ViewModels
         private void ChangedSlider()
         {
             _xrayService.PrevNextSliderBar(Media.Information.Slider);
+        }
+
+
+        /// <summary>
+        /// Play/Stop일때 적용시킬 Visibility
+        /// </summary>
+        /// <param name="check">bool</param>
+        private void ChangedVisibility(bool check)
+        {
+            VisibilityFooterButton(PreviousCommand, check, VideoButtons);
+            VisibilityFooterButton(NextCommand, check, VideoButtons);
+
+            VisibilityFooterButton(RelativeWidthRatioDownCommand, check, VideoButtons);
+            VisibilityFooterButton(RelativeWidthRatioUpCommand, check, VideoButtons);
+
         }
 
 

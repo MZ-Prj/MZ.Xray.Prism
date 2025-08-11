@@ -126,7 +126,7 @@ namespace MZ.Dashboard.ViewModels
             _undoRedoManager.SaveState(Controls);
             
             Controls.Remove(model);
-
+            
             CopyControlsToZeffect();
             UpdateCanUndoRedo();
         }
@@ -186,6 +186,7 @@ namespace MZ.Dashboard.ViewModels
         private void CopyControlsToZeffect()
         {
             Zeffect.Controls = Controls;
+            Zeffect.Model.Control = Zeffect.Controls.First();
         }
 
         /// <summary>

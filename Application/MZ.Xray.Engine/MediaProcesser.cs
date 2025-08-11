@@ -279,8 +279,16 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void FreezeImageSource()
         {
-            ImageSource = VisionBase.CanFreezeImageSource(Image.ToBitmapSource());
-            Histogram = VisionBase.CanFreezeImageSource(VisionBase.PlotFilledHistogram(Image).ToBitmapSource());
+            //ImageSource = VisionBase.CanFreezeImageSource(Image.ToBitmapSource());
+            //Histogram = VisionBase.CanFreezeImageSource(VisionBase.PlotFilledHistogram(Image).ToBitmapSource());
+
+            _dispatcher.InvokeAsync(() =>
+            {
+                var histogram = VisionBase.PlotFilledHistogram(Image);
+                ImageSource = VisionBase.ToBitmapSource(Image, ref Model.ImageSourceWriteableBitmap);
+                Histogram = VisionBase.ToBitmapSource(histogram, ref Model.HistogramWriteableBitmap);
+            }, DispatcherPriority.Render);
+
         }
         /// <summary>
         /// Mat -> ImageSource로 변환 (비동기)

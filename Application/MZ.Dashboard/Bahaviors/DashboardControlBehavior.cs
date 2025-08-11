@@ -83,6 +83,8 @@ namespace MZ.Dashboard.Bahaviors
         {
             this.AssociatedObject.MouseEnter += OnMouseEnter;
             this.AssociatedObject.MouseLeave += OnMouseLeave;
+
+            this.AssociatedObject.MouseWheel += OnMouseWheel;
         }
         /// <summary>
         /// OnDetaching
@@ -91,6 +93,9 @@ namespace MZ.Dashboard.Bahaviors
         {
             this.AssociatedObject.MouseEnter -= OnMouseEnter;
             this.AssociatedObject.MouseLeave -= OnMouseLeave;
+
+            this.AssociatedObject.MouseWheel -= OnMouseWheel;
+
         }
         /// <summary>
         /// 마우스가 Canvas Layout 위에 있을때 Overlay Control 제어
@@ -134,6 +139,27 @@ namespace MZ.Dashboard.Bahaviors
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayBottomControls"), isPinned);
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayGradient"), isPinned);
         }
+
+
+        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var viewModel = this.AssociatedObject.DataContext as DashboardControlViewModel;
+            if (viewModel != null)
+            {
+                var canvas = MZFramework.FindChildByName(this.AssociatedObject, "CanvasImageView") as Canvas;
+                bool scale = e.Delta > 0;
+
+                if (scale)
+                {
+                    viewModel.ZoomInButton();
+                }
+                else
+                {
+                    viewModel.ZoomOutButton();
+                }
+            }
+        }
+
         /// <summary>
         /// Overlay Control Visibility 변경(Visibility to bool)
         /// </summary>
@@ -146,6 +172,19 @@ namespace MZ.Dashboard.Bahaviors
                 overlay.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+        /// <summary>
+        /// 마우스 커서 변경
+        /// </summary>
+        /// <param name="cursor">Cursor</param>
+        private void OnEventCursor(Cursor cursor)
+        {
+            if (AssociatedObject is FrameworkElement frameworkElement)
+            {
+                frameworkElement.Cursor = cursor;
+            }
+        }
+
     }
     /// <summary>
     /// Canvas Load/UnLoad 초기 동작 수행

@@ -96,6 +96,8 @@ namespace MZ.Core
         public readonly static string XrayRealtimeRegionZeffect = "XrayRealtimeRegion_Zeffect";
         public readonly static string XrayRealtimeRegionZoomIn = "XrayRealtimeRegion_ZoomIn";
         public readonly static string XrayRealtimeRegionZoomOut = "XrayRealtimeRegion_ZoomOut";
+        public readonly static string XrayRealtimeRegionRelativeWidthRatioDown = "XrayRealtimeRegion_RelativeWidthRatioDown";
+        public readonly static string XrayRealtimeRegionRelativeWidthRatioUp = "XrayRealtimeRegion_RelativeWidthRatioUp";
 
         //Message (Loading, Splash)
         public readonly static string SplashRegionLoading = "SplashRegion_Loading";

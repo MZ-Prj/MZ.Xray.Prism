@@ -291,6 +291,12 @@
   <data name="LngXrayRealtimeRegion_ZoomOut" xml:space="preserve">
     <value>축소</value>
   </data>
+  <data name="LngXrayRealtimeRegion_RelativeWidthRatioDown" xml:space="preserve">
+    <value>가로 비율 축소</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_RelativeWidthRatioUp" xml:space="preserve">
+    <value>가로 비율 확대</value>
+  </data>
   <data name="LngXrayRealtimeRegion_ZoomIn" xml:space="preserve">
     <value>확대</value>
   </data>

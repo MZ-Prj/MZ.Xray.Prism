@@ -58,12 +58,6 @@ namespace MZ.Model
         public Brush ColorBrush { get => _colorBrush; set => SetProperty(ref _colorBrush, value); }
 
         /// <summary>
-        /// 언어 변경시 적용할 ICommand
-        /// </summary>
-        private ICommand _languageCommand;
-        public ICommand LanguageCommand { get => _languageCommand; set => SetProperty(ref _languageCommand, value); }
-
-        /// <summary>
         /// 아이콘버튼 객체 생성자  
         /// - 필수: 아이콘 종류, 커맨드  
         /// - 옵션: 컬러, 표시여부, UId, 이름, 툴팁, Id 등

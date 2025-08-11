@@ -226,5 +226,10 @@ namespace MZ.Xray.Engine
             Model.Gain = line;
         }
 
+        public void ChangedRelativeWidthRatio(double width)
+        {
+            Model.RelativeWidthRatio += width;
+        }
+
     }
 }

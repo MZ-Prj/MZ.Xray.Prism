@@ -4,8 +4,10 @@ using OpenCvSharp;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MZ.Model
 {
@@ -154,6 +156,8 @@ namespace MZ.Model
         /// </summary>
         private ImageSource _imageSource = null;
         public ImageSource ImageSource { get => _imageSource; set => SetProperty(ref _imageSource, value); }
+
+        public WriteableBitmap ImageSourceWriteableBitmap;
     }
 
     /// <summary>
@@ -176,6 +180,9 @@ namespace MZ.Model
         /// </summary>
         private ImageSource _histogram = null;
         public ImageSource Histogram { get => _histogram; set => SetProperty(ref _histogram, value); }
+
+        public WriteableBitmap HistogramWriteableBitmap;
+
         /// <summary>
         /// 재생/분석 중인 프레임의 목록
         /// </summary>
@@ -219,7 +226,7 @@ namespace MZ.Model
         /// 이미지 가로 방향의 상대적 비율(표준값 대비)
         /// </summary>
         private double _relativeWidthRatio = 1.25;
-        public double RelativeWidthRatio { get => _relativeWidthRatio; set => SetProperty(ref _relativeWidthRatio, value); }
+        public double RelativeWidthRatio { get => _relativeWidthRatio; set => SetProperty(ref _relativeWidthRatio,Math.Clamp(value,1.0,2.0)); }
         /// <summary>
         /// 방사선이 꺼진 상태의 센서 최대 신호값
         /// </summary>

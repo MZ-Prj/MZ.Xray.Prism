@@ -37,6 +37,7 @@ namespace MZ.AI.Engine
 
         private bool _isVisibility = false;
         public bool IsVisibility { get => _isVisibility; set => SetProperty(ref _isVisibility, value); }
+
         #endregion
 
         public YoloProcessor() { }
