@@ -9,13 +9,14 @@ using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using OpenCvSharp.WpfExtensions;
 using static MZ.Vision.VisionEnum;
+using System.Windows.Threading;
 
 namespace MZ.Vision
 {
     /// <summary>
     /// OpenCvSharp(Mat) 기반 영상 처리, 변환, 생성, 정보조회 등 주요 함수 제공 유틸리티
     /// </summary>
-    public class VisionBase
+    public static class VisionBase
     {
         private static Random _random = new();
 
@@ -210,8 +211,8 @@ namespace MZ.Vision
             channels[3].ConvertTo(alpha, MatType.CV_32F, 1.0 / byte.MaxValue);
 
             Mat background = new (input.Size(), MatType.CV_32FC3, Scalar.White);
-
             Mat foreground = new ();
+
             Cv2.Merge([channels[0], channels[1], channels[2]], foreground);
             foreground.ConvertTo(foreground, MatType.CV_32FC3);
 
@@ -1478,6 +1479,59 @@ namespace MZ.Vision
                 await Task.Run(() => bitmap.Freeze());
             }
             return bitmap;
+        }
+
+        /// <summary>
+        /// 초기 선언값 그대로 가져와서 gc 처리 간소화
+        /// </summary>
+        public static WriteableBitmap ToBitmapSource(this Mat src, ref WriteableBitmap writeableBitmap)
+        {
+            if (src == null || src.Empty())
+            {
+                return null;
+            }
+                
+            Mat bgra = src;
+            if (src.Type() != MatType.CV_8UC4)
+            {
+                bgra = new Mat();
+                var code = src.Channels() switch
+                {
+                    1 => ColorConversionCodes.GRAY2BGRA,
+                    3 => ColorConversionCodes.BGR2BGRA,
+                    _ => throw new NotSupportedException($"Channels: {src.Channels()}")
+                };
+                Cv2.CvtColor(src, bgra, code);
+            }
+
+            if (writeableBitmap == null || 
+                writeableBitmap.PixelWidth != bgra.Width || 
+                writeableBitmap.PixelHeight != bgra.Height)
+            {
+                writeableBitmap = new WriteableBitmap(bgra.Width, bgra.Height, 96, 96, PixelFormats.Bgra32, null);
+            }
+
+            var rect = new System.Windows.Int32Rect(0, 0, bgra.Width, bgra.Height);
+            int stride = (int)bgra.Step();
+            int bufferSize = stride * bgra.Height;
+
+            writeableBitmap.Lock();
+            try
+            {
+                writeableBitmap.WritePixels(rect, bgra.Data, bufferSize, stride);
+            }
+            finally 
+            { 
+                writeableBitmap.Unlock(); 
+            }
+
+            if (!ReferenceEquals(bgra, src))
+            {
+                bgra.Dispose();
+            }
+
+            return writeableBitmap;
+            
         }
 
     }

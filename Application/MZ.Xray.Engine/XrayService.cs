@@ -114,49 +114,12 @@ namespace MZ.Xray.Engine
         /// 화면(Screen) 갱신용 Task를 중지/제어하기 위한 CancellationTokenSource.
         /// </summary>
         private CancellationTokenSource _screenCts;
-        /// <summary>
-        /// 비디오(Video) 저장용 Task를 중지/제어하기 위한 CancellationTokenSource.
-        /// </summary>
-        private CancellationTokenSource _videoCts;
 
         private Task _screenTask;
-        private Task _videoTask;
         private bool IsRunning => _screenCts != null && !_screenCts.IsCancellationRequested;
 
         #endregion
 
-        /// <summary>
-        /// 비디오 저장 주기 Task 시작 (비동기)
-        /// 일정 간격마다 Media 객체의 SaveVideo()를 호출
-        /// </summary>
-        private void StartVideoTask()
-        {
-            if (IsRunning)
-            {
-                return;
-            }
-
-            _videoCts = new();
-
-            _videoTask = Task.Run(async () =>
-            {
-                try
-                {
-                    while (!_videoCts.Token.IsCancellationRequested)
-                    {
-                        await Task.Delay(1000 * Media.Information.VideoDelay, _videoCts.Token);
-                        Media.SaveVideo();
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    MZLogger.Error(ex.ToString());
-                }
-            }, _videoCts.Token);
-        }
 
         /// <summary>
         /// 화면(Screen) 갱신 주기 Task 시작 (비동기)
@@ -180,7 +143,7 @@ namespace MZ.Xray.Engine
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
                         await UpdateScreen();
-                        await Task.Delay(1, _screenCts.Token);
+                        await Task.Delay(16, _screenCts.Token);
                     }
                 }
                 catch (OperationCanceledException)
@@ -193,23 +156,6 @@ namespace MZ.Xray.Engine
             }, _screenCts.Token);
         }
 
-        /// <summary>
-        /// 비디오 저장 Task 중지
-        /// </summary>
-        private void StopVideoTask()
-        {
-            if (!IsRunning)
-            {
-                return;
-            }
-
-            _videoCts?.Cancel();
-            _videoTask.Wait(TimeSpan.FromMilliseconds(100));
-
-            _videoCts?.Dispose();
-            _videoCts = null;
-            _videoTask = null;
-        }
 
         /// <summary>
         /// 화면 갱신 Task 중지
@@ -237,7 +183,6 @@ namespace MZ.Xray.Engine
         {
             Stop();
 
-            StartVideoTask();
             StartScreenTask();
         }
 
@@ -246,7 +191,6 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void Stop()
         {
-            StopVideoTask();
             StopScreenTask();
         }
 
@@ -283,12 +227,14 @@ namespace MZ.Xray.Engine
         
         public async Task UpdateScreen()
         {
+
             await Task.WhenAll(
                  Media.FreezeImageSourceAsync(),
                  Zeffect.FreezeImageSourceAsync());
 
             if (Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
             {
+
                 Media.AddFrame();
                 Zeffect.AddFrame();
 

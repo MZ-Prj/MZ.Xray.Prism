@@ -22,7 +22,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=ActionButtons}">
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=ActionButtons}" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel HorizontalAlignment="Stretch"/>
@@ -44,8 +44,7 @@
                             <ToolTip Style="{StaticResource CustomToolTipStyle}"
                                      Content="{Binding Path=Tooltip, Converter={StaticResource LanguageConverter}}" />
                         </RepeatButton.ToolTip>
-                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"
-                                                    />
+                        <iconPacks:PackIconMaterial Kind="{Binding Path=IconKind}" Width="24" Height="24"/>
                     </RepeatButton>
 
                 </DataTemplate>

@@ -3,13 +3,13 @@ using MZ.Vision;
 using MZ.Model;
 using OpenCvSharp;
 using Prism.Mvvm;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using OpenCvSharp.WpfExtensions;
 using static MZ.Vision.VisionEnums;
-using System.Linq;
+using System.Windows.Threading;
 
 namespace MZ.Xray.Engine
 {
@@ -18,6 +18,8 @@ namespace MZ.Xray.Engine
     /// </summary>
     public class ZeffectProcesser : BindableBase
     {
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         #region Params
         private ZeffectModel _model = new();
         public ZeffectModel Model { get => _model; set => SetProperty(ref _model, value); }
@@ -63,6 +65,8 @@ namespace MZ.Xray.Engine
             Model.Controls.Add(new () { Content = "Organic", Color = Color.FromArgb(128, 255, 128, 128), Min = 0.0, Max = 0.3 });
             Model.Controls.Add(new () { Content = "Inorganic", Color = Color.FromArgb(128, 0, 128, 0), Min = 0.3, Max = 0.75 });
             Model.Controls.Add(new () { Content = "Metal", Color = Color.FromArgb(128, 0, 128, 255), Min = 0.75, Max = 1.0 });
+
+            Model.Control = Model.Controls.First();
         }
 
         /// <summary>
@@ -183,7 +187,10 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void FreezeImageSource()
         {
-            ImageSource = VisionBase.CanFreezeImageSource(Image.ToBitmapSource());
+            _dispatcher.InvokeAsync(() =>
+            {
+                ImageSource = VisionBase.ToBitmapSource(Image, ref Model.ImageSourceWriteableBitmap);
+            }, DispatcherPriority.Render);
         }
         /// <summary>
         /// Mat -> ImageSource로 변환 (비동기)

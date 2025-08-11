@@ -38,11 +38,11 @@
                 </i:Interaction.Behaviors>
                 <Canvas x:Name="CanvasImageView" 
                         DataContext="{Binding Path=Media.Model}"
+                        Width="{Binding Path=Information.Width}" 
+                        Height="{Binding Path=Information.Height}"
                         CacheMode="BitmapCache"
                         ClipToBounds="True" 
                         IsManipulationEnabled="true" 
-                        Width="{Binding Path=Information.Width}" 
-                        Height="{Binding Path=Information.Height}"
                         SnapsToDevicePixels="True"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         RenderOptions.EdgeMode="Aliased"
@@ -155,7 +155,9 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Canvas.RenderTransform>
-                        <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Path=Media.Model.Filter.Zoom}" ScaleY="{Binding Path=Media.Model.Filter.Zoom}"/>
+                        </TransformGroup>
                     </Canvas.RenderTransform>
                 </Canvas>
 
@@ -219,10 +221,12 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
+                
                 <WrapPanel x:Name="OverlayFpsControls" 
                            Canvas.Right="0" Canvas.Top="0">
                     <Label Content="{Binding Path=Media.Information.Fps}" Margin="4" Foreground="{DynamicResource MahApps.Brushes.Accent2}"/>
                 </WrapPanel>
+                
                 <StackPanel x:Name="OverlayBottomControls" 
                             Visibility="Collapsed"
                             Canvas.Left="0" Canvas.Bottom="0"

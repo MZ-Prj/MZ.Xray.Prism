@@ -14,6 +14,7 @@ using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
 using System;
+using System.Windows.Threading;
 
 namespace MZ.AI.Engine
 {
@@ -22,6 +23,9 @@ namespace MZ.AI.Engine
     /// </summary>
     public class AIService : BindableBase, IAIService
     {
+
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         #region Params
         private YoloProcessor _yolo = new();
         public YoloProcessor Yolo { get => _yolo; set => SetProperty(ref _yolo, value); }
@@ -131,21 +135,28 @@ namespace MZ.AI.Engine
                 Shift(width);
             });
         }
+
         /// <summary>
         /// 예측 결과 객체의 X 좌표 Shift
         /// </summary>
         public void Shift(int width)
         {
-            var objectDetections = new ObservableCollection<ObjectDetectionModel>(
-                Yolo.ObjectDetections.Select(c =>
+            _dispatcher.Invoke(() =>
+            {
+                var objectDetections = Yolo.ObjectDetections;
+                double dx = width * Yolo.ObjectDetectionOption.ScaleX;
+
+                for (int i = 0; i < objectDetections.Count; i++)
                 {
-                    var copy = new ObjectDetectionModel();
-                    c.CopyTo(copy);
-                    copy.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
-                    return copy;
-                })
-            );
-            Yolo.ObjectDetections = objectDetections;
+                    var c = objectDetections[i];
+                    double x = c.OffsetX - dx;
+                    if (!double.IsNaN(x) && x != c.OffsetX)
+                    {
+                        c.OffsetX = x;
+                    }
+                }
+            }, DispatcherPriority.DataBind);
+            
         }
         /// <summary>
         /// 객체탐지 결과 추가
@@ -162,6 +173,7 @@ namespace MZ.AI.Engine
             );
             Yolo.ObjectDetectionsList.Add(objectDetections);
         }
+
         /// <summary>
         /// 인덱스 기반 객체탐지 결과 삭제
         /// </summary>
@@ -270,5 +282,6 @@ namespace MZ.AI.Engine
         {
             Yolo.Clear();
         }
+
     }
 }

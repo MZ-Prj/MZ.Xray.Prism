@@ -113,7 +113,12 @@ namespace MZ.DTO
         public const string AIOnOffButton = "AIOnOffButton";
         /// <summary>이미지 저장 버튼</summary>
         public const string SaveImageButton = "SaveImageButton";
-
+        /// <summary>비율 - 버튼</summary>
+        public const string RelativeWidthRatioDownButton = "RelativeWidthRatioDownButton";
+        /// <summary>비율 + 버튼</summary>
+        public const string RelativeWidthRatioUpButton = "RelativeWidthRatioUpButton";
+        
+            
         /// <summary>
         /// 모든 버튼 키 문자열 배열 반환
         /// </summary>

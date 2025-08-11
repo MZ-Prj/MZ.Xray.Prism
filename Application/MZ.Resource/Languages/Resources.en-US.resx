@@ -291,6 +291,12 @@
   <data name="LngXrayRealtimeRegion_ZoomOut" xml:space="preserve">
     <value>Zoom Out</value>
   </data>
+  <data name="LngXrayRealtimeRegion_RelativeWidthRatioDown" xml:space="preserve">
+    <value>Relative Width Ratio Down</value>
+  </data>
+  <data name="LngXrayRealtimeRegion_RelativeWidthRatioUp" xml:space="preserve">
+    <value>Relative Width Ratio Up</value>
+  </data>
   <data name="LngXrayRealtimeRegion_ZoomIn" xml:space="preserve">
     <value>Zoom In</value>
   </data>
