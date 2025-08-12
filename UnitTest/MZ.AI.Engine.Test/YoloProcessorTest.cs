@@ -2,11 +2,9 @@
 using SkiaSharp;
 using OpenCvSharp;
 using YoloDotNet.Enums;
+using YoloDotNet.Models;
 using Xunit;
 using Assert = Xunit.Assert;
-using MZ.Model;
-using System.Collections.ObjectModel;
-using YoloDotNet.Models;
 
 namespace MZ.AI.Engine.Test
 {

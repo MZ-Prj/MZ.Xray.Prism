@@ -494,6 +494,7 @@
         "type": "Project",
         "dependencies": {
           "MZ.Domain": "[1.0.0, )",
+          "MZ.Model": "[1.0.0, )",
           "Prism.Wpf": "[8.1.97, )"
         }
       },

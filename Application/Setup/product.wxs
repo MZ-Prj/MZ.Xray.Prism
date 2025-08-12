@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Package
+      Id="MZ.Xray.Prism"
+      Name="MZ Xray"
+      Manufacturer="MZ"
+      Version="1.0.0"
+      Scope="perMachine">
+
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Icon Id="AppIcon" SourceFile="logo.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="MZ\App" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Property Id="ROOTDRIVE" Value="C:\" />
+    <Property Id="INSTALLFOLDER" Value="C:\MZ\App" />
+    <Property Id="APP_EXE" Value="MZ.Xray.Prism.exe" />
+
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+
+    <Feature Id="Main" Title="MZ Xray" Level="1" ConfigurableDirectory="INSTALLFOLDER">
+      <Files Include="$(AppSource)\**" />
+      <ComponentRef Id="Cmp_RemoveInstallFolder" />
+      <ComponentRef Id="Cmp_DesktopShortcut" />
+    </Feature>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
+  </Package>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="Cmp_RemoveInstallFolder" Guid="*">
+        <util:RemoveFolderEx Property="INSTALLFOLDER" On="uninstall" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\MZ\MZ.App"
+                       Name="Installed"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="Cmp_DesktopShortcut" Guid="*">
+        <Shortcut Id="DesktopShortcut"
+                  Directory="DesktopFolder"
+                  Name="MZ App"
+                  Target="[INSTALLFOLDER][APP_EXE]"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="AppIcon"
+                  IconIndex="0" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\MZ\MZ.App"
+                       Name="DesktopShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+</Wix>
