@@ -111,6 +111,27 @@ namespace MZ.DTO
         }
 
         /// <summary>
+        /// ObjectDetectionModel을 복사
+        /// </summary>
+        /// <param name="model">ObjectDetectionModel</param>
+        /// <returns>ObjectDetectionModel</returns>
+        public static ObjectDetectionModel ModelCopy(ObjectDetectionModel model)
+        {
+            return new ObjectDetectionModel()
+            {
+                Index = model.Index,
+                Name = model.Name,
+                Color = model.Color,
+                Confidence = model.Confidence,
+                X = model.X,
+                Y = model.Y,
+                Width = model.Width,
+                Height = model.Height,
+                OffsetX = model.OffsetX,
+            };
+        }
+
+        /// <summary>
         /// ObjectDetectionEntity로 ObjectDetectionModel 변환
         /// </summary>
         /// <param name="entity">ObjectDetectionEntity</param>
