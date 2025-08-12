@@ -8,6 +8,9 @@ using MZ.Dashboard.ViewModels;
 
 namespace MZ.Dashboard.Bahaviors
 {
+    /// <summary>
+    /// 이미지 스토리지 화면 동작 Behavior 클래스
+    /// </summary>
     public class ImageStorageDetailBehavior : Behavior<Canvas>
     {
         private Canvas _parentCanvas;
@@ -22,6 +25,13 @@ namespace MZ.Dashboard.Bahaviors
         private const double MinZoom = 1.0;
         private const double MaxZoom = 10.0;
 
+        ImageStorageDetailBehavior()
+        {
+
+        }
+        /// <summary>
+        /// Behavior OnAttached
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -41,6 +51,9 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
 
+        /// <summary>
+        /// Behavior OnDetaching
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
@@ -57,6 +70,9 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
 
+        /// <summary>
+        /// 초기 좌표 및 줌 설정
+        /// </summary>
         private void InitTransforms()
         {
             _transformGroup = AssociatedObject.RenderTransform as TransformGroup;
@@ -89,6 +105,9 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
 
+        /// <summary>
+        /// 마우스 휠 동작시 줌 설정
+        /// </summary>
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (_parentCanvas == null)
@@ -120,6 +139,9 @@ namespace MZ.Dashboard.Bahaviors
             OnEventCursor(Cursors.Cross);
         }
 
+        /// <summary>
+        /// 왼쪽 버튼 클릭시 드레그 드롭 설정(시작)
+        /// </summary>
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _parentCanvas ??= VisualTreeHelper.GetParent(AssociatedObject) as Canvas;
@@ -133,12 +155,18 @@ namespace MZ.Dashboard.Bahaviors
             AssociatedObject.CaptureMouse();
         }
 
+        /// <summary>
+        /// 왼쪽 버튼 클릭시 드레그 드롭 설정(해제)
+        /// </summary>
         private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             _isDragging = false;
             AssociatedObject.ReleaseMouseCapture();
         }
 
+        /// <summary>
+        /// 왼쪽 버튼 클릭시 드레그 드롭 설정(이동)
+        /// </summary>
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
 
@@ -157,20 +185,27 @@ namespace MZ.Dashboard.Bahaviors
         }
 
 
+        /// <summary>
+        /// 컨버스 크기 바뀌면 좌표 재설정
+        /// </summary>
         private void ParentCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             CenterCanvas();
         }
 
+
+        /// <summary>
+        /// 좌표 중앙 설정 수행
+        /// </summary>
         private void CenterCanvas()
         {
             if (_parentCanvas != null)
             {
-                if (AssociatedObject is FrameworkElement fe && fe.ActualWidth > 0)
+                if (AssociatedObject is FrameworkElement frameworkElement && frameworkElement.ActualWidth > 0)
                 {
                     double scale = _scaleTransform.ScaleX; 
-                    double scaledWidth = fe.ActualWidth * scale;
-                    double scaledHeight = fe.ActualHeight * scale;
+                    double scaledWidth = frameworkElement.ActualWidth * scale;
+                    double scaledHeight = frameworkElement.ActualHeight * scale;
 
                     double offsetX = (_parentCanvas.ActualWidth - scaledWidth) / 2;
                     double offsetY = (_parentCanvas.ActualHeight - scaledHeight) / 2;
@@ -181,6 +216,10 @@ namespace MZ.Dashboard.Bahaviors
             }
         }
 
+        /// <summary>
+        /// 커서 
+        /// </summary>
+        /// <param name="cursor"></param>
         private void OnEventCursor(Cursor cursor)
         {
             if (AssociatedObject is FrameworkElement frameworkElement)
@@ -190,6 +229,9 @@ namespace MZ.Dashboard.Bahaviors
         }
 
 
+        /// <summary>
+        /// 새로고침 
+        /// </summary>
         private void OnEventRefresh()
         {
             
@@ -200,6 +242,9 @@ namespace MZ.Dashboard.Bahaviors
             OnEventCursor(Cursors.Arrow);
         }
 
+        /// <summary>
+        /// 줌 갱신
+        /// </summary>
         private void OnEventUpdateZoom(int delta)
         {
             if (_parentCanvas == null || _scaleTransform == null || _translateTransform == null)

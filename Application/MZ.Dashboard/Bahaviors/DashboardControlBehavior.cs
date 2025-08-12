@@ -140,7 +140,9 @@ namespace MZ.Dashboard.Bahaviors
             SetOverlayVisibility(MZFramework.FindControls(this.AssociatedObject, "OverlayGradient"), isPinned);
         }
 
-
+        /// <summary>
+        /// 확대/축소
+        /// </summary>
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var viewModel = this.AssociatedObject.DataContext as DashboardControlViewModel;
