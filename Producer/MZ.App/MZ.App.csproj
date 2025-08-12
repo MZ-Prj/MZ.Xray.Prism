@@ -34,4 +34,7 @@
     <ProjectReference Include="..\MZ.Splash\MZ.Splash.csproj" />
     <ProjectReference Include="..\MZ.Toolbar\MZ.Toolbar.csproj" />
   </ItemGroup>
+	<Target Name="RemoveLog" BeforeTargets="BeforeBuild">
+		<Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)RemoveLog.ps1&quot;" />
+	</Target>
 </Project>
