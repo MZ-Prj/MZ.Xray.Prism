@@ -69,7 +69,8 @@ jobs:
           dotnet test ${{ matrix.project }}
           --configuration Release
           --logger "trx;LogFileName=${{ matrix.module_name }}.trx"
-          --results-directory ../TestResults/${{ matrix.module_name }}
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults/${{ matrix.module_name }}
         working-directory: ./UnitTest
 
       # 커버리지 HTML 리포트 생성 (ReportGenerator 액션)
@@ -79,7 +80,7 @@ jobs:
           reports: ./UnitTest/TestResults/${{ matrix.module_name }}/**/coverage.cobertura.xml
           targetdir: ./UnitTest/TestResults/Coverage/${{ matrix.module_name }}
           reporttypes: 'HtmlInline;Cobertura'
-          assemblyfilters: '+*' 
+          assemblyfilters: '+*'
 
       # TRX/커버리지 업로드
       - name: Upload test results (${{ matrix.module_name }})
@@ -87,12 +88,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.module_name }}
-          path: ./TestResults/${{ matrix.module_name }}
+          path: |
+            ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
+            ./UnitTest/TestResults/Coverage/${{ matrix.module_name }}/**
 
       # PR 체크/요약에 테스트 결과(실패/성공) 게시
       - name: Publish test results to PR checks (${{ matrix.module_name }})
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: dorny/test-reporter@v1
         with:
-          files: ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
-          check_name: "Tests (${{ matrix.module_name }})"
+          name: "Tests (${{ matrix.module_name }})"
+          path: ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
