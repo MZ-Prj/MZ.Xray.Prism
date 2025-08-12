@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
     <ApplicationIcon>logo.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />

@@ -4,6 +4,7 @@
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
 		<BaseOutputPath>$(SolutionDir)\Build</BaseOutputPath>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Prism.Wpf" Version="8.1.97" />
