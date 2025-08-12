@@ -13,13 +13,12 @@ using Prism.Services.Dialogs;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.Configuration;
 using static MZ.Core.MZModel;
 using static MZ.Sidebar.MZEvents;
 using static MZ.Event.MZEvent;
-using System;
-using System.Threading.Tasks;
 
 namespace MZ.Dashboard.ViewModels
 {
@@ -70,10 +69,7 @@ namespace MZ.Dashboard.ViewModels
         #region Initialize
         public override void InitializeModel()
         {
-            //WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.FolderOpen), FolderOpenCommand));
-            WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Download), FileDownloadCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.IpNetwork), IpNetworkCommand));
-            //WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.Earth), LanguageCommand));
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
         }
         

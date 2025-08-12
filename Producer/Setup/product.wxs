@@ -23,7 +23,7 @@
 
     <Property Id="ROOTDRIVE" Value="C:\" />
     <Property Id="INSTALLFOLDER" Value="C:\MZ\Producer" />
-    <Property Id="APP_EXE" Value="MZ.Xray.Prism.exe" />
+    <Property Id="APP_EXE" Value="MZ.App.exe" />
 
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 

@@ -25,11 +25,6 @@
         
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
 
-            <Button Command="{Binding Path=LoadCommand}" 
-                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                <iconPacks:PackIconMaterial Kind="Lan" Width="20" Height="20"/>
-            </Button>
-            
             <ItemsControl ItemsSource="{Binding Path=ActionButtons}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

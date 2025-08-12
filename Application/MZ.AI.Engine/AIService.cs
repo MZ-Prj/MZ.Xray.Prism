@@ -15,6 +15,7 @@ using YoloDotNet.Enums;
 using YoloDotNet.Models;
 using System;
 using System.Windows.Threading;
+using ControlzEx.Standard;
 
 namespace MZ.AI.Engine
 {
@@ -141,22 +142,16 @@ namespace MZ.AI.Engine
         /// </summary>
         public void Shift(int width)
         {
-            _dispatcher.Invoke(() =>
+            var src = Yolo.ObjectDetections;
+            var objectDetections = new List<ObjectDetectionModel>(Yolo.ObjectDetections.Count);
+            for (int i = 0; i < src.Count; i++)
             {
-                var objectDetections = Yolo.ObjectDetections;
-                double dx = width * Yolo.ObjectDetectionOption.ScaleX;
-
-                for (int i = 0; i < objectDetections.Count; i++)
-                {
-                    var c = objectDetections[i];
-                    double x = c.OffsetX - dx;
-                    if (!double.IsNaN(x) && x != c.OffsetX)
-                    {
-                        c.OffsetX = x;
-                    }
-                }
-            }, DispatcherPriority.DataBind);
-            
+                var c = src[i];
+                var copy = ObjectDetectionMapper.ModelCopy(c);
+                copy.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
+                objectDetections.Add(copy);
+            }
+            Yolo.ObjectDetections = [.. objectDetections];
         }
         /// <summary>
         /// 객체탐지 결과 추가

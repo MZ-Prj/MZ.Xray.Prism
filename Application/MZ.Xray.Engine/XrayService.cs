@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using System.Threading.Channels;
 using Prism.Mvvm;
 using Prism.Events;
+using MZ.Core;
 using MZ.Logger;
 using MZ.Vision;
 using MZ.Model;
@@ -16,9 +17,6 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using MZ.Core;
-using System.Windows.Media.Effects;
-using Microsoft.VisualBasic;
 
 namespace MZ.Xray.Engine
 {

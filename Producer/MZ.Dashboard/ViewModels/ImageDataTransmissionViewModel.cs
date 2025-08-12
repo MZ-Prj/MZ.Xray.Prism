@@ -7,9 +7,12 @@ using MZ.Model;
 using MZ.Loading;
 using Prism.Commands;
 using Prism.Ioc;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using static MZ.Sidebar.MZEvents;
 
 namespace MZ.Dashboard.ViewModels
@@ -19,7 +22,9 @@ namespace MZ.Dashboard.ViewModels
         #region Service
         private readonly ILoadingService _loadingService;
         private readonly IProducerService _producerService;
+        private readonly IConfiguration _configuration;
         #endregion
+
 
         #region Params
         private LoadingModel _loadingModel;
@@ -33,8 +38,13 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
         #region Command
+
+        private DelegateCommand _fileDownloadCommand;
+        public ICommand FileDownloadCommand => _fileDownloadCommand ??= new(MZAction.Wrapper(FileDownloadButton));
+
         private DelegateCommand _loadCommand;
         public ICommand LoadCommand => _loadCommand ??= new(MZAction.Wrapper(LoadButton));
+
 
         private DelegateCommand _playpauseCommand;
         public ICommand PlayPauseCommand => _playpauseCommand ??= new(MZAction.Wrapper(PlayPauseButton));
@@ -43,17 +53,20 @@ namespace MZ.Dashboard.ViewModels
         public ICommand StopCommand => _stopCommand ??= new(MZAction.Wrapper(StopButton));
         #endregion
 
-        public ImageDataTransmissionViewModel(IContainerExtension container, ILoadingService loadingService, IProducerService producerService) : base(container)
+        public ImageDataTransmissionViewModel(IContainerExtension container, ILoadingService loadingService, IProducerService producerService, IConfiguration configuration) : base(container)
         {
             _producerService = producerService;
             _loadingService = loadingService;
-
+            _configuration = configuration;
             base.Initialize();
         }
 
         #region Initialize
         public override void InitializeModel()
         {
+
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Download), FileDownloadCommand));
+            ActionButtons.Add(new(nameof(PackIconMaterialKind.Lan), LoadCommand, isVisibility: true));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.Play), PlayPauseCommand, isVisibility:false));
             ActionButtons.Add(new(nameof(PackIconMaterialKind.Stop), StopCommand, isVisibility: false));
         }
@@ -68,6 +81,45 @@ namespace MZ.Dashboard.ViewModels
         #endregion
 
         #region Button
+        private async void FileDownloadButton()
+        {
+            MZWebDownload download = new();
+
+            string path = _configuration["Data:Path"];
+            string link = _configuration["Data:DownloadLink"];
+
+            MZIO.TryDeleteFile(path);
+            MZIO.TryMakeDirectoryRemoveFile(path);
+
+            using (LoadingModel.Show())
+            {
+                LoadingModel.Message = "Downloading...";
+                bool checkDownload = await download.RunAsync(link, path);
+
+                if (checkDownload)
+                {
+                    string extractPath = Path.GetDirectoryName(path);
+
+                    LoadingModel.Message = "Unzip Dataset...";
+                    bool isUnzip = await MZZip.UnzipAsync(path, extractPath);
+                    if (isUnzip)
+                    {
+                        LoadingModel.Message = "Success!";
+                        MZIO.TryDeleteFile(path);
+
+                        LoadingModel.Message = "Read Dataset...";
+                        _producerService.Stop();
+                        await _producerService.LoadFilesAsync(extractPath);
+                    }
+                    else
+                    {
+                        LoadingModel.Message = "Fail!";
+                    }
+                    await Task.Delay(1000);
+                }
+            }
+        }
+
         private async void LoadButton()
         {
             // logic
@@ -75,11 +127,12 @@ namespace MZ.Dashboard.ViewModels
             {
                 await _producerService.LoadAsync();
 
-                // ui
-                foreach (var button in ActionButtons)
-                {
-                    button.IsVisibility = Socket.Model.IsConnected;
-                }
+                VisibilityButton(FileDownloadCommand, !Socket.Model.IsConnected, ActionButtons);
+                VisibilityButton(LoadCommand, !Socket.Model.IsConnected, ActionButtons);
+                VisibilityButton(PlayPauseCommand, Socket.Model.IsConnected, ActionButtons);
+                VisibilityButton(StopCommand, Socket.Model.IsConnected, ActionButtons);
+
+                SetButtonIcon(PlayPauseCommand, nameof(PackIconMaterialKind.Play), ActionButtons);
             }
 
             // logic 
@@ -97,11 +150,9 @@ namespace MZ.Dashboard.ViewModels
         private void PlayPauseButton()
         {
             //ui
-            var button = ActionButtons.FirstOrDefault(vb => vb.Command == PlayPauseCommand);
-            if (button != null)
-            {
-                button.IconKind = button.IconKind == nameof(PackIconMaterialKind.Play) ? nameof(PackIconMaterialKind.Pause) : nameof(PackIconMaterialKind.Play);
-            }
+            ToggleButton(PlayPauseCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Pause), ActionButtons);
+
+            VisibilityButton(LoadCommand, false, ActionButtons);
 
             //logic
             _producerService.Pause();
@@ -110,22 +161,69 @@ namespace MZ.Dashboard.ViewModels
 
         private void StopButton()
         {
-            // ui
-            foreach (var actionButton in ActionButtons)
-            {
-                actionButton.IsVisibility = false;
-            }
-
-            var button = ActionButtons.FirstOrDefault(vb => vb.Command == PlayPauseCommand);
-            if (button != null)
-            {
-                button.IconKind = nameof(PackIconMaterialKind.Play);
-            }
+            SetButtonIcon(PlayPauseCommand, nameof(PackIconMaterialKind.Play), ActionButtons);
+            
+            VisibilityButton(FileDownloadCommand, true, ActionButtons);
+            VisibilityButton(LoadCommand, true, ActionButtons);
+            VisibilityButton(PlayPauseCommand, false, ActionButtons);
+            VisibilityButton(StopCommand, false, ActionButtons);
 
             // logic
             _producerService.Stop();
 
         }
         #endregion
+
+
+        /// <summary>
+        /// 버튼 아이콘 On/Off 토글
+        /// </summary>
+        /// <param name="targetCommand">ICommand</param>
+        /// <param name="iconOn">string</param>
+        /// <param name="iconOff">string</param>
+        /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
+        private void ToggleButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IconKind = button.IconKind == iconOff ? iconOn : iconOff;
+                    }
+                }
+            }
+        }
+
+        private void SetButtonIcon(ICommand command, string iconKind, ObservableCollection<IconButtonModel> actionButtons)
+        {
+            var button = actionButtons?.FirstOrDefault(vb => vb.Command == command);
+            if (button != null)
+            {
+                button.IconKind = iconKind;
+            }
+        }
+
+
+        /// <summary>
+        /// 버튼 노출상태 변경
+        /// </summary>
+        /// <param name="targetCommand">ICommand</param>
+        /// <param name="isVisibility">bool</param>
+        /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
+        private void VisibilityButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        {
+            foreach (var collection in buttonCollections)
+            {
+                foreach (var button in collection)
+                {
+                    if (button.Command == targetCommand)
+                    {
+                        button.IsVisibility = isVisibility;
+                    }
+                }
+            }
+        }
     }
 }
