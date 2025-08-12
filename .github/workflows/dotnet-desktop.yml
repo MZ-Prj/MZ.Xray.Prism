@@ -6,10 +6,23 @@ on:
   pull_request:
     branches: [ main, master ]
 
+# 같은 브랜치에 새 커밋이 오면 이전 실행 취소해서 CI 자원 절약
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 필요한 최소 권한만 부여
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write  
+
 jobs:
   run-tests:
     # net8.0-windows 타겟이 있으니 Windows 러너 사용
     runs-on: windows-latest
+
+    timeout-minutes: 30
 
     strategy:
       fail-fast: false
@@ -59,9 +72,27 @@ jobs:
           --results-directory ../TestResults/${{ matrix.module_name }}
         working-directory: ./UnitTest
 
+      # 커버리지 HTML 리포트 생성 (ReportGenerator 액션)
+      - name: Generate coverage report (${{ matrix.module_name }})
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: ./UnitTest/TestResults/${{ matrix.module_name }}/**/coverage.cobertura.xml
+          targetdir: ./UnitTest/TestResults/Coverage/${{ matrix.module_name }}
+          reporttypes: 'HtmlInline;Cobertura'
+          assemblyfilters: '+*' 
+
+      # TRX/커버리지 업로드
       - name: Upload test results (${{ matrix.module_name }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.module_name }}
           path: ./TestResults/${{ matrix.module_name }}
+
+      # PR 체크/요약에 테스트 결과(실패/성공) 게시
+      - name: Publish test results to PR checks (${{ matrix.module_name }})
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
+          check_name: "Tests (${{ matrix.module_name }})"
