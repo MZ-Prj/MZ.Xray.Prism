@@ -97,7 +97,7 @@ jobs:
         if: always()
         uses: dorny/test-reporter@v1
         with:
-          name: "Tests (${{ matrix.module_name }})"
+          name: "PR Check Results (${{ matrix.module_name }})"
           path: ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
           reporter: dotnet-trx
           fail-on-error: false
