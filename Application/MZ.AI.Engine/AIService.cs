@@ -14,7 +14,6 @@ using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
 using System.Windows.Threading;
-using System.Windows.Controls;
 
 namespace MZ.AI.Engine
 {
@@ -23,7 +22,6 @@ namespace MZ.AI.Engine
     /// </summary>
     public class AIService : BindableBase, IAIService
     {
-
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         #region Params
@@ -141,12 +139,16 @@ namespace MZ.AI.Engine
         /// </summary>
         public void Shift(int width)
         {
-            var list = Yolo.ObjectDetections;
-            for (int i = 0; i < list.Count; i++)
+            _dispatcher.Invoke(() =>
             {
-                list[i].OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
-            }
-
+                var list = Yolo.ObjectDetections;
+                var delta = (width * Yolo.ObjectDetectionOption.ScaleX);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    list[i].OffsetX -= delta;
+                }
+            }, DispatcherPriority.Render);
+            
         }
 
         /// <summary>
@@ -166,6 +168,7 @@ namespace MZ.AI.Engine
         {
             Yolo.ObjectDetectionsList.RemoveAt(index);
         }
+
         /// <summary>
         /// 현재 객체탐지 결과 개수 반환
         /// </summary>
@@ -173,6 +176,7 @@ namespace MZ.AI.Engine
         {
             return Yolo.ObjectDetectionsList.Count;
         }
+
         /// <summary>
         /// 탐지 결과 이미지 저장
         /// </summary>
@@ -183,6 +187,7 @@ namespace MZ.AI.Engine
                 Yolo.Save(path, time);
             });
         }
+
         /// <summary>
         /// 스트림 이미지로 결과 저장
         /// </summary>
@@ -193,6 +198,7 @@ namespace MZ.AI.Engine
                 Yolo.Save(path,time,stream);
             });
         }
+
         /// <summary>
         /// ObjectDetectionModel 리스트로 매핑
         /// </summary>
@@ -200,6 +206,7 @@ namespace MZ.AI.Engine
         {
             return Yolo.ChangePositionCanvasToMat(start);
         }
+
         /// <summary>
         /// 현재 카테고리 리스트 반환
         /// </summary>
@@ -207,6 +214,7 @@ namespace MZ.AI.Engine
         {
             return Yolo.Categories;
         }
+
         /// <summary>
         /// 객체탐지 결과 특정 인덱스 값 변경 (UI동기화용)
         /// </summary>
@@ -228,6 +236,7 @@ namespace MZ.AI.Engine
             }
             catch { }
         }
+
         /// <summary>
         /// 카테고리 색상 변경
         /// </summary>
@@ -235,6 +244,7 @@ namespace MZ.AI.Engine
         {
             Yolo.Categories[index].Color = color;
         }
+
         /// <summary>
         /// 지정 루트경로에 저장된 모델이 있는지 확인
         /// </summary>

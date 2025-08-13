@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -17,7 +18,6 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using System.Diagnostics;
 
 namespace MZ.Xray.Engine
 {
@@ -103,9 +103,6 @@ namespace MZ.Xray.Engine
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public partial class XrayService : BindableBase, IXrayService
     {
         #region Fields & Properties
@@ -118,32 +115,12 @@ namespace MZ.Xray.Engine
         private bool IsRunning => _screenCts != null && !_screenCts.IsCancellationRequested;
 
         /// <summary>
-        /// 
+        /// 실시간 화면 랜더링을 위한 갱신용 FPS (실로직용)
+        /// comment -> Model.Inforamtion.FPS는 화면 갱신될때 값을 표기(ui용)
         /// </summary>
-        private int _frameDelay = 32;
+        private int _fps = 60;
 
-        private bool _checkFrameDelay = false;
         #endregion
-
-        private async Task UpdateFrameDelay()
-        {
-            if (!_checkFrameDelay && Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
-            {
-                var delay = new Stopwatch();
-                long tick = 0;
-
-                delay.Restart();
-                await UpdateScreen();
-                delay.Stop();
-                tick += delay.ElapsedMilliseconds;
-                
-                _frameDelay = (int)Math.Clamp(tick + 4, 16, 60);
-                _checkFrameDelay = true;
-
-                MZLogger.Information($"[FrameDelay] : {tick:0.0}ms -> Delay={_frameDelay}ms");
-            }
-            
-        }
 
         /// <summary>
         /// 화면(Screen) 갱신 주기 Task 시작 (비동기)
@@ -156,31 +133,101 @@ namespace MZ.Xray.Engine
                 return;
             }
 
-            _screenCts = new();
-
-            _screenTask = Task.Run(async () =>
-            {
-                try
-                {
-                    Media.LastestSlider();
-
-                    while (!_screenCts.Token.IsCancellationRequested)
-                    {
-                        await UpdateFrameDelay();
-                        await UpdateScreen();
-                        await Task.Delay(_frameDelay, _screenCts.Token);
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    MZLogger.Error(ex.ToString());
-                }
-            }, _screenCts.Token);
+            _screenCts = new CancellationTokenSource();
+            _screenTask = ScreenLoopAsync(_screenCts.Token);
         }
 
+        private async Task ScreenLoopAsync(CancellationToken token)
+        {
+            Media.LastestSlider();
+
+            double targetTicks = CalcTargetTicks(_fps);
+            long nextTick = Stopwatch.GetTimestamp();
+
+            while (!token.IsCancellationRequested)
+            {
+                long frameStart = Stopwatch.GetTimestamp();
+
+                // UI 반영
+                await InvokeUpdateScreenAsync(token); 
+
+                // 다음 프레임 기준 계산
+                nextTick = GetNextTick(nextTick, targetTicks);
+
+                // 지연 계산 및 대기/동기화
+                if (!await WaitUntilAsync(nextTick, token))  
+                {
+                    //프레임이 늦었을 때, 현재 시간으로 동기화
+                    nextTick = Stopwatch.GetTimestamp();
+                }
+
+                // 중간에 FPS 변경 시 주기 갱신
+                targetTicks = RefreshTargetIfChanged(targetTicks, _fps);
+            }
+        }
+
+        /// <summary>
+        /// UI 스레드에서 UpdateScreen 실행 
+        /// </summary>
+        private async Task InvokeUpdateScreenAsync(CancellationToken token)
+        {
+            await _dispatcher.InvokeAsync(
+                UpdateScreen,
+                DispatcherPriority.Render,
+                token
+            );
+        }
+
+
+        /// <summary>
+        /// FPS를 Stopwatch Tick 변환
+        /// </summary>
+        private double CalcTargetTicks(int fps)
+        {
+            return Stopwatch.Frequency / (double)fps;
+        }
+
+        /// <summary>
+        /// 다음 프레임 기준 시간 계산
+        /// </summary>
+        private long GetNextTick(long next, double targetTicks)
+        {
+            return next + (long)targetTicks;
+        }
+
+        /// <summary>
+        /// 목표 시간까지 대기. 
+        /// </summary>
+        private async Task<bool> WaitUntilAsync(long tick, CancellationToken token)
+        {
+            long now = Stopwatch.GetTimestamp();
+            long remain = tick - now;
+
+            if (remain <= 0)
+            {
+                return false;
+            }
+            int delay = (int)(remain * 1000 / Stopwatch.Frequency);
+            if (delay > 0)
+            {
+                try 
+                { 
+                    await Task.Delay(delay, token); 
+                }
+                catch (Exception) {}
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// FPS 변경 감지 시 새 주기로 갱신
+        /// </summary>
+        private double RefreshTargetIfChanged(double current, int fps)
+        {
+            double target = CalcTargetTicks(fps);
+            return Math.Abs(target - current) > 1 ? target : current;
+        }
 
         /// <summary>
         /// 화면 갱신 Task 중지
@@ -254,8 +301,7 @@ namespace MZ.Xray.Engine
         {
             if (IsRunning)
             {
-                await Task.WhenAll(
-                    Media.FreezeImageSourceAsync(),
+                await Task.WhenAll(Media.FreezeImageSourceAsync(),
                     Zeffect.FreezeImageSourceAsync());
 
                 if (Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
@@ -419,7 +465,6 @@ namespace MZ.Xray.Engine
 
                     Media.ClearCount();
                     Calibration.UpdateGain(line);
-
                 }
             }
             catch (Exception ex)
