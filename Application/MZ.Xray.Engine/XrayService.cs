@@ -120,31 +120,29 @@ namespace MZ.Xray.Engine
         /// <summary>
         /// 
         /// </summary>
-        private int _frameDelay = 16;
+        private int _frameDelay = 32;
 
         private bool _checkFrameDelay = false;
         #endregion
 
         private async Task UpdateFrameDelay()
         {
-            const int testFrames = 30;
-            var delay = new Stopwatch();
-            long totalTicks = 0;
-
-            for (int i = 0; i < testFrames; i++)
+            if (!_checkFrameDelay && Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
             {
+                var delay = new Stopwatch();
+                long tick = 0;
+
                 delay.Restart();
                 await UpdateScreen();
                 delay.Stop();
-                totalTicks += delay.ElapsedMilliseconds;
+                tick += delay.ElapsedMilliseconds;
+                
+                _frameDelay = (int)Math.Clamp(tick + 4, 16, 60);
+                _checkFrameDelay = true;
+
+                MZLogger.Information($"[FrameDelay] : {tick:0.0}ms -> Delay={_frameDelay}ms");
             }
-
-            double avgMs = totalTicks / (double)testFrames;
-
-            _frameDelay = (int)Math.Clamp(avgMs + 4, 16, 40);
-            _checkFrameDelay = true;
-
-            MZLogger.Information($"[FrameDelay] : {avgMs:0.0}ms -> Delay={_frameDelay}ms");
+            
         }
 
         /// <summary>
@@ -166,13 +164,9 @@ namespace MZ.Xray.Engine
                 {
                     Media.LastestSlider();
 
-                    if (!_checkFrameDelay)
-                    {
-                        await UpdateFrameDelay();
-                    }
-
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
+                        await UpdateFrameDelay();
                         await UpdateScreen();
                         await Task.Delay(_frameDelay, _screenCts.Token);
                     }
