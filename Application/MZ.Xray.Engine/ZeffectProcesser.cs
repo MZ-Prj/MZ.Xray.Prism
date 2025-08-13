@@ -150,6 +150,10 @@ namespace MZ.Xray.Engine
         {
             try
             {
+                if (index <= 0 || index > Frames.Count)
+                {
+                    return;
+                }
                 ImageSource = VisionBase.CanFreezeImageSource(Frames[index - 1].Image.ToBitmapSource());
 
             }
