@@ -25,7 +25,7 @@ namespace MZ.Dashboard.Bahaviors
         private const double MinZoom = 1.0;
         private const double MaxZoom = 10.0;
 
-        ImageStorageDetailBehavior()
+        public ImageStorageDetailBehavior()
         {
 
         }
