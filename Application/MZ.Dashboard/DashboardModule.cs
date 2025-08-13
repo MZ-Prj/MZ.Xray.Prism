@@ -66,7 +66,11 @@ namespace MZ.Dashboard
         /// </summary>
         private void SplashCloseEvent()
         {
+#if DEBUG
             SetWindowLocate(MZWindowNames.DashboardWindow, 1);
+#else
+            SetWindowLocate(MZWindowNames.DashboardWindow, 0);
+#endif
             ShowWindow(MZWindowNames.DashboardWindow);
         }
     }
