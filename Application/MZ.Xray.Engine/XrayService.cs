@@ -17,7 +17,6 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using YoloDotNet;
 
 namespace MZ.Xray.Engine
 {
