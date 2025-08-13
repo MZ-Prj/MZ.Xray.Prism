@@ -4,7 +4,6 @@ using OpenCvSharp;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -100,7 +99,7 @@ namespace MZ.Model
         /// <summary>
         /// 최대 재생 간격
         /// </summary>
-        private int _maxInterval = 32;
+        private int _maxInterval = 16;
         public int MaxInterval { get => _maxInterval; set => SetProperty(ref _maxInterval, value); }
 
         /// <summary>

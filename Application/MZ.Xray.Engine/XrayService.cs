@@ -17,6 +17,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
+using YoloDotNet;
 
 namespace MZ.Xray.Engine
 {
@@ -225,31 +226,27 @@ namespace MZ.Xray.Engine
         
         public async Task UpdateScreen()
         {
-
-            await Task.WhenAll(
-                 Media.FreezeImageSourceAsync(),
-                 Zeffect.FreezeImageSourceAsync());
-
-            if (Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
+            if (IsRunning)
             {
+                await Task.WhenAll(
+                    Media.FreezeImageSourceAsync(),
+                    Zeffect.FreezeImageSourceAsync());
 
-                Media.AddFrame();
-                Zeffect.AddFrame();
-
-                _aiService.AddObjectDetection();
-
-                if (Media.CompareSlider())
+                if (Media.IsCountUpperZero() && Media.IsFrameUpdateRequired())
                 {
-                    Media.RemoveFrame();
-                    Zeffect.RemoveFrame();
+                    Add();
 
-                    _aiService.RemoveObjectDetection();
+                    if (Media.CompareSlider())
+                    {
+                        Remove();
 
-                    Media.ResetSlider();
+                        Media.ResetSlider();
+                    }
+                    Media.IncrementSlider();
                 }
-                Media.IncrementSlider();
+                Media.IncreaseInterval();
             }
-            Media.IncreaseInterval();
+            
         }
 
         /// <summary>
@@ -270,6 +267,20 @@ namespace MZ.Xray.Engine
             Media.ChangeFrame(index);
             Zeffect.ChangeFrame(index);
             _aiService.ChangeObjectDetections(index);
+        }
+
+        private void Add()
+        {
+            Media.AddFrame();
+            Zeffect.AddFrame();
+            _aiService.AddObjectDetection();
+        }
+
+        private void Remove()
+        {
+            Media.RemoveFrame();
+            Zeffect.RemoveFrame();
+            _aiService.RemoveObjectDetection();
         }
 
     }
@@ -382,6 +393,7 @@ namespace MZ.Xray.Engine
 
                     Media.ClearCount();
                     Calibration.UpdateGain(line);
+
                 }
             }
             catch (Exception ex)
@@ -485,6 +497,7 @@ namespace MZ.Xray.Engine
         /// <returns></returns>
         public async Task ShiftAsync(Mat line, Mat color, Mat zeff)
         {
+
             int width = color.Width;
             await Task.WhenAll(
                 Calibration.ShiftAsync(line),
@@ -525,7 +538,8 @@ namespace MZ.Xray.Engine
                     XrayDataSaveManager.ScreenAsync(Media.ChangedScreenToMat(), path, $"{time}.png"),
                     _databaseService.Image.Save(new ImageSaveRequest(path, $"{time}.png", (end - start), height, ObjectDetectionMapper.ModelsToEntities(_aiService.Yolo.ChangePositionCanvasToMat()))),
                     _aiService.Save(path, $"{time}.json"));
-            }); 
+            });
+
         }
     }
 

@@ -89,17 +89,11 @@
                         <ImageBrush ImageSource="{Binding Path=Zeffect.Model.ImageSource, Mode=OneWay}"/>
                     </Canvas.Background>
                 </Canvas>
-
+                
                 <Canvas x:Name="CanvasAIPredictView"
                         Visibility="{Binding Path=Yolo.IsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        CacheMode="BitmapCache"
-                        ClipToBounds="True" 
-                        IsManipulationEnabled="true" 
                         Width="{Binding Path=Media.Model.Information.Width}" 
                         Height="{Binding Path=Media.Model.Information.Height}"
-                        SnapsToDevicePixels="True"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        RenderOptions.EdgeMode="Aliased"
                         RenderTransformOrigin="0.5, 0.5">
 
                     <ItemsControl ItemsSource="{Binding Path=Yolo.ObjectDetections}">

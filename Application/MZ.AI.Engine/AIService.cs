@@ -13,9 +13,8 @@ using MZ.Domain.Entities;
 using YoloDotNet;
 using YoloDotNet.Enums;
 using YoloDotNet.Models;
-using System;
 using System.Windows.Threading;
-using ControlzEx.Standard;
+using System.Windows.Controls;
 
 namespace MZ.AI.Engine
 {
@@ -142,30 +141,21 @@ namespace MZ.AI.Engine
         /// </summary>
         public void Shift(int width)
         {
-            var src = Yolo.ObjectDetections;
-            var objectDetections = new List<ObjectDetectionModel>(Yolo.ObjectDetections.Count);
-            for (int i = 0; i < src.Count; i++)
+            var list = Yolo.ObjectDetections;
+            for (int i = 0; i < list.Count; i++)
             {
-                var c = src[i];
-                var copy = ObjectDetectionMapper.ModelCopy(c);
-                copy.OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
-                objectDetections.Add(copy);
+                list[i].OffsetX -= (width * Yolo.ObjectDetectionOption.ScaleX);
             }
-            Yolo.ObjectDetections = [.. objectDetections];
+
         }
+
         /// <summary>
         /// 객체탐지 결과 추가
         /// </summary>
         public void AddObjectDetection()
         {
-            var objectDetections = new ObservableCollection<ObjectDetectionModel>(
-                Yolo.ObjectDetections.Select(c =>
-                {
-                    var copy = new ObjectDetectionModel();
-                    c.CopyTo(copy);
-                    return copy;
-                })
-            );
+            var src = Yolo.ObjectDetections;
+            var objectDetections = new ObservableCollection<ObjectDetectionModel>(src.Select(ObjectDetectionMapper.ModelCopy));
             Yolo.ObjectDetectionsList.Add(objectDetections);
         }
 
@@ -224,7 +214,17 @@ namespace MZ.AI.Engine
         {
             try
             {
-                Yolo.ObjectDetections = Yolo.ObjectDetectionsList[index - 1];
+
+                if (index <= 0 || index > Yolo.ObjectDetectionsList.Count)
+                {
+                    return;
+                }
+
+                var src = Yolo.ObjectDetectionsList[index - 1];
+                var objectDetections = new ObservableCollection<ObjectDetectionModel>(src.Select(ObjectDetectionMapper.ModelCopy));
+
+                Yolo.ObjectDetections = objectDetections;
+
             }
             catch { }
         }
