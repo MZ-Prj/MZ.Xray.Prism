@@ -17,7 +17,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
-using YoloDotNet;
+using System.Diagnostics;
 
 namespace MZ.Xray.Engine
 {
@@ -117,8 +117,35 @@ namespace MZ.Xray.Engine
         private Task _screenTask;
         private bool IsRunning => _screenCts != null && !_screenCts.IsCancellationRequested;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private int _frameDelay = 16;
+
+        private bool _checkFrameDelay = false;
         #endregion
 
+        private async Task UpdateFrameDelay()
+        {
+            const int testFrames = 30;
+            var delay = new Stopwatch();
+            long totalTicks = 0;
+
+            for (int i = 0; i < testFrames; i++)
+            {
+                delay.Restart();
+                await UpdateScreen();
+                delay.Stop();
+                totalTicks += delay.ElapsedMilliseconds;
+            }
+
+            double avgMs = totalTicks / (double)testFrames;
+
+            _frameDelay = (int)Math.Clamp(avgMs + 4, 16, 40);
+            _checkFrameDelay = true;
+
+            MZLogger.Information($"[FrameDelay] : {avgMs:0.0}ms -> Delay={_frameDelay}ms");
+        }
 
         /// <summary>
         /// 화면(Screen) 갱신 주기 Task 시작 (비동기)
@@ -139,10 +166,15 @@ namespace MZ.Xray.Engine
                 {
                     Media.LastestSlider();
 
+                    if (!_checkFrameDelay)
+                    {
+                        await UpdateFrameDelay();
+                    }
+
                     while (!_screenCts.Token.IsCancellationRequested)
                     {
                         await UpdateScreen();
-                        await Task.Delay(16, _screenCts.Token);
+                        await Task.Delay(_frameDelay, _screenCts.Token);
                     }
                 }
                 catch (OperationCanceledException)
