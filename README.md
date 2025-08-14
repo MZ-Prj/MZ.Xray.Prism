@@ -101,6 +101,7 @@ graph TD
     X["On Exception:<br/>MZLogger.Error(ex)"]
     A -.-> X
 ```
+
 ##### 이미지 색상 처리 (Process)
 1. 입력 검증: 비어있는 라인(데이터 없음)은 즉시 반환하여 불필요한 연산 방지
 2. 보정/비율 조정: 라인의 픽셀 비율과 해상도 보정
@@ -155,19 +156,84 @@ graph TD
 
 ### 3. 엔티티 
 
+```mermaid
+erDiagram
+    USER ||--|| USERSETTING : has
+    USER ||--|| CALIBRATION : has
+    USER ||--|| FILTER : has
+    USER ||--|| MATERIAL : has
+    USER ||--o{ ZEFFCONTROL : owns
+    USER ||--o{ CURVECONTROL : owns
+
+    USERSETTING ||--o{ USERBUTTON : has
+    MATERIAL ||--o{ MATERIALCONTROL : has
+
+    IMAGE ||--o{ OBJECTDETECTION : has
+
+    AIOPTION ||--o{ CATEGORY : has
+
+    USER {
+        int Id PK
+        string Username
+        string PasswordHash
+        string Role
+        datetime CreateDate
+        datetime LastLoginDate
+    }
+    USERSETTING {
+        int Id PK
+        int UserId FK
+        string Theme
+        string Language
+        bool IsUsernameSave
+    }
+    IMAGE {
+        int Id PK
+        string Path
+        string Filename
+        int Width
+        int Height
+        datetime CreateDate
+    }
+    AIOPTION {
+        int Id PK
+        string OnnxModel
+        string ModelType
+        bool Cuda
+        bool PrimeGpu
+        int GpuId
+        float Confidence
+        float IoU
+        datetime CreateDate
+        bool IsChecked
+    }
 ```
-User (1) ──── (1) UserSetting ── (N) UserButton
-   │
-   ├──── (1) Calibration
-   ├──── (1) Filter
-   ├──── (1) Material ─── (N) MaterialControl
-   ├──── (N) ZeffectControl
-   └──── (N) CurveControl
 
-AIOption (1) ─── (N) Category
+#### 3.1 서비스 계층
 
-Image (1) ─── (N) ObjectDetection
-```
-
-#### 3.1 데이터 처리 파이프라인(엔티티)
-
+- DatabaseService
+    - 진입점: User, AppSetting, Image, Filter, Material, Calibration, ZeffectControl, CurveControl, AIOption 서비스 모음
+- AppSettingService
+    - Register: 기존 레코드 전체 삭제 후 단일 최신값  저장
+    - GetAppSetting: 현재값 조회
+- UserService
+    - Login: 사용자 조회 → 패스워드 해시 검증(SHA-256)  LastLoginDate 갱신 → 세션 저장
+    - Logout: 사용시간 누적 후 세션 클리어
+    - Register: 중복 검사 → 사용자/기본 UserSetting/Buttons 생성
+    - ChangeLanguage, ChangeTheme, SaveUserSetting, GetUserSetting, GetUserWithUserSetting, IsAdmin, IsLoggedIn, GetUser
+- XrayAIOptionService
+    - Create: AIOption 정책 보장,  하위 Category 일괄 생성
+    - Save: 카테고리 동기화(UpdateCategories)
+    - Load, ExistOneRecord, Delete
+- XrayVisionImageService
+    - Load(기간/페이지), Load(리포트용 전체)
+    - Save: 이미지 메타, ObjectDetection 집합 저장
+- XrayVisionCalibrationService / FilterService / MaterialService
+    - Load(username)
+    - Save(로그인 사용자)
+    - MaterialService.Save: MaterialControl 추가/수정/삭제 동기화 처리
+- XrayVisionZeffectControlService / CurveControlService
+    - Load(username)
+    - Save: 사용자별 컨트롤 집합 전체 동기화
+        - Zeffect: 존재하지 않는 항목 삭제, 신규 추가/기존 수정
+        - Curve: 사용자 기존값 전체 삭제 후 요청값으로 재등록
