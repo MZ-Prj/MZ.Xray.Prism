@@ -1,7 +1,7 @@
 # MZ.Xray.Prism
 
-[![Build](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-build.yml/badge.svg)](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-build.yml)
-[![Tests](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-tests.yml/badge.svg)](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-tests.yml)
+[![CI](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-tests.yml/badge.svg)](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-tests.yml)
+
 
 ## 1. 프로젝트 개요
 
