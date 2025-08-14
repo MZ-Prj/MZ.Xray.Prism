@@ -2,6 +2,8 @@
 
 ### 1. 프로젝트 개요
 
+[![영상 보기](https://img.youtube.com/vi/uLTVRcM9iZM/0.jpg)](https://www.youtube.com/watch?v=uLTVRcM9iZM)
+
 #### 목적
 - 생산 라인/연구 장비 등에서 X-ray 영상을 자동으로 분석해 위험 물품을 검출
 
@@ -35,7 +37,7 @@ MZ.Xray.Prism/
 - Application : 운영 UI, 시각화, 설정 관리, 실시간 상태 모니터링(Prism MVVM)
 - Producer : 입력→전처리→데이터 송신, 가상의 장비(Detector)의 송신부 구현
 - UnitTest : 핵심 알고리즘/서비스 단위 테스트
-- .github/workflows(CI/CD) : 빌드/테스트/릴리스 자동화 워크플로우(Git Action)
+- .github/workflows(CI/CD) : 빌드/테스트 자동화 워크플로우(Git Action)
 
 ### 3. 엔티티 
 
