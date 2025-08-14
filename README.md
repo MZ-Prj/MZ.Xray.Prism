@@ -11,9 +11,8 @@
 > 클릭 시 YouTube에서 전체 영상 재생
 
 <a href="https://www.youtube.com/watch?v=uLTVRcM9iZM" target="_blank">
-    <img src="https://img.youtube.com/vi/uLTVRcM9iZM/0.jpg" width=320 alt="MZ.Xray.Prism 시연 영상"/>
+    <img src="https://raw.githubusercontent.com/MZ-Prj/MZ.Xray.Prism/main/README/intro.gif" width=320 alt="MZ.Xray.Prism 시연 영상"/>
 </a>
-
 
 ### 1.3 특징
 
