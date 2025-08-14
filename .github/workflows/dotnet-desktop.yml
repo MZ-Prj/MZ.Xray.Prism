@@ -34,7 +34,9 @@ jobs:
             project: MZ.Infrastructure.Test/MZ.Infrastructure.Test.csproj
           - module_name: Vision
             project: MZ.Vision.Test/MZ.Vision.Test.csproj
-
+          - module_name: Xray.Engine
+            project: MZ.Xray.Engine.Test/MZ.Xray.Engine.Test.csproj
+            
     name: Run Tests (${{ matrix.module_name }})
 
     steps:
