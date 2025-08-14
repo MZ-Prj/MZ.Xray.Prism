@@ -1,19 +1,20 @@
-name: .NET Tests
+name: .NET Tests (Modules)
 
 on:
-  workflow_run:
-    workflows: [".NET Build"]
-    types: [completed]
+  workflow_call:
+    inputs:
+      commit:
+        description: "Commit SHA to test"
+        required: true
+        type: string
 
 permissions:
   contents: read
-  actions: read 
   checks: write
   pull-requests: write
 
 jobs:
   tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -27,10 +28,12 @@ jobs:
             project: MZ.Vision.Test/MZ.Vision.Test.csproj
           - module_name: Xray.Engine
             project: MZ.Xray.Engine.Test/MZ.Xray.Engine.Test.csproj
+
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          # 빌드 워크플로우에서 넘겨준 동일 커밋으로 고정
+          ref: ${{ inputs.commit }}
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4

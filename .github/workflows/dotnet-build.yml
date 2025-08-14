@@ -12,6 +12,8 @@ concurrency:
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
   build:
@@ -36,3 +38,10 @@ jobs:
 
       - name: Build (Release)
         run: dotnet build UnitTest/UnitTest.sln --configuration Release --no-restore
+
+  # ✅ 빌드 끝나면 같은 워크플로우 안에서 "테스트 워크플로우 파일"을 호출
+  run-tests:
+    needs: build
+    uses: ./.github/workflows/dotnet-tests.yml
+    with:
+      commit: ${{ github.sha }}
