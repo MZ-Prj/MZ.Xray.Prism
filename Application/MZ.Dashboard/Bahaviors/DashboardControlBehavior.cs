@@ -242,9 +242,6 @@ namespace MZ.Dashboard.Bahaviors
     /// <summary>
     /// Canvas 하위의 Usercontrol 처리 속도 시간 측정
     /// </summary>
-    /// <summary>
-    /// Canvas 하위의 Usercontrol 처리 속도 시간 측정
-    /// </summary>
     public partial class DashboardControlBehavior
     {
         public static readonly DependencyProperty GenerationProperty = DependencyProperty.Register(nameof(Generation), typeof(int), typeof(DashboardControlBehavior), new PropertyMetadata(0));

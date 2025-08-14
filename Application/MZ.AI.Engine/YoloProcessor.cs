@@ -223,6 +223,10 @@ namespace MZ.AI.Engine
         {
             IsVisibility = !IsVisibility;
         }
+        public void ChangedVisibility(bool isVisibility)
+        {
+            IsVisibility = isVisibility;
+        }
 
         /// <summary>
         /// YOLO 엔진 리소스를 해제하고 참조 해제

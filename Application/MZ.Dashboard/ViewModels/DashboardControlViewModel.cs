@@ -18,6 +18,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 
 namespace MZ.Dashboard.ViewModels
@@ -162,9 +164,10 @@ namespace MZ.Dashboard.ViewModels
             base.Initialize();
         }
 
-        public override void OnNavigatedTo(NavigationContext navigationContext)
+
+        public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
-            Load();
+            await InitializeScreen();
         }
 
 
@@ -195,7 +198,7 @@ namespace MZ.Dashboard.ViewModels
         private void PickerButton()
         {
             // ui
-            ToggleFooterButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff), VideoButtons);
+            ToggleButton(PickerCommand, nameof(PackIconMaterialKind.Pin), nameof(PackIconMaterialKind.PinOff), VideoButtons);
         }
 
         /// <summary>
@@ -207,7 +210,7 @@ namespace MZ.Dashboard.ViewModels
             // ui
             IsRunning = _xrayService.IsPlaying();
 
-            ToggleFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
+            ToggleButton(PlayStopCommand, nameof(PackIconMaterialKind.Play), nameof(PackIconMaterialKind.Stop), VideoButtons);
 
             ChangedVisibility(IsRunning);
 
@@ -307,7 +310,7 @@ namespace MZ.Dashboard.ViewModels
         private void AIOnOffButton()
         {
             // ui
-            ToggleFooterButton(AIOnOffCommand, nameof(PackIconMaterialKind.HeadRemoveOutline), nameof(PackIconMaterialKind.HeadCheckOutline), ActionButtons);
+            ToggleButton(AIOnOffCommand, nameof(PackIconMaterialKind.HeadRemoveOutline), nameof(PackIconMaterialKind.HeadCheckOutline), ActionButtons);
 
             // logic
             Yolo.ChangedVisibility();
@@ -346,7 +349,6 @@ namespace MZ.Dashboard.ViewModels
             }
         }
 
-
         private void RelativeWidthRatioUpButton()
         {
             Calibration.ChangedRelativeWidthRatio(-0.1);
@@ -362,14 +364,15 @@ namespace MZ.Dashboard.ViewModels
         /// <summary>
         /// 뷰 로드 시 기본 상태 초기화
         /// </summary>
-        /// <param name="check">bool</param>
-        private async void Load()
+        private async Task InitializeScreen()
         {
             // ui
             CreateButtons();
             ChangeFooterButton(PlayStopCommand, nameof(PackIconMaterialKind.Stop), VideoButtons);
 
             ChangedVisibility(false);
+            ChangedAIFalse();
+
 
             // logic
             _xrayService.Stop();
@@ -382,6 +385,7 @@ namespace MZ.Dashboard.ViewModels
                 _xrayService.UI.LoadActionButton(userSetting.Data?.Buttons);
             }
         }
+
 
         /// <summary>
         /// 버튼 집합
@@ -452,7 +456,7 @@ namespace MZ.Dashboard.ViewModels
         /// <param name="iconOn">string</param>
         /// <param name="iconOff">string</param>
         /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
-        private void ToggleFooterButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        private void ToggleButton(ICommand targetCommand, string iconOn, string iconOff, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
             {
@@ -472,7 +476,7 @@ namespace MZ.Dashboard.ViewModels
         /// <param name="targetCommand">ICommand</param>
         /// <param name="isVisibility">bool</param>
         /// <param name="buttonCollections">ObservableCollection<IconButtonModel>[]</param>
-        private void VisibilityFooterButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
+        private void VisibilityButton(ICommand targetCommand, bool isVisibility, params ObservableCollection<IconButtonModel>[] buttonCollections)
         {
             foreach (var collection in buttonCollections)
             {
@@ -483,6 +487,16 @@ namespace MZ.Dashboard.ViewModels
                         button.IsVisibility = isVisibility;
                     }
                 }
+            }
+        }
+
+
+        private void SetButtonIcon(ICommand command, string iconKind, ObservableCollection<IconButtonModel> actionButtons)
+        {
+            var button = actionButtons?.FirstOrDefault(vb => vb.Command == command);
+            if (button != null)
+            {
+                button.IconKind = iconKind;
             }
         }
 
@@ -502,12 +516,19 @@ namespace MZ.Dashboard.ViewModels
         /// <param name="check">bool</param>
         private void ChangedVisibility(bool check)
         {
-            VisibilityFooterButton(PreviousCommand, check, VideoButtons);
-            VisibilityFooterButton(NextCommand, check, VideoButtons);
+            VisibilityButton(PreviousCommand, check, VideoButtons);
+            VisibilityButton(NextCommand, check, VideoButtons);
 
-            VisibilityFooterButton(RelativeWidthRatioDownCommand, check, VideoButtons);
-            VisibilityFooterButton(RelativeWidthRatioUpCommand, check, VideoButtons);
+            VisibilityButton(RelativeWidthRatioDownCommand, check, VideoButtons);
+            VisibilityButton(RelativeWidthRatioUpCommand, check, VideoButtons);
 
+            IsRunning = check;
+        }
+
+        private void ChangedAIFalse()
+        {
+            SetButtonIcon(AIOnOffCommand, nameof(PackIconMaterialKind.HeadRemoveOutline), ActionButtons);
+            Yolo.ChangedVisibility(false);
         }
 
 

@@ -69,7 +69,9 @@ namespace MZ.Dashboard.ViewModels
         #region Initialize
         public override void InitializeModel()
         {
+#if DEBUG
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.IpNetwork), IpNetworkCommand));
+#endif
             WindowCommandButtons.Add(new(nameof(PackIconMaterialKind.ThemeLightDark), ThemeCommand));
         }
         
@@ -78,7 +80,7 @@ namespace MZ.Dashboard.ViewModels
         {
             SubscribeEvent<DashboardNavigationEvent, NavigationModel>(model => _regionManager.RequestNavigate(model.Region, model.View));
         }
-        #endregion
+#endregion
 
         #region Button
         /// <summary>
