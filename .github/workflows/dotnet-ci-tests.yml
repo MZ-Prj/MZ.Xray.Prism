@@ -1,10 +1,9 @@
 name: .NET Tests (Modules)
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  workflow_run:
+    workflows: [".NET Build"]
+    types: [completed]
 
 permissions:
   contents: read
