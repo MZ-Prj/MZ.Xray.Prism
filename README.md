@@ -1,5 +1,8 @@
 # MZ.Xray.Prism
 
+[![Build](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-build.yml/badge.svg)](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-build.yml)
+[![Tests](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-tests.yml/badge.svg)](https://github.com/MZ-Prj/MZ.Xray.Prism/actions/workflows/dotnet-ci-tests.yml)
+
 ## 1. 프로젝트 개요
 
 ### 1.1 목적
@@ -192,10 +195,15 @@ erDiagram
 - **XrayVisionZeffectControlService / CurveControlService**
     - 사용자별 로드/저장, Zeffect(추가/삭제/수정), Curve(전체 재등록)
 
-## 5. 개발 성과 & 본인 역할
+## 5. 개발
 
 - **개인 프로젝트**로 기획부터 설계, 구현, 테스트, 배포까지 전 과정 단독 수행
 - 기존 레거시 X-ray 분석 코드 구조를 **MVVM + 모듈화 아키텍처**로 재구성
 - 이미지 처리 파이프라인 최적화로 **프레임 처리 속도 향상** (불필요 연산 제거 및 병렬 처리 도입)
 - AI 추론 모듈을 ONNX Runtime(CUDA) 기반으로 통합하여 GPU 가속 적용
 - DB 스키마 및 서비스 계층을 새로 설계하여 유지보수성 및 확장성 향상
+
+## 6. 전후 비교 (before-after)
+<!-- TODO -->
+
+
