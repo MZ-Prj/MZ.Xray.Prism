@@ -12,12 +12,14 @@ concurrency:
 
 permissions:
   contents: read
-  checks: write
-  pull-requests: write
 
 jobs:
   build:
     runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      OUTDIR: ${{ github.workspace }}\_build\
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,15 +35,18 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget-
 
+      # ✅ 같은 출력 경로로 고정 (테스트와 동일)
       - name: Restore
-        run: dotnet restore UnitTest/UnitTest.sln
+        run: dotnet restore UnitTest/UnitTest.sln -p:BaseOutputPath="$env:OUTDIR"
+        working-directory: ./UnitTest
 
       - name: Build (Release)
-        run: dotnet build UnitTest/UnitTest.sln --configuration Release --no-restore
+        run: dotnet build UnitTest/UnitTest.sln --configuration Release --no-restore -p:BaseOutputPath="$env:OUTDIR"
+        working-directory: ./UnitTest
 
-  # ✅ 빌드 끝나면 같은 워크플로우 안에서 "테스트 워크플로우 파일"을 호출
-  run-tests:
-    needs: build
-    uses: ./.github/workflows/dotnet-tests.yml
-    with:
-      commit: ${{ github.sha }}
+      # ✅ 테스트 워크플로우가 그대로 쓸 수 있게 업로드
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: ${{ env.OUTDIR }}

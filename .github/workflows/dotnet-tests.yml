@@ -1,12 +1,10 @@
 name: .NET Tests (Modules)
 
+# ✅ 빌드 워크플로 완료 시에만 시작(순서 보장)
 on:
-  workflow_call:
-    inputs:
-      commit:
-        description: "Commit SHA to test"
-        required: true
-        type: string
+  workflow_run:
+    workflows: [".NET Build"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -15,7 +13,12 @@ permissions:
 
 jobs:
   tests:
+    # ✅ 빌드가 성공했을 때만
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      OUTDIR: ${{ github.workspace }}\_build\
     strategy:
       fail-fast: false
       matrix:
@@ -30,10 +33,10 @@ jobs:
             project: MZ.Xray.Engine.Test/MZ.Xray.Engine.Test.csproj
 
     steps:
+      # ✅ 빌드가 돌았던 동일 커밋으로 고정
       - uses: actions/checkout@v4
         with:
-          # 빌드 워크플로우에서 넘겨준 동일 커밋으로 고정
-          ref: ${{ inputs.commit }}
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
@@ -47,17 +50,22 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Restore
-        run: dotnet restore UnitTest/UnitTest.sln
+      # ✅ 빌드 산출물 다운로드 (같은 OUTDIR로)
+      - name: Download build outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: build-outputs
+          path: ${{ env.OUTDIR }}
+          run-id: ${{ github.event.workflow_run.id }}   # ← 빌드 런의 아티팩트
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build (Release)
-        run: dotnet build UnitTest/UnitTest.sln --configuration Release --no-restore
-
+      # ✅ 테스트는 빌드 재실행 없이, 같은 출력 경로를 가리키며 실행
       - name: Test (${{ matrix.module_name }})
         run: >
           dotnet test UnitTest/${{ matrix.project }}
           --configuration Release
           --no-build
+          -p:BaseOutputPath="$env:OUTDIR"
           --logger "trx;LogFileName=${{ matrix.module_name }}.trx"
           --collect:"XPlat Code Coverage"
           --results-directory ./UnitTest/TestResults/${{ matrix.module_name }}
