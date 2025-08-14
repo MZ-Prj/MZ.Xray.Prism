@@ -18,6 +18,7 @@ using MZ.Resource;
 using OpenCvSharp;
 using Microsoft.Extensions.Configuration;
 using static MZ.Event.MZEvent;
+using System.Collections.Generic;
 
 namespace MZ.Xray.Engine
 {
@@ -73,14 +74,20 @@ namespace MZ.Xray.Engine
         /// </summary>
         public void InitializeEvent()
         {
-            _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe((FileModel file) =>
+            try
             {
-                if (IsRunning && _databaseService.User.IsLoggedIn())
+                _eventAggregator.GetEvent<FileReceiveEvent>().Subscribe((FileModel file) =>
                 {
-                    _imageProcessingChannel.Writer.TryWrite(file.Image);
-                }
-            }, ThreadOption.UIThread, true);
-
+                    if (IsRunning && _databaseService.User.IsLoggedIn())
+                    {
+                        _imageProcessingChannel.Writer.TryWrite(file.Image);
+                    }
+                }, ThreadOption.UIThread, true);
+            }
+            catch (Exception ex) 
+            { 
+                MZLogger.Error(ex.ToString()); 
+            }
         }
 
         /// <summary>
@@ -474,6 +481,46 @@ namespace MZ.Xray.Engine
         }
 
         /// <summary>
+        /// Process의 순 알고리즘 처리만 적용
+        /// UnitTest 코드
+        /// </summary>
+        public async Task ProcessTest(Mat origin)
+        {
+            if (VisionBase.IsEmpty(origin))
+            {
+                return;
+            }
+
+            // 이미지 크기 비율 조정
+            Mat line = Calibration.AdjustRatio(origin);
+
+            // 이미지 크기 변경시 초기화
+            await UpdateOnResizeAsync(line);
+
+            // Update : Gain, Offset 
+            if (!Calibration.UpdateOnEnergy(line))
+            {
+                return;
+            }
+
+            // Calibration 알고리즘 계산
+            (Mat high, _, Mat color, Mat zeff) = Calculation(line);
+
+            // 물체 유무 판단
+            bool isObject = await Calibration.IsObjectAsync(high);
+            if (isObject)
+            {
+                await ShiftAsync(line, CurveSpline.UpdateMat(color), zeff);
+                Media.IncreaseCount();
+            }
+            else
+            {
+                Media.ClearCount();
+                Calibration.UpdateGain(line);
+            }
+        }
+
+        /// <summary>
         /// 한 줄(Line) X-ray 이미지 처리 수행
         /// - 상/하(High/Low) 신호 분해
         /// - 컬러 및 Zeff 효과 계산
@@ -540,6 +587,8 @@ namespace MZ.Xray.Engine
 
             return (high, low, color, zeff);
         }
+
+
 
         /// <summary>
         /// 입력 라인의 크기 변화시, 각 모듈(Calibration/Media/Zeffect 등)에서 내부 버퍼/상태를 비동기로 Resize 처리
