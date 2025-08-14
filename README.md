@@ -19,9 +19,17 @@
 #### 환경 요구 사항
 - OS: Windows 10/11, .NET 8 LTS
 - IDE: Visual Studio 2022, Desktop development with .NET 
-- AI : ONNX Runtime(CUDA)
+- AI : ONNX Runtime(CUDA), 
 - GPU: CUDA 12.x, cuDNN 9.x
 - Library : WPF, Prism, OpenCV-Sharp, Serilog,  LiveChartCore
+
+#### 기술 스택 세부 정보
+- AI 모델 형식: YOLOv11
+- 데이터 형식: 16bit grayscale / dual-energy X-ray raw format
+- 네트워크 프로토콜: TCP Socket
+- DB: SQLite(Local)
+- 로그 관리: Serilog, rolling file
+- 배포 방식: MSI Installer
 
 #### 기능 
 - 로그인 및 회원가입 기능
@@ -56,13 +64,94 @@ MZ.Xray.Prism/
 ├─ Producer/
 ├─ UnitTest/
 ├─ .github/
-│  └─ workflows/
+   └─ workflows/
 ```
 
 - Application : 운영 UI, 시각화, 설정 관리, 실시간 상태 모니터링(Prism MVVM)
 - Producer : 입력→전처리→데이터 송신, 가상의 장비(Detector)의 송신부 구현
 - UnitTest : 핵심 알고리즘/서비스 단위 테스트
 - .github/workflows(CI/CD) : 빌드/테스트 자동화 워크플로우(Git Action)
+
+#### 2.1 데이터 처리 파이프라인(이미지)
+
+- 데이터 수집
+   - Producer에서 raw frame(16cu1)을 실시간 소켓 통신 수행
+   - unsafe pointer를 Mat으로 변환
+ 
+##### 실시간 이미지 처리
+
+```mermaid
+graph TD
+    A["Start: Process(origin)"] --> B{"IsEmpty(origin)?"}
+    B -- "Yes" --> Z["Return"]
+    B -- "No" --> C["AdjustRatio(origin) → line"]
+    C --> D["UpdateOnResizeAsync(line)"]
+    D --> E{"UpdateOnEnergy(line)?"}
+    E -- "No" --> Z
+    E -- "Yes" --> F["Calculation(line)<br/>(high, low, color, zeff)"]
+    F --> G{"IsObjectAsync(high)?"}
+    G -- "Yes" --> H["ShiftAsync(line,<br/>CurveSpline.UpdateMat(color), zeff)"]
+    H --> I["Media.IncreaseCount()"]
+    I --> J["End"]
+    G -- "No" --> K["Predict()"]
+    K --> L["Save()"]
+    L --> M["Media.ClearCount()"]
+    M --> N["Calibration.UpdateGain(line)"]
+    N --> J
+    X["On Exception:<br/>MZLogger.Error(ex)"]
+    A -.-> X
+```
+##### 이미지 색상 처리 (Process)
+1. 입력 검증: 비어있는 라인(데이터 없음)은 즉시 반환하여 불필요한 연산 방지
+2. 보정/비율 조정: 라인의 픽셀 비율과 해상도 보정
+3. 에너지 상태 갱신: Gain/Offset 기반 상태 갱신
+4. 색상/물성 계산: 듀얼에너지 기반으로 Color/Zeff 계산
+5. 결과 생성: High, Low, Color, Zeff 이미지 생성
+6. 물체 판단: 고신호(High)를 이용해 물체 존재 여부 판단
+7. 물체 식별 시: 라인을 이동(Shift)하고 색상/물성 데이터 갱신 
+8. 물체 비식별 시: AI 추론을 수행하고 결과/이미지 저장 및 Gain 업데이트
+
+##### 이미지 색상 처리
+
+```mermaid
+graph TD
+    A["Start: Calculation(line)"] --> B["Compute width, halfHeight"]
+    B --> C["Create Mats:<br/>high 16UC1, low 16UC1,<br/>color 8UC4, zeff 8UC1"]
+    C --> D["Load Calibration: Gain, Offset"]
+    D --> E["Parallel.For x = 0..width-1"]
+    E --> F["k = 0"]
+    F --> G["for y = 0..halfHeight-1<br/>l = y + halfHeight"]
+    G --> H["Read gl, ol, gh, oh"]
+    H --> I{"CompareBoundaryArtifact(gh) ?"}
+    I -- "No" --> G
+    I -- "Yes" --> J["Normalize:<br/>nh = Normalize(L(l,x), oh, gh, rate)<br/>nl = Normalize(L(y,x), ol, gl, rate)"]
+    J --> K["16-bit scale:<br/>uh = max(nh,nl) * 65535<br/>ul = min(nh,nl) * ushort.MAX"]
+    K --> L["Write:<br/>high[k,x] = uh<br/>low[k,x] = ul"]
+    L --> M["zeff[k,x] = Zeffect.Calculation(uh, ul)"]
+    M --> N["color[k,x] = Material.Calculation(nh, nl)"]
+    N --> O["k = k + 1"]
+    O --> G
+    G --> P["Return (high, low, color, zeff)"]
+```
+
+##### 세부 연산 (Calculation)
+1. 기본 설정: width, halfHeight를 계산하고 출력 버퍼 생성
+2. high, low: 16UC1 / color: 8UC4 / zeff: 8UC1
+3. 보정 파라미터 로드: 행 단위 Gain, Offset 호출
+4. 열 단위 병렬 처리: x = 0..width-1 범위를 병렬 처리
+5. 상·하 신호 매핑: 각 y = 0..halfHeight-1에 대해 l = y + halfHeight로 High/Low 위치 지정
+6. 경계 검사: CompareBoundaryArtifact(gh)가 참거짓 판단
+7. 정규화:
+   - nh = Normalize(L(l,x), oh, gh, rate)
+   - nl = Normalize(L(y,x), ol, gl, rate)
+8. High/Low 값 확정(16-bit):
+   - uh = max(nh, nl) * ushort.MAX
+   - ul = min(nh, nl) * ushort.MAX
+9. 버퍼 기록: high[k,x] = uh, low[k,x] = ul
+10. Zeff 계산(8-bit): zeff[k,x] = Zeffect.Calculation(uh, ul)
+11. 컬러 매핑(RGBA): color[k,x] = Material.Calculation(nh, nl)
+12. 라인 인덱스 진척: k = k + 1로 출력 라인 진행
+13. 반환: (high, low, color, zeff)을 반환
 
 ### 3. 엔티티 
 
@@ -80,4 +169,5 @@ AIOption (1) ─── (N) Category
 Image (1) ─── (N) ObjectDetection
 ```
 
+#### 3.1 데이터 처리 파이프라인(엔티티)
 
