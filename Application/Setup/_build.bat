@@ -4,4 +4,4 @@ wix build Product.wxs ^
   -ext WixToolset.UI.wixext ^
   -ext WixToolset.Util.wixext ^
   -d AppSource="D:\workspace\MZ.Xray.Prism\Application\Build\x64\Release\net8.0-windows7.0" ^
-  -o Setup.msi
+  -o AppSetup.msi
