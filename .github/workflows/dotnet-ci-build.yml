@@ -1,0 +1,35 @@
+name: .NET Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore UnitTest/UnitTest.sln
+
+      - name: Build (Release)
+        run: dotnet build UnitTest/UnitTest.sln --configuration Release --no-restore
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-outputs
+          path: |
+            **/bin/Release/**
+            !**/*.pdb

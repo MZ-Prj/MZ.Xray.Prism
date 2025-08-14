@@ -6,24 +6,14 @@ on:
   pull_request:
     branches: [ main, master ]
 
-# 같은 브랜치에 새 커밋이 오면 이전 실행 취소해서 CI 자원 절약
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-# 필요한 최소 권한만 부여
 permissions:
   contents: read
   checks: write
-  pull-requests: write  
+  pull-requests: write
 
 jobs:
-  run-tests:
-    # net8.0-windows 타겟이 있으니 Windows 러너 사용
+  tests:
     runs-on: windows-latest
-
-    timeout-minutes: 30
-
     strategy:
       fail-fast: false
       matrix:
@@ -36,46 +26,28 @@ jobs:
             project: MZ.Vision.Test/MZ.Vision.Test.csproj
           - module_name: Xray.Engine
             project: MZ.Xray.Engine.Test/MZ.Xray.Engine.Test.csproj
-            
-    name: Run Tests (${{ matrix.module_name }})
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      - name: NuGet cache
-        uses: actions/cache@v4
+      - name: Download build outputs
+        uses: actions/download-artifact@v4
         with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+          name: build-outputs
+          path: ./_build
 
-      # 솔루션이 UnitTest 폴더에 있으므로, 그 디렉터리에서 실행
-      - name: Restore (solution)
-        run: dotnet restore UnitTest.sln
-        working-directory: ./UnitTest
-
-      - name: Build (solution, Release)
-        run: dotnet build UnitTest.sln --configuration Release --no-restore
-        working-directory: ./UnitTest
-
-      # 모듈별 테스트 (csproj 경로는 UnitTest를 기준으로)
       - name: Test (${{ matrix.module_name }})
         run: >
-          dotnet test ${{ matrix.project }}
+          dotnet test UnitTest/${{ matrix.project }}
           --configuration Release
           --logger "trx;LogFileName=${{ matrix.module_name }}.trx"
           --collect:"XPlat Code Coverage"
-          --results-directory ./TestResults/${{ matrix.module_name }}
-        working-directory: ./UnitTest
+          --results-directory ./UnitTest/TestResults/${{ matrix.module_name }}
 
-      # 커버리지 HTML 리포트 생성 (ReportGenerator 액션)
       - name: Generate coverage report (${{ matrix.module_name }})
         uses: danielpalme/ReportGenerator-GitHub-Action@5
         with:
@@ -84,7 +56,6 @@ jobs:
           reporttypes: 'HtmlInline;Cobertura'
           assemblyfilters: '+*'
 
-      # TRX/커버리지 업로드
       - name: Upload test results (${{ matrix.module_name }})
         if: always()
         uses: actions/upload-artifact@v4
@@ -94,7 +65,6 @@ jobs:
             ./UnitTest/TestResults/${{ matrix.module_name }}/*.trx
             ./UnitTest/TestResults/Coverage/${{ matrix.module_name }}/**
 
-      # PR 체크/요약에 테스트 결과(실패/성공) 게시
       - name: Publish test results to PR checks (${{ matrix.module_name }})
         if: always()
         uses: dorny/test-reporter@v1
