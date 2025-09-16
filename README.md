@@ -204,7 +204,5 @@ erDiagram
 - AI 추론 모듈을 ONNX Runtime(CUDA) 기반으로 통합하여 GPU 가속 적용
 - DB 스키마 및 서비스 계층을 새로 설계하여 유지보수성 및 확장성 향상
 
-## 6. 전후 비교 (before-after)
-<!-- TODO -->
 
 
